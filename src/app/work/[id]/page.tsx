@@ -5,9 +5,9 @@ import { fetchPublishedArticles, fetchArticleById } from "@/lib/supabase-data";
 import Comments from "@/components/Comments";
 import ReadingProgress from "@/components/ReadingProgress";
 import ShareButtons from "@/components/ShareButtons";
-import RelatedArticles from "@/components/RelatedArticles";
 import LikeButton from "@/components/LikeButton";
 import BookmarkButton from "@/components/BookmarkButton";
+import MarkdownContent from "@/components/MarkdownContent";
 import { ArrowLeftIcon } from "@/components/Icons";
 
 export async function generateStaticParams() {
@@ -54,7 +54,6 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
 
   const sectionSlug = SECTIONS.find((s) => s.name === article.section)?.slug || "";
   const colors = sectionColors[article.section] || "";
-  const paragraphs = article.content.split("\n\n");
 
   return (
     <>
@@ -102,9 +101,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
           </header>
 
           <div className="article-content text-foreground/90">
-            {paragraphs.map((para, i) => (
-              <p key={i}>{para}</p>
-            ))}
+            <MarkdownContent content={article.content} />
           </div>
         </article>
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/lib/supabase";
 import { SECTIONS, Section } from "@/lib/types";
+import RichEditor from "@/components/RichEditor";
 import { PenIcon, CheckIcon } from "@/components/Icons";
 
 export default function SubmitPage() {
@@ -44,7 +45,7 @@ export default function SubmitPage() {
     const { error: insertError } = await supabase.from("articles").insert({
       title: title.trim(),
       content: content.trim(),
-      excerpt: excerpt.trim() || content.trim().slice(0, 200),
+      excerpt: excerpt.trim() || content.trim().replace(/[#*>\-!\[\]()]/g, "").slice(0, 200),
       section,
       author_id: user.id,
       author_name: profile?.display_name || profile?.username || "مجهول",
@@ -82,43 +83,44 @@ export default function SubmitPage() {
         <h1 className="text-2xl font-bold font-[var(--font-heading)]">إرسال عمل جديد</h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-surface rounded-3xl border border-border/50 p-8 shadow-xl space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {error && <p className="text-red-500 text-xs bg-red-500/10 p-3 rounded-xl">{error}</p>}
 
-        <div>
-          <label className="text-xs font-medium text-text-muted block mb-1.5">عنوان العمل *</label>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="عنوان عملك الأدبي" required />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
+        <div className="bg-surface rounded-2xl border border-border/50 p-6 space-y-4">
           <div>
-            <label className="text-xs font-medium text-text-muted block mb-1.5">القسم *</label>
-            <select value={section} onChange={(e) => setSection(e.target.value as Section)} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30">
-              {SECTIONS.map((s) => <option key={s.slug} value={s.name}>{s.name}</option>)}
-            </select>
+            <label className="text-xs font-medium text-text-muted block mb-1.5">عنوان العمل *</label>
+            <input value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="عنوان عملك الأدبي" required />
           </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-medium text-text-muted block mb-1.5">القسم *</label>
+              <select value={section} onChange={(e) => setSection(e.target.value as Section)} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30">
+                {SECTIONS.map((s) => <option key={s.slug} value={s.name}>{s.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-text-muted block mb-1.5">وقت القراءة</label>
+              <select value={readTime} onChange={(e) => setReadTime(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30">
+                <option>دقيقة واحدة</option>
+                <option>3 دقائق</option>
+                <option>5 دقائق</option>
+                <option>8 دقائق</option>
+                <option>10 دقائق</option>
+                <option>15 دقيقة</option>
+              </select>
+            </div>
+          </div>
+
           <div>
-            <label className="text-xs font-medium text-text-muted block mb-1.5">وقت القراءة</label>
-            <select value={readTime} onChange={(e) => setReadTime(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30">
-              <option>دقيقة واحدة</option>
-              <option>3 دقائق</option>
-              <option>5 دقائق</option>
-              <option>8 دقائق</option>
-              <option>10 دقائق</option>
-              <option>15 دقيقة</option>
-            </select>
+            <label className="text-xs font-medium text-text-muted block mb-1.5">المقتطف (اختياري)</label>
+            <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 resize-none" placeholder="جملة قصيرة تلخص عملك..." />
           </div>
         </div>
 
         <div>
-          <label className="text-xs font-medium text-text-muted block mb-1.5">المقتطف (اختياري)</label>
-          <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 resize-none" placeholder="جملة قصيرة تلخص عملك..." />
-        </div>
-
-        <div>
-          <label className="text-xs font-medium text-text-muted block mb-1.5">المحتوى *</label>
-          <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={15} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 resize-none leading-loose" placeholder="اكتب عملك الأدبي هنا..." required />
-          <p className="text-[11px] text-text-muted mt-1">{content.split(/\s+/).filter(Boolean).length} كلمة</p>
+          <label className="text-xs font-medium text-text-muted block mb-2">المحتوى *</label>
+          <RichEditor value={content} onChange={setContent} placeholder="اكتب محتواك هنا... يمكنك استخدام **غامق** و *مائل* و ## عنوان" />
         </div>
 
         <div className="flex gap-3 pt-2">
