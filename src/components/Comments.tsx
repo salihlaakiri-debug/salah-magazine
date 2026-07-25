@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Comment } from "@/lib/types";
+import { MessageIcon, PlusIcon, XIcon, CheckIcon } from "./Icons";
 
 const STORAGE_KEY = "salah-comments";
 
@@ -69,16 +70,18 @@ export default function Comments({ articleId }: { articleId: string }) {
       <div className="section-divider mb-10" />
 
       <div className="flex items-center justify-between mb-8">
-        <h3 className="text-xl font-bold font-[var(--font-heading)]">
+        <h3 className="text-xl font-bold font-[var(--font-heading)] flex items-center gap-2">
+          <MessageIcon size={20} className="text-accent" />
           التعليقات
-          <span className="text-sm font-normal text-text-muted mr-2">({comments.length})</span>
+          <span className="text-sm font-normal text-text-muted">({comments.length})</span>
         </h3>
         {!showForm && (
           <button
             onClick={() => setShowForm(true)}
-            className="text-sm text-accent hover:text-accent-dark transition-colors font-medium"
+            className="text-sm text-accent hover:text-accent-dark transition-colors font-medium flex items-center gap-1"
           >
-            + أضف تعليقاً
+            <PlusIcon size={14} />
+            تعليق جديد
           </button>
         )}
       </div>
@@ -98,8 +101,9 @@ export default function Comments({ articleId }: { articleId: string }) {
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="text-sm text-text-muted hover:text-foreground transition-colors"
+                className="text-sm text-text-muted hover:text-foreground transition-colors flex items-center gap-1"
               >
+                <XIcon size={14} />
                 إلغاء
               </button>
             </div>
@@ -115,13 +119,15 @@ export default function Comments({ articleId }: { articleId: string }) {
           <div className="flex items-center gap-3">
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl bg-accent text-white text-sm font-medium hover:bg-accent-dark transition-colors shadow-lg shadow-accent/20"
+              className="px-6 py-2.5 rounded-xl bg-accent text-white text-sm font-medium hover:bg-accent-dark transition-colors shadow-lg shadow-accent/20 flex items-center gap-2"
             >
-             نشر التعليق
+              <CheckIcon size={14} />
+              نشر التعليق
             </button>
             {submitted && (
-              <span className="text-sm text-emerald-600 dark:text-emerald-400 animate-fade-in">
-                ✓ تم النشر بنجاح
+              <span className="text-sm text-emerald-600 dark:text-emerald-400 animate-fade-in flex items-center gap-1">
+                <CheckIcon size={14} />
+                تم النشر بنجاح
               </span>
             )}
           </div>
@@ -131,10 +137,8 @@ export default function Comments({ articleId }: { articleId: string }) {
       <div className="space-y-4">
         {comments.length === 0 && !showForm && (
           <div className="text-center py-12 bg-surface/50 rounded-2xl border border-border/30">
-            <p className="text-4xl mb-3">💬</p>
-            <p className="text-sm text-text-muted">
-              لا توجد تعليقات بعد.
-            </p>
+            <MessageIcon size={40} className="mx-auto text-text-muted mb-3 opacity-30" />
+            <p className="text-sm text-text-muted">لا توجد تعليقات بعد.</p>
             <button
               onClick={() => setShowForm(true)}
               className="mt-3 text-sm text-accent hover:text-accent-dark transition-colors font-medium"

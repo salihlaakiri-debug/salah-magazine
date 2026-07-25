@@ -3,10 +3,11 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ThemeProvider from "@/components/ThemeProvider";
+import AuthProvider from "@/components/AuthProvider";
 
 export const metadata: Metadata = {
   title: "صلاح | مجلة أدبية",
-  description: "مجلة أدبية عربية تublish القصائد والتأملات والحكايات من عوالم اللغة والصمت",
+  description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
   keywords: ["أدب عربي", "شعر", "قصة", "نثر", "تأملات", "مجلة أدبية"],
 };
 
@@ -19,9 +20,11 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" suppressHydrationWarning className="h-full">
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <AuthProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,5 +1,7 @@
 "use client";
 
+import { useTheme } from "./ThemeProvider";
+import { MoonIcon, SunIcon } from "./Icons";
 import { useEffect, useState } from "react";
 
 export default function ReadingProgress() {

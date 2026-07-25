@@ -1,14 +1,16 @@
 "use client";
 
+import { TwitterIcon, FacebookIcon, WhatsAppIcon, CopyIcon } from "./Icons";
+
 export default function ShareButtons({ title, url }: { title: string; url: string }) {
   const encoded = encodeURIComponent(url);
   const text = encodeURIComponent(title);
 
   const links = [
-    { name: "تويتر", href: `https://twitter.com/intent/tweet?text=${text}&url=${encoded}`, icon: "𝕏" },
-    { name: "فيسبوك", href: `https://www.facebook.com/sharer/sharer.php?u=${encoded}`, icon: "f" },
-    { name: "واتساب", href: `https://wa.me/?text=${text}%20${encoded}`, icon: "w" },
-    { name: "نسخ", href: "#", icon: "⧉", action: () => navigator.clipboard.writeText(url) },
+    { name: "تويتر", href: `https://twitter.com/intent/tweet?text=${text}&url=${encoded}`, Icon: TwitterIcon },
+    { name: "فيسبوك", href: `https://www.facebook.com/sharer/sharer.php?u=${encoded}`, Icon: FacebookIcon },
+    { name: "واتساب", href: `https://wa.me/?text=${text}%20${encoded}`, Icon: WhatsAppIcon },
+    { name: "نسخ", href: "#", Icon: CopyIcon, action: () => navigator.clipboard.writeText(url) },
   ];
 
   return (
@@ -26,10 +28,10 @@ export default function ShareButtons({ title, url }: { title: string; url: strin
           }}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-8 h-8 rounded-lg bg-surface border border-border/50 flex items-center justify-center text-xs font-bold hover:bg-accent hover:text-white hover:border-accent transition-all"
+          className="w-8 h-8 rounded-lg bg-surface border border-border/50 flex items-center justify-center hover:bg-accent hover:text-white hover:border-accent transition-all text-text-muted"
           title={l.name}
         >
-          {l.icon}
+          <l.Icon size={14} />
         </a>
       ))}
     </div>

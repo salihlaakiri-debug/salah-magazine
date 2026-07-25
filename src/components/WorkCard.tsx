@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Article } from "@/lib/types";
+import { ArrowLeftIcon } from "./Icons";
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
@@ -49,8 +50,9 @@ export default function WorkCard({ article, featured = false }: { article: Artic
                   <span className="text-xs">{formatDate(article.date)}</span>
                 </div>
               </div>
-              <span className="text-sm text-accent opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
-                اقرأ المزيد ←
+              <span className="text-sm text-accent opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0 flex items-center gap-1">
+                اقرأ المزيد
+                <ArrowLeftIcon size={14} />
               </span>
             </div>
           </div>
@@ -85,8 +87,8 @@ export default function WorkCard({ article, featured = false }: { article: Artic
               <span className="w-1 h-1 rounded-full bg-border" />
               <span>{formatDate(article.date)}</span>
             </div>
-            <span className="text-accent opacity-0 group-hover:opacity-100 transition-opacity text-[11px]">
-              ←
+            <span className="text-accent opacity-0 group-hover:opacity-100 transition-opacity">
+              <ArrowLeftIcon size={12} />
             </span>
           </div>
         </div>

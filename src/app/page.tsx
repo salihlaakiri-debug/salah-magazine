@@ -2,6 +2,8 @@ import Link from "next/link";
 import { SECTIONS } from "@/lib/types";
 import { getRecentArticles, getArticlesBySection, articles } from "@/lib/data";
 import WorkCard from "@/components/WorkCard";
+import SectionIcon from "@/components/SectionIcon";
+import { PenIcon, SearchIcon, ArchiveIcon, ArrowLeftIcon, StarIcon, MessageIcon } from "@/components/Icons";
 
 export default function HomePage() {
   const featured = articles[0];
@@ -30,15 +32,16 @@ export default function HomePage() {
             <div className="flex flex-wrap justify-center gap-3 animate-fade-in-up delay-300 opacity-0">
               <Link
                 href="/archive"
-                className="group px-7 py-3.5 rounded-full bg-accent text-white font-medium hover:bg-accent-dark transition-all shadow-lg shadow-accent/20 hover:shadow-accent/30"
+                className="group px-7 py-3.5 rounded-full bg-accent text-white font-medium hover:bg-accent-dark transition-all shadow-lg shadow-accent/20 hover:shadow-accent/30 flex items-center gap-2"
               >
+                <ArchiveIcon size={16} />
                 تصفّح الأرشيف
-                <span className="inline-block mr-1 group-hover:-translate-x-1 transition-transform">←</span>
               </Link>
               <Link
                 href="/search"
-                className="px-7 py-3.5 rounded-full border border-border bg-surface font-medium hover:bg-surface-hover transition-all"
+                className="px-7 py-3.5 rounded-full border border-border bg-surface font-medium hover:bg-surface-hover transition-all flex items-center gap-2"
               >
+                <SearchIcon size={16} />
                 بحث
               </Link>
             </div>
@@ -51,6 +54,7 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex items-center gap-3 mb-10">
           <div className="w-1 h-8 rounded-full bg-accent" />
+          <StarIcon size={20} className="text-accent" />
           <h2 className="text-2xl sm:text-3xl font-bold font-[var(--font-heading)]">
             العمل المميز
           </h2>
@@ -74,7 +78,9 @@ export default function HomePage() {
             >
               <div className="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative">
-                <span className="text-4xl mb-3 block group-hover:scale-110 transition-transform">{s.icon}</span>
+                <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-accent/10 flex items-center justify-center text-accent group-hover:scale-110 transition-transform">
+                  <SectionIcon section={s.name} size={24} />
+                </div>
                 <h3 className="font-bold text-sm font-[var(--font-heading)] group-hover:text-accent transition-colors">
                   {s.name}
                 </h3>
@@ -97,9 +103,10 @@ export default function HomePage() {
           </div>
           <Link
             href="/archive"
-            className="text-sm text-accent hover:text-accent-dark transition-colors font-medium"
+            className="text-sm text-accent hover:text-accent-dark transition-colors font-medium flex items-center gap-1"
           >
-            عرض الكل ←
+            عرض الكل
+            <ArrowLeftIcon size={14} />
           </Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -118,14 +125,15 @@ export default function HomePage() {
               <div className="flex items-center gap-3">
                 <div className="w-1 h-8 rounded-full bg-accent" />
                 <h2 className="text-xl sm:text-2xl font-bold font-[var(--font-heading)]">
-                  {s.icon} {s.name}
+                  {s.name}
                 </h2>
               </div>
               <Link
                 href={`/section/${encodeURIComponent(s.slug)}`}
-                className="text-sm text-accent hover:text-accent-dark transition-colors"
+                className="text-sm text-accent hover:text-accent-dark transition-colors flex items-center gap-1"
               >
-                المزيد ←
+                المزيد
+                <ArrowLeftIcon size={14} />
               </Link>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -139,8 +147,12 @@ export default function HomePage() {
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent/10 via-surface to-accent-light/10 border border-border/50 p-10 sm:p-14 text-center">
-          <div className="absolute top-4 right-4 text-6xl opacity-10 animate-float">✍️</div>
-          <div className="absolute bottom-4 left-4 text-6xl opacity-10 animate-float" style={{ animationDelay: "3s" }}>📖</div>
+          <div className="absolute top-4 right-4 opacity-5">
+            <PenIcon size={120} />
+          </div>
+          <div className="absolute bottom-4 left-4 opacity-5">
+            <MessageIcon size={100} />
+          </div>
           <h2 className="text-2xl sm:text-3xl font-bold font-[var(--font-heading)] mb-4 relative">
             هل تكتب؟
           </h2>
@@ -149,9 +161,10 @@ export default function HomePage() {
           </p>
           <Link
             href="/about"
-            className="inline-flex px-8 py-3.5 rounded-full bg-accent text-white font-medium hover:bg-accent-dark transition-all shadow-lg shadow-accent/20 relative"
+            className="inline-flex px-8 py-3.5 rounded-full bg-accent text-white font-medium hover:bg-accent-dark transition-all shadow-lg shadow-accent/20 relative items-center gap-2"
           >
             تواصل معنا
+            <ArrowLeftIcon size={16} />
           </Link>
         </div>
       </section>

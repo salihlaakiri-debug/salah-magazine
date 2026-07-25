@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { SECTIONS } from "@/lib/types";
+import SectionIcon from "@/components/SectionIcon";
+import { MailIcon } from "@/components/Icons";
 
 export const metadata = {
   title: "من نحن | مجلة صلاح",
@@ -64,7 +66,9 @@ export default function AboutPage() {
                 href={`/section/${encodeURIComponent(s.slug)}`}
                 className="flex items-start gap-3 p-4 rounded-xl hover:bg-surface-hover transition-colors group"
               >
-                <span className="text-2xl group-hover:scale-110 transition-transform">{s.icon}</span>
+                <div className="text-accent group-hover:scale-110 transition-transform">
+                  <SectionIcon section={s.name} size={28} />
+                </div>
                 <div>
                   <h3 className="font-bold text-sm font-[var(--font-heading)] group-hover:text-accent transition-colors">
                     {s.name}
@@ -79,7 +83,9 @@ export default function AboutPage() {
         </div>
 
         <div className="bg-gradient-to-br from-accent/10 to-accent-light/10 rounded-3xl border border-accent/20 p-8 sm:p-10 text-center">
-          <p className="text-4xl mb-4">✉️</p>
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-accent/10 flex items-center justify-center text-accent">
+            <MailIcon size={32} />
+          </div>
           <h2 className="text-xl font-bold font-[var(--font-heading)] mb-3">تواصل معنا</h2>
           <p className="text-text-muted text-sm leading-relaxed max-w-md mx-auto">
             إذا كنت كاتباً وترغب في نشر أعمالك في المجلة، أو إذا كان لديك أي

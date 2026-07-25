@@ -3,6 +3,8 @@ import Link from "next/link";
 import { SECTIONS } from "@/lib/types";
 import { getArticlesBySection } from "@/lib/data";
 import WorkCard from "@/components/WorkCard";
+import SectionIcon from "@/components/SectionIcon";
+import { FileTextIcon } from "@/components/Icons";
 
 export function generateStaticParams() {
   return SECTIONS.map((s) => ({ slug: s.slug }));
@@ -34,7 +36,9 @@ export default function SectionPage({ params }: { params: { slug: string } }) {
       <div className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-1 h-10 rounded-full bg-accent" />
-          <span className="text-5xl">{section.icon}</span>
+          <div className="text-accent">
+            <SectionIcon section={section.name} size={40} />
+          </div>
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold font-[var(--font-heading)] mb-3">
           {section.name}
@@ -44,7 +48,7 @@ export default function SectionPage({ params }: { params: { slug: string } }) {
 
       {articles.length === 0 ? (
         <div className="text-center py-20 bg-surface/50 rounded-3xl border border-border/30">
-          <p className="text-5xl mb-4">📭</p>
+          <FileTextIcon size={48} className="mx-auto text-text-muted/20 mb-4" />
           <p className="text-text-muted">لا توجد أعمال في هذا القسم بعد.</p>
         </div>
       ) : (

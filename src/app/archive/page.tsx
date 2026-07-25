@@ -5,6 +5,7 @@ import { articles } from "@/lib/data";
 import { SECTIONS } from "@/lib/types";
 import WorkCard from "@/components/WorkCard";
 import Link from "next/link";
+import { ArchiveIcon, FileTextIcon } from "@/components/Icons";
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
@@ -58,7 +59,7 @@ export default function ArchivePage() {
           >
             <option value="الكل">جميع الأقسام</option>
             {SECTIONS.map((s) => (
-              <option key={s.slug} value={s.name}>{s.icon} {s.name}</option>
+              <option key={s.slug} value={s.name}>{s.name}</option>
             ))}
           </select>
         </div>
@@ -86,7 +87,7 @@ export default function ArchivePage() {
 
       {sorted.length === 0 ? (
         <div className="text-center py-20 bg-surface/50 rounded-3xl border border-border/30">
-          <p className="text-5xl mb-4">📭</p>
+          <FileTextIcon size={48} className="mx-auto text-text-muted/20 mb-4" />
           <p className="text-text-muted">لا توجد أعمال تطابق التصفية.</p>
         </div>
       ) : (

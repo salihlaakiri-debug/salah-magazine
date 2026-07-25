@@ -5,6 +5,7 @@ import Comments from "@/components/Comments";
 import ReadingProgress from "@/components/ReadingProgress";
 import ShareButtons from "@/components/ShareButtons";
 import RelatedArticles from "@/components/RelatedArticles";
+import { ArrowLeftIcon } from "@/components/Icons";
 
 export function generateStaticParams() {
   return articles.map((a) => ({ id: a.id }));
@@ -84,7 +85,7 @@ export default function WorkPage({
                   <span className="text-xs text-text-muted">{formatDate(article.date)}</span>
                 </div>
               </div>
-              <ShareButtons title={article.title} url={`http://localhost:3000/work/${article.id}`} />
+              <ShareButtons title={article.title} url={`https://salah-magazine.vercel.app/work/${article.id}`} />
             </div>
           </header>
 
@@ -103,7 +104,9 @@ export default function WorkPage({
             href="/"
             className="inline-flex items-center gap-2 text-sm text-accent hover:text-accent-dark transition-colors group"
           >
-            <span className="group-hover:-translate-x-1 transition-transform">←</span>
+            <span className="group-hover:-translate-x-1 transition-transform">
+              <ArrowLeftIcon size={16} />
+            </span>
             العودة إلى الصفحة الرئيسية
           </Link>
         </div>
