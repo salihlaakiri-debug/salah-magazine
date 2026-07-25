@@ -5,7 +5,8 @@ import { useState, useRef, useEffect } from "react";
 import { SECTIONS } from "@/lib/types";
 import { useTheme } from "./ThemeProvider";
 import { useAuth } from "./AuthProvider";
-import { MenuIcon, XIcon, MoonIcon, SunIcon, PenIcon, SearchIcon, ShieldIcon, UserIcon, LogOutIcon } from "./Icons";
+import { MenuIcon, XIcon, MoonIcon, SunIcon, PenIcon, SearchIcon, ShieldIcon, UserIcon, LogOutIcon, BookmarkIcon } from "./Icons";
+import NotificationsBell from "./NotificationsBell";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -54,37 +55,46 @@ export default function Header() {
             {loading ? (
               <div className="w-8 h-8 rounded-full bg-surface animate-pulse" />
             ) : user ? (
-              <div ref={userMenuRef} className="relative">
-                <button onClick={() => setUserMenuOpen(!userMenuOpen)} className="flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-surface-hover transition-colors">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-xs font-bold">
-                    {profile?.display_name?.[0] || profile?.username?.[0] || user.email?.[0]}
-                  </div>
-                </button>
-                {userMenuOpen && (
-                  <div className="absolute left-0 top-full mt-2 w-56 bg-surface rounded-2xl border border-border/50 shadow-xl py-2 animate-fade-in z-50">
-                    <div className="px-4 py-3 border-b border-border/30">
-                      <p className="font-bold text-sm truncate">{profile?.display_name || profile?.username}</p>
-                      <p className="text-[11px] text-text-muted truncate">{user.email}</p>
+              <>
+                <NotificationsBell />
+                <div ref={userMenuRef} className="relative">
+                  <button onClick={() => setUserMenuOpen(!userMenuOpen)} className="flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-surface-hover transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-xs font-bold">
+                      {profile?.display_name?.[0] || profile?.username?.[0] || user.email?.[0]}
                     </div>
-                    <Link href={`/profile/${profile?.username}`} onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-colors">
-                      <UserIcon size={16} /> ملفي الشخصي
-                    </Link>
-                    <Link href="/my-works" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-colors">
-                      <PenIcon size={16} /> أعمالي
-                    </Link>
-                    {isAdmin && (
-                      <Link href="/admin/dashboard" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-colors text-accent">
-                        <ShieldIcon size={16} /> لوحة التحكم
+                  </button>
+                  {userMenuOpen && (
+                    <div className="absolute left-0 top-full mt-2 w-56 bg-surface rounded-2xl border border-border/50 shadow-xl py-2 animate-fade-in z-50">
+                      <div className="px-4 py-3 border-b border-border/30">
+                        <p className="font-bold text-sm truncate">{profile?.display_name || profile?.username}</p>
+                        <p className="text-[11px] text-text-muted truncate">{user.email}</p>
+                      </div>
+                      <Link href={`/profile/${profile?.username}`} onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-colors">
+                        <UserIcon size={16} /> ملفي الشخصي
                       </Link>
-                    )}
-                    <div className="border-t border-border/30 mt-1 pt-1">
-                      <button onClick={async () => { await signOut(); setUserMenuOpen(false); }} className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-500/10 transition-colors w-full">
-                        <LogOutIcon size={16} /> خروج
-                      </button>
+                      <Link href="/dashboard" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-colors">
+                        <PenIcon size={16} /> لوحة الكاتب
+                      </Link>
+                      <Link href="/my-works" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-colors">
+                        <PenIcon size={16} /> أعمالي
+                      </Link>
+                      <Link href="/bookmarks" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-colors">
+                        <BookmarkIcon size={16} /> المحفوظات
+                      </Link>
+                      {isAdmin && (
+                        <Link href="/admin/dashboard" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-colors text-accent">
+                          <ShieldIcon size={16} /> لوحة التحكم
+                        </Link>
+                      )}
+                      <div className="border-t border-border/30 mt-1 pt-1">
+                        <button onClick={async () => { await signOut(); setUserMenuOpen(false); }} className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-500/10 transition-colors w-full">
+                          <LogOutIcon size={16} /> خروج
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              </>
             ) : (
               <div className="flex items-center gap-2">
                 <Link href="/login" className="px-4 py-2 rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors">دخول</Link>
@@ -112,7 +122,7 @@ export default function Header() {
                 { href: "/search", label: "بحث" },
                 { href: "/about", label: "من نحن" },
                 { href: "/submit", label: "إرسال عمل" },
-                ...(user ? [{ href: "/my-works", label: "أعمالي" }] : []),
+                ...(user ? [{ href: "/dashboard", label: "لوحة الكاتب" }, { href: "/bookmarks", label: "المحفوظات" }, { href: "/my-works", label: "أعمالي" }] : []),
                 ...(!user ? [{ href: "/login", label: "دخول" }] : []),
               ].map((item) => (
                 <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)} className="px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-surface-hover transition-colors">

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { UserProfile, Article } from "@/lib/types";
 import WorkCard from "@/components/WorkCard";
+import FollowButton from "@/components/FollowButton";
 import { UserIcon, ClockIcon, FileTextIcon } from "@/components/Icons";
 
 export default function ProfilePage() {
@@ -54,7 +55,10 @@ export default function ProfilePage() {
             {profile.display_name?.[0] || profile.username[0]}
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-bold font-[var(--font-heading)] mb-1">{profile.display_name || profile.username}</h1>
+            <div className="flex items-center gap-3 mb-1">
+              <h1 className="text-2xl font-bold font-[var(--font-heading)]">{profile.display_name || profile.username}</h1>
+              <FollowButton authorId={profile.id} />
+            </div>
             <p className="text-sm text-text-muted mb-3">@{profile.username}</p>
             {profile.bio && <p className="text-sm text-foreground/70 leading-relaxed mb-4">{profile.bio}</p>}
             <div className="flex flex-wrap items-center gap-4 text-xs text-text-muted">
