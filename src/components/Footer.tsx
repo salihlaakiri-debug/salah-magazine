@@ -12,7 +12,7 @@ export default function Footer() {
             {/* Brand — takes more space on large screens */}
             <div className="sm:col-span-2 lg:col-span-5">
               <div className="flex items-center gap-3 mb-4">
-                <SudfehLogo size={36} />
+                <SudfehLogo size={48} />
                 <span className="text-xl sm:text-2xl font-bold font-[var(--font-heading)]">
                   السُّدفة
                 </span>
