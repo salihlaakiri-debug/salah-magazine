@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ThemeProvider from "@/components/ThemeProvider";
 import AuthProvider from "@/components/AuthProvider";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 export const metadata: Metadata = {
   title: {
@@ -14,11 +15,7 @@ export const metadata: Metadata = {
   keywords: ["أدب عربي", "شعر", "قصة", "نثر", "تأملات", "مجلة أدبية", "السُّدفة"],
   authors: [{ name: "السُّدفة" }],
   icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/logo.png", sizes: "192x192", type: "image/png" },
-    ],
-    apple: "/logo.png",
+    icon: "/favicon.svg",
   },
   openGraph: {
     type: "website",
@@ -26,13 +23,18 @@ export const metadata: Metadata = {
     siteName: "السُّدفة",
     title: "السُّدفة | مجلة أدبية عربية",
     description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
-    images: ["/logo.png"],
+    images: ["/favicon.svg"],
   },
   twitter: {
     card: "summary_large_image",
     title: "السُّدفة | مجلة أدبية عربية",
     description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
-    images: ["/logo.png"],
+    images: ["/favicon.svg"],
+  },
+  alternates: {
+    types: {
+      "application/rss+xml": [{ title: "السُّدفة RSS", url: "/rss" }],
+    },
   },
   metadataBase: new URL("https://salah-magazine.vercel.app"),
 };
@@ -45,6 +47,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning className="h-full">
       <body className="min-h-full flex flex-col">
+        <ServiceWorkerRegister />
         <ThemeProvider>
           <AuthProvider>
             <Header />

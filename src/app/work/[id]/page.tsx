@@ -4,6 +4,8 @@ import { SECTIONS } from "@/lib/types";
 import { fetchPublishedArticles, fetchArticleById } from "@/lib/supabase-data";
 import Comments from "@/components/Comments";
 import ReadingProgress from "@/components/ReadingProgress";
+import ReadingMode from "@/components/ReadingMode";
+import TableOfContents from "@/components/TableOfContents";
 import ShareButtons from "@/components/ShareButtons";
 import ShareCard from "@/components/ShareCard";
 import LikeButton from "@/components/LikeButton";
@@ -72,7 +74,9 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
   return (
     <>
       <ReadingProgress />
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+      <ReadingMode />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+        <div className="max-w-3xl mx-auto lg:ml-auto lg:mr-0">
         <nav className="text-sm text-text-muted mb-10 flex items-center gap-1 flex-wrap">
           <Link href="/" className="hover:text-accent transition-colors">الرئيسية</Link>
           <span className="text-border">/</span>
@@ -127,38 +131,44 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
         </article>
 
         <Comments articleId={article.id} />
+        </div>
 
-        {related.length > 0 && (
-          <section className="mt-16">
-            <div className="section-divider mb-10" />
-            <h3 className="text-xl font-bold font-[var(--font-heading)] mb-6">أعمال مشابهة</h3>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {related.map((a) => (
-                <Link key={a.id} href={`/work/${a.id}`} className="group block">
-                  <div className="bg-surface/50 border border-border/30 rounded-2xl p-5 hover:border-accent/30 transition-all">
-                    <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gradient-to-r ${sectionColors[a.section] || ""}`}>
-                      {a.section}
-                    </span>
-                    <h4 className="text-sm font-bold font-[var(--font-heading)] mt-3 mb-2 group-hover:text-accent transition-colors">{a.title}</h4>
-                    <p className="text-xs text-text-muted line-clamp-2">{a.excerpt}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
+        {/* Desktop TOC sidebar */}
+        <div className="hidden lg:block">
+          <TableOfContents content={article.content} />
+        </div>
+      </div>
 
-        <div className="mt-12 pt-8 border-t border-border">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm text-accent hover:text-accent-dark transition-colors group"
-          >
+      {related.length > 0 && (
+        <section className="max-w-3xl mx-auto px-4 sm:px-6 mt-16">
+          <div className="section-divider mb-10" />
+          <h3 className="text-xl font-bold font-[var(--font-heading)] mb-6">أعمال مشابهة</h3>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((a) => (
+              <Link key={a.id} href={`/work/${a.id}`} className="group block">
+                <div className="bg-surface/50 border border-border/30 rounded-2xl p-5 hover:border-accent/30 transition-all">
+                  <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gradient-to-r ${sectionColors[a.section] || ""}`}>
+                    {a.section}
+                  </span>
+                  <h4 className="text-sm font-bold font-[var(--font-heading)] mt-3 mb-2 group-hover:text-accent transition-colors">{a.title}</h4>
+                  <p className="text-xs text-text-muted line-clamp-2">{a.excerpt}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-12 pt-8 border-t border-border">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm text-accent hover:text-accent-dark transition-colors group"
+        >
             <span className="group-hover:-translate-x-1 transition-transform">
               <ArrowLeftIcon size={16} />
             </span>
             العودة إلى الصفحة الرئيسية
           </Link>
-        </div>
       </div>
     </>
   );

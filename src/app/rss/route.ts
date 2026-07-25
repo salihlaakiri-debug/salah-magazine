@@ -1,0 +1,45 @@
+import { fetchPublishedArticles } from "@/lib/supabase-data";
+
+function escapeXml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+export async function GET() {
+  const articles = await fetchPublishedArticles();
+
+  const items = articles
+    .map(
+      (article) => `    <item>
+      <title>${escapeXml(article.title)}</title>
+      <link>https://salah-magazine.vercel.app/article/${article.id}</link>
+      <description>${escapeXml(article.excerpt)}</description>
+      <pubDate>${new Date(article.published_at || article.date).toUTCString()}</pubDate>
+      <author>${escapeXml(article.author)}</author>
+      <guid isPermaLink="false">article-${escapeXml(article.id)}</guid>
+    </item>`
+    )
+    .join("\n");
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>${escapeXml("السُّدفة | مجلة أدبية عربية")}</title>
+    <link>https://salah-magazine.vercel.app</link>
+    <description>${escapeXml("مجلة أدبية عربية تنشر القصائد والتأملات والحكايات")}</description>
+    <language>ar</language>
+    <atom:link href="https://salah-magazine.vercel.app/rss" rel="self" type="application/rss+xml" />
+${items}
+  </channel>
+</rss>`;
+
+  return new Response(xml, {
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+    },
+  });
+}
