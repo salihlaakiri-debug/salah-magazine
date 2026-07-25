@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { articles } from "@/lib/data";
-import { SECTIONS } from "@/lib/types";
+import { useState, useEffect } from "react";
+import { Article, SECTIONS } from "@/lib/types";
+import { supabase } from "@/lib/supabase";
 import WorkCard from "@/components/WorkCard";
 import Link from "next/link";
 import { ArchiveIcon, FileTextIcon } from "@/components/Icons";
@@ -16,20 +16,36 @@ function formatDate(dateStr: string): string {
 }
 
 export default function ArchivePage() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedSection, setSelectedSection] = useState("الكل");
   const [selectedMonth, setSelectedMonth] = useState("الكل");
 
-  const months = [...new Set(articles.map((a) => a.date.slice(0, 7)))].sort().reverse();
+  useEffect(() => {
+    async function load() {
+      const { data } = await supabase
+        .from("articles")
+        .select("*")
+        .eq("status", "published")
+        .order("published_at", { ascending: false });
+      setArticles((data || []).map((a: any) => ({
+        id: a.id, title: a.title, content: a.content, excerpt: a.excerpt || "",
+        section: a.section, date: a.published_at || a.created_at,
+        author: a.author_name || "صلاح", author_id: a.author_id,
+        readTime: a.read_time || "3 دقائق", status: a.status,
+      })));
+      setLoading(false);
+    }
+    load();
+  }, []);
+
+  const months = [...new Set(articles.map((a) => a.date?.slice(0, 7)))].filter(Boolean).sort().reverse();
 
   const filtered = articles.filter((a) => {
     const sectionMatch = selectedSection === "الكل" || a.section === selectedSection;
-    const monthMatch = selectedMonth === "الكل" || a.date.startsWith(selectedMonth);
+    const monthMatch = selectedMonth === "الكل" || (a.date && a.date.startsWith(selectedMonth));
     return sectionMatch && monthMatch;
   });
-
-  const sorted = [...filtered].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -81,18 +97,20 @@ export default function ArchivePage() {
       <div className="flex items-center gap-2 mb-6">
         <span className="w-2 h-2 rounded-full bg-accent" />
         <p className="text-sm text-text-muted">
-          {sorted.length} عمل أدبي
+          {loading ? "...جاري التحميل" : `${filtered.length} عمل أدبي`}
         </p>
       </div>
 
-      {sorted.length === 0 ? (
+      {loading ? (
+        <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>
+      ) : filtered.length === 0 ? (
         <div className="text-center py-20 bg-surface/50 rounded-3xl border border-border/30">
           <FileTextIcon size={48} className="mx-auto text-text-muted/20 mb-4" />
           <p className="text-text-muted">لا توجد أعمال تطابق التصفية.</p>
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {sorted.map((article) => (
+          {filtered.map((article) => (
             <WorkCard key={article.id} article={article} />
           ))}
         </div>

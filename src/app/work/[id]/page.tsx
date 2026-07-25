@@ -1,20 +1,23 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { SECTIONS } from "@/lib/types";
-import { articles, getArticleById } from "@/lib/data";
+import { fetchPublishedArticles, fetchArticleById } from "@/lib/supabase-data";
 import Comments from "@/components/Comments";
 import ReadingProgress from "@/components/ReadingProgress";
 import ShareButtons from "@/components/ShareButtons";
 import RelatedArticles from "@/components/RelatedArticles";
+import LikeButton from "@/components/LikeButton";
+import BookmarkButton from "@/components/BookmarkButton";
 import { ArrowLeftIcon } from "@/components/Icons";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const articles = await fetchPublishedArticles();
   return articles.map((a) => ({ id: a.id }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const article = getArticleById(id);
+  const article = await fetchArticleById(id);
   if (!article) return {};
   return {
     title: `${article.title} | مجلة صلاح`,
@@ -39,15 +42,17 @@ const sectionColors: Record<string, string> = {
   "تأملات": "from-rose-500/10 to-pink-500/10 text-rose-600 dark:text-rose-400",
 };
 
-export default async function WorkPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function WorkPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const article = getArticleById(id);
+  const article = await fetchArticleById(id);
   if (!article) notFound();
 
+  const allArticles = await fetchPublishedArticles();
+  const related = allArticles
+    .filter((a) => a.section === article.section && a.id !== article.id)
+    .slice(0, 3);
+
+  const sectionSlug = SECTIONS.find((s) => s.name === article.section)?.slug || "";
   const colors = sectionColors[article.section] || "";
   const paragraphs = article.content.split("\n\n");
 
@@ -58,7 +63,7 @@ export default async function WorkPage({
         <nav className="text-sm text-text-muted mb-10 flex items-center gap-1 flex-wrap">
           <Link href="/" className="hover:text-accent transition-colors">الرئيسية</Link>
           <span className="text-border">/</span>
-          <Link href={`/section/${SECTIONS.find(s => s.name === article.section)?.slug || ''}`} className="hover:text-accent transition-colors">
+          <Link href={`/section/${sectionSlug}`} className="hover:text-accent transition-colors">
             {article.section}
           </Link>
           <span className="text-border">/</span>
@@ -88,7 +93,11 @@ export default async function WorkPage({
                   <span className="text-xs text-text-muted">{formatDate(article.date)}</span>
                 </div>
               </div>
-              <ShareButtons title={article.title} url={`https://salah-magazine.vercel.app/work/${article.id}`} />
+              <div className="flex items-center gap-2">
+                <LikeButton articleId={article.id} />
+                <BookmarkButton articleId={article.id} />
+                <ShareButtons title={article.title} url={`https://salah-magazine.vercel.app/work/${article.id}`} />
+              </div>
             </div>
           </header>
 
@@ -100,7 +109,26 @@ export default async function WorkPage({
         </article>
 
         <Comments articleId={article.id} />
-        <RelatedArticles current={article} />
+
+        {related.length > 0 && (
+          <section className="mt-16">
+            <div className="section-divider mb-10" />
+            <h3 className="text-xl font-bold font-[var(--font-heading)] mb-6">أعمال مشابهة</h3>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((a) => (
+                <Link key={a.id} href={`/work/${a.id}`} className="group block">
+                  <div className="bg-surface/50 border border-border/30 rounded-2xl p-5 hover:border-accent/30 transition-all">
+                    <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gradient-to-r ${sectionColors[a.section] || ""}`}>
+                      {a.section}
+                    </span>
+                    <h4 className="text-sm font-bold font-[var(--font-heading)] mt-3 mb-2 group-hover:text-accent transition-colors">{a.title}</h4>
+                    <p className="text-xs text-text-muted line-clamp-2">{a.excerpt}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         <div className="mt-12 pt-8 border-t border-border">
           <Link

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Article } from "@/lib/types";
-import { searchArticles } from "@/lib/data";
+import { supabase } from "@/lib/supabase";
 import WorkCard from "./WorkCard";
 import { SearchIcon, XIcon } from "./Icons";
 
@@ -11,19 +11,33 @@ export default function SearchBar() {
   const [results, setResults] = useState<Article[]>([]);
   const [searched, setSearched] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const doSearch = useCallback(() => {
-    if (query.trim().length > 0) {
-      setResults(searchArticles(query.trim()));
-      setSearched(true);
-    } else {
+  const doSearch = useCallback(async () => {
+    if (query.trim().length < 2) {
       setResults([]);
       setSearched(false);
+      return;
     }
+    setLoading(true);
+    const q = query.trim();
+    const { data } = await supabase
+      .from("articles")
+      .select("*")
+      .eq("status", "published")
+      .or(`title.ilike.%${q}%,content.ilike.%${q}%,excerpt.ilike.%${q}%`)
+      .order("published_at", { ascending: false });
+    setResults((data || []).map((a: any) => ({
+      id: a.id, title: a.title, content: a.content, excerpt: a.excerpt || "",
+      section: a.section, date: a.published_at || a.created_at,
+      author: a.author_name || "صلاح", readTime: a.read_time || "3 دقائق",
+    })));
+    setSearched(true);
+    setLoading(false);
   }, [query]);
 
   useEffect(() => {
-    const timer = setTimeout(doSearch, 250);
+    const timer = setTimeout(doSearch, 400);
     return () => clearTimeout(timer);
   }, [doSearch]);
 
@@ -52,7 +66,11 @@ export default function SearchBar() {
         )}
       </div>
 
-      {searched && (
+      {loading && (
+        <div className="flex justify-center py-12"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>
+      )}
+
+      {!loading && searched && (
         <div className="animate-fade-in">
           <div className="flex items-center gap-2 mb-6">
             <span className="w-2 h-2 rounded-full bg-accent" />
@@ -70,7 +88,7 @@ export default function SearchBar() {
         </div>
       )}
 
-      {!searched && (
+      {!searched && !loading && (
         <div className="text-center py-16">
           <SearchIcon size={64} className="mx-auto text-text-muted/20 mb-4" />
           <p className="text-text-muted">ابحث في جميع الأعمال الأدبية</p>

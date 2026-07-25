@@ -435,3 +435,44 @@ export function LayoutIcon(p: IconProps = defaultProps) {
     </Icon>
   );
 }
+
+export function HeartIcon({ filled, ...p }: IconProps & { filled?: boolean }) {
+  if (filled) {
+    return (
+      <svg width={p.size || 24} height={p.size || 24} viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={p.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" className={p.className || ""}>
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+      </svg>
+    );
+  }
+  return (
+    <Icon {...p}>
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </Icon>
+  );
+}
+
+export function BookmarkIcon({ filled, ...p }: IconProps & { filled?: boolean }) {
+  if (filled) {
+    return (
+      <svg width={p.size || 24} height={p.size || 24} viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth={p.strokeWidth || 1.5} strokeLinecap="round" strokeLinejoin="round" className={p.className || ""}>
+        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+      </svg>
+    );
+  }
+  return (
+    <Icon {...p}>
+      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+    </Icon>
+  );
+}
+
+export function UsersIcon(p: IconProps = defaultProps) {
+  return (
+    <Icon {...p}>
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </Icon>
+  );
+}

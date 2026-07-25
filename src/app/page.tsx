@@ -1,13 +1,21 @@
 import Link from "next/link";
 import { SECTIONS } from "@/lib/types";
-import { getRecentArticles, getArticlesBySection, articles } from "@/lib/data";
+import { fetchRecentArticles, fetchPublishedArticles } from "@/lib/supabase-data";
 import WorkCard from "@/components/WorkCard";
 import SectionIcon from "@/components/SectionIcon";
 import { PenIcon, SearchIcon, ArchiveIcon, ArrowLeftIcon, StarIcon, MessageIcon } from "@/components/Icons";
 
-export default function HomePage() {
-  const featured = articles[0];
-  const recent = getRecentArticles(5).slice(1);
+export default async function HomePage() {
+  const allArticles = await fetchPublishedArticles();
+  const featured = allArticles[0];
+  const recent = allArticles.slice(1, 6);
+
+  const sectionsWithArticles = await Promise.all(
+    SECTIONS.map(async (s) => {
+      const sectionArticles = allArticles.filter((a) => a.section === s.name).slice(0, 2);
+      return { ...s, articles: sectionArticles };
+    })
+  );
 
   return (
     <div>
@@ -51,16 +59,18 @@ export default function HomePage() {
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
       </section>
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="flex items-center gap-3 mb-10">
-          <div className="w-1 h-8 rounded-full bg-accent" />
-          <StarIcon size={20} className="text-accent" />
-          <h2 className="text-2xl sm:text-3xl font-bold font-[var(--font-heading)]">
-            العمل المميز
-          </h2>
-        </div>
-        <WorkCard article={featured} featured />
-      </section>
+      {featured && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="flex items-center gap-3 mb-10">
+            <div className="w-1 h-8 rounded-full bg-accent" />
+            <StarIcon size={20} className="text-accent" />
+            <h2 className="text-2xl sm:text-3xl font-bold font-[var(--font-heading)]">
+              العمل المميز
+            </h2>
+          </div>
+          <WorkCard article={featured} featured />
+        </section>
+      )}
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex items-center gap-3 mb-8">
@@ -73,7 +83,7 @@ export default function HomePage() {
           {SECTIONS.map((s) => (
             <Link
               key={s.slug}
-              href={`/section/${encodeURIComponent(s.slug)}`}
+              href={`/section/${s.slug}`}
               className="group relative overflow-hidden rounded-2xl p-6 border border-border/50 bg-surface card-hover text-center"
             >
               <div className="absolute inset-0 bg-gradient-to-b from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -116,9 +126,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {SECTIONS.map((s) => {
-        const sectionArticles = getArticlesBySection(s.name).slice(0, 2);
-        if (sectionArticles.length === 0) return null;
+      {sectionsWithArticles.map((s) => {
+        if (s.articles.length === 0) return null;
         return (
           <section key={s.slug} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="flex items-center justify-between mb-6">
@@ -129,7 +138,7 @@ export default function HomePage() {
                 </h2>
               </div>
               <Link
-                href={`/section/${encodeURIComponent(s.slug)}`}
+                href={`/section/${s.slug}`}
                 className="text-sm text-accent hover:text-accent-dark transition-colors flex items-center gap-1"
               >
                 المزيد
@@ -137,7 +146,7 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              {sectionArticles.map((article) => (
+              {s.articles.map((article) => (
                 <WorkCard key={article.id} article={article} />
               ))}
             </div>
@@ -160,10 +169,10 @@ export default function HomePage() {
             نفتح أبوابنا لكل كاتبٍ يحمل قلماً صادقاً. شاركنا أعمالك في أيٍّ من أقسامنا الأدبية.
           </p>
           <Link
-            href="/about"
+            href="/submit"
             className="inline-flex px-8 py-3.5 rounded-full bg-accent text-white font-medium hover:bg-accent-dark transition-all shadow-lg shadow-accent/20 relative items-center gap-2"
           >
-            تواصل معنا
+            أرسل عملك
             <ArrowLeftIcon size={16} />
           </Link>
         </div>

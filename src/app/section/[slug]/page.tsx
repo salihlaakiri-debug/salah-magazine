@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { SECTIONS } from "@/lib/types";
-import { getArticlesBySection } from "@/lib/data";
+import { fetchArticlesBySection } from "@/lib/supabase-data";
 import WorkCard from "@/components/WorkCard";
 import SectionIcon from "@/components/SectionIcon";
 import { FileTextIcon } from "@/components/Icons";
@@ -25,7 +25,7 @@ export default async function SectionPage({ params }: { params: Promise<{ slug: 
   const section = SECTIONS.find((s) => s.slug === slug);
   if (!section) notFound();
 
-  const articles = getArticlesBySection(section.name);
+  const articles = await fetchArticlesBySection(section.name);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
