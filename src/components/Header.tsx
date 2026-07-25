@@ -32,7 +32,7 @@ export default function Header() {
               <PenIcon size={18} />
             </div>
             <div className="hidden sm:block">
-              <span className="text-xl font-bold font-[var(--font-heading)] gradient-text">صلاح</span>
+              <span className="text-xl font-bold font-[var(--font-heading)] gradient-text">السُّدفة</span>
               <span className="block text-[10px] text-text-muted -mt-1 tracking-wider">مجلة أدبية</span>
             </div>
           </Link>

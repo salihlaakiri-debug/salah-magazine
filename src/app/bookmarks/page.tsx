@@ -31,7 +31,7 @@ export default function BookmarksPage() {
       setArticles((arts || []).map((a: any) => ({
         id: a.id, title: a.title, content: a.content, excerpt: a.excerpt || "",
         section: a.section, date: a.published_at || a.created_at,
-        author: a.author_name || "صلاح", readTime: a.read_time || "3 دقائق",
+        author: a.author_name || "السُّدفة", readTime: a.read_time || "3 دقائق",
       })));
       setLoading(false);
     }

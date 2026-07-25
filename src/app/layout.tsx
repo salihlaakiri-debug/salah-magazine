@@ -6,7 +6,7 @@ import ThemeProvider from "@/components/ThemeProvider";
 import AuthProvider from "@/components/AuthProvider";
 
 export const metadata: Metadata = {
-  title: "صلاح | مجلة أدبية",
+  title: "السُّدفة | مجلة أدبية",
   description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
   keywords: ["أدب عربي", "شعر", "قصة", "نثر", "تأملات", "مجلة أدبية"],
 };

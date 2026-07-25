@@ -31,7 +31,7 @@ export default function ArchivePage() {
       setArticles((data || []).map((a: any) => ({
         id: a.id, title: a.title, content: a.content, excerpt: a.excerpt || "",
         section: a.section, date: a.published_at || a.created_at,
-        author: a.author_name || "صلاح", author_id: a.author_id,
+        author: a.author_name || "السُّدفة", author_id: a.author_id,
         readTime: a.read_time || "3 دقائق", status: a.status,
       })));
       setLoading(false);

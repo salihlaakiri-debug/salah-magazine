@@ -34,7 +34,7 @@ export default function RegisterPage() {
   return (
     <div>
       <h1 className="text-2xl font-bold font-[var(--font-heading)] mb-2 text-center">إنشاء حساب</h1>
-      <p className="text-sm text-text-muted text-center mb-8">انضم إلى مجتمع صلاح وابدأ رحلتك الأدبية</p>
+      <p className="text-sm text-text-muted text-center mb-8">انضم إلى مجتمع السُّدفة وابدأ رحلتك الأدبية</p>
 
       <form onSubmit={handleSubmit} className="bg-surface rounded-3xl border border-border/50 p-8 shadow-xl space-y-4">
         {error && <p className="text-red-500 text-xs text-center bg-red-500/10 p-3 rounded-xl">{error}</p>}

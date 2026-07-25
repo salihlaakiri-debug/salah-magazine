@@ -4,7 +4,7 @@ import SectionIcon from "@/components/SectionIcon";
 import { MailIcon } from "@/components/Icons";
 
 export const metadata = {
-  title: "من نحن | مجلة صلاح",
+  title: "من نحن | مجلة السُّدفة",
 };
 
 export default function AboutPage() {
@@ -19,7 +19,7 @@ export default function AboutPage() {
       <div className="flex items-center gap-3 mb-10">
         <div className="w-1 h-10 rounded-full bg-accent" />
         <h1 className="text-3xl sm:text-4xl font-bold font-[var(--font-heading)]">
-          عن مجلة صلاح
+          عن مجلة السُّدفة
         </h1>
       </div>
 
@@ -27,10 +27,10 @@ export default function AboutPage() {
         <div className="bg-surface rounded-3xl border border-border/50 p-8 sm:p-10">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-accent-dark flex items-center justify-center text-white font-bold text-xl font-[var(--font-heading)] shadow-lg shadow-accent/20">
-              ص
+              س
             </div>
             <div>
-              <h2 className="font-bold font-[var(--font-heading)] text-xl">مجلة صلاح</h2>
+              <h2 className="font-bold font-[var(--font-heading)] text-xl">مجلة السُّدفة</h2>
               <p className="text-xs text-text-muted">مجلة أدبية عربية مستقلة</p>
             </div>
           </div>

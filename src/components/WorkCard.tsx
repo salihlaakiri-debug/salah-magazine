@@ -2,6 +2,11 @@ import Link from "next/link";
 import { Article } from "@/lib/types";
 import { ArrowLeftIcon } from "./Icons";
 
+function getAuthorInitial(name: string): string {
+  if (name.startsWith("ال")) return name[2] || name[0];
+  return name[0];
+}
+
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
   return date.toLocaleDateString("ar-SA", {
@@ -43,7 +48,7 @@ export default function WorkCard({ article, featured = false }: { article: Artic
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 text-sm text-text-muted">
                 <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-bold">
-                  {article.author[0]}
+                  {getAuthorInitial(article.author)}
                 </div>
                 <div>
                   <span className="block font-medium text-foreground text-xs">{article.author}</span>
@@ -81,7 +86,7 @@ export default function WorkCard({ article, featured = false }: { article: Artic
           <div className="flex items-center justify-between text-xs text-text-muted">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold">
-                {article.author[0]}
+                {getAuthorInitial(article.author)}
               </div>
               <span>{article.author}</span>
               <span className="w-1 h-1 rounded-full bg-border" />

@@ -10,7 +10,7 @@ export default function ArticlesPage() {
   const [articlesList, setArticlesList] = useState<Article[]>(initialArticles);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Article | null>(null);
-  const [form, setForm] = useState({ title: "", content: "", excerpt: "", section: "نثر" as Article["section"], date: new Date().toISOString().split("T")[0], author: "صلاح", readTime: "5 دقائق" });
+  const [form, setForm] = useState({ title: "", content: "", excerpt: "", section: "نثر" as Article["section"], date: new Date().toISOString().split("T")[0], author: "السُّدفة", readTime: "5 دقائق" });
   const [filter, setFilter] = useState("الكل");
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
@@ -18,7 +18,7 @@ export default function ArticlesPage() {
 
   const openNew = () => {
     setEditing(null);
-    setForm({ title: "", content: "", excerpt: "", section: "نثر", date: new Date().toISOString().split("T")[0], author: "صلاح", readTime: "5 دقائق" });
+    setForm({ title: "", content: "", excerpt: "", section: "نثر", date: new Date().toISOString().split("T")[0], author: "السُّدفة", readTime: "5 دقائق" });
     setShowModal(true);
   };
 

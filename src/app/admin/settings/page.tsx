@@ -10,7 +10,7 @@ export default function SettingsPage() {
   const { theme, toggle } = useTheme();
   const [newPassword, setNewPassword] = useState("");
   const [saved, setSaved] = useState(false);
-  const [siteName, setSiteName] = useState("صلاح");
+  const [siteName, setSiteName] = useState("السُّدفة");
   const [siteDesc, setSiteDesc] = useState("مجلة أدبية عربية");
 
   const handleSave = () => {

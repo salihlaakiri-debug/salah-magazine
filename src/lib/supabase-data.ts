@@ -9,7 +9,7 @@ function mapArticle(row: any): Article {
     excerpt: row.excerpt || "",
     section: row.section as Section,
     date: row.published_at || row.created_at,
-    author: row.author_name || "صلاح",
+    author: row.author_name || "السُّدفة",
     author_id: row.author_id || undefined,
     author_name: row.author_name || undefined,
     readTime: row.read_time || "3 دقائق",

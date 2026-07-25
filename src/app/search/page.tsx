@@ -2,7 +2,7 @@ import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
 
 export const metadata = {
-  title: "بحث | مجلة صلاح",
+  title: "بحث | مجلة السُّدفة",
 };
 
 export default function SearchPage() {

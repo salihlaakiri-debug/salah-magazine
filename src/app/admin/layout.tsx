@@ -45,7 +45,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
           <div>
             <h2 className="font-bold text-sm font-[var(--font-heading)]">لوحة التحكم</h2>
-            <p className="text-[10px] text-text-muted">مجلة صلاح</p>
+            <p className="text-[10px] text-text-muted">مجلة السُّدفة</p>
           </div>
         </div>
 

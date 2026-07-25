@@ -28,7 +28,7 @@ export default async function HomePage() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold font-[var(--font-heading)] mb-6 animate-fade-in-up delay-100 opacity-0">
-              <span className="gradient-text">صلاح</span>
+              <span className="gradient-text">السُّدفة</span>
             </h1>
 
             <p className="text-lg sm:text-xl text-text-muted max-w-xl mx-auto mb-10 animate-fade-in-up delay-200 opacity-0 leading-relaxed">

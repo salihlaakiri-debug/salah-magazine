@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const article = await fetchArticleById(id);
   if (!article) return {};
   return {
-    title: `${article.title} | مجلة صلاح`,
+    title: `${article.title} | مجلة السُّدفة`,
     description: article.excerpt,
   };
 }
@@ -85,7 +85,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-sm font-bold">
-                  {article.author[0]}
+                  {article.author.startsWith("ال") ? (article.author[2] || article.author[0]) : article.author[0]}
                 </div>
                 <div>
                   <span className="block font-bold text-sm">{article.author}</span>

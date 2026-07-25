@@ -10,10 +10,10 @@ export default function Footer() {
             <div className="md:col-span-2">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent-light flex items-center justify-center text-white font-bold text-lg font-[var(--font-heading)]">
-                  ص
+                  س
                 </div>
                 <span className="text-2xl font-bold font-[var(--font-heading)]">
-                  صلاح
+                  السُّدفة
                 </span>
               </div>
               <p className="text-sm opacity-60 leading-relaxed max-w-md mb-6">
@@ -73,7 +73,7 @@ export default function Footer() {
 
         <div className="border-t border-white/10 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs opacity-40">
-            © {new Date().getFullYear()} مجلة صلاح. جميع الحقوق محفوظة.
+            © {new Date().getFullYear()} مجلة السُّدفة. جميع الحقوق محفوظة.
           </p>
           <p className="text-xs opacity-40">
             صُمّمت بشغفٍ للكلمة العربية
