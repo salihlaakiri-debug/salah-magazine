@@ -16,7 +16,8 @@ export default function Footer() {
             {/* Brand */}
             <div className="sm:col-span-2 lg:col-span-5">
               <div className="flex items-center gap-3 mb-4">
-                <SudfehLogo size={44} />
+                <SudfehLogo size={40} showText={false} />
+                <span className="text-xl font-bold font-[var(--font-heading)] gradient-text leading-none">السُّدفة</span>
               </div>
               <p className="text-sm opacity-50 leading-relaxed max-w-sm mb-6">
                 مجلة أدبية عربية مستقلة. نكتب لنفهم، وصمتاً لنسمع. ننشر القصائد
