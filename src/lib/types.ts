@@ -6,7 +6,12 @@ export interface Article {
   section: Section;
   date: string;
   author: string;
+  author_id?: string;
+  author_name?: string;
   readTime: string;
+  status?: "draft" | "pending" | "published" | "rejected";
+  published_at?: string;
+  created_at?: string;
 }
 
 export type Section = "شعر" | "قصة" | "نثر" | "مقالات" | "تأملات";
@@ -14,9 +19,20 @@ export type Section = "شعر" | "قصة" | "نثر" | "مقالات" | "تأم�
 export interface Comment {
   id: string;
   articleId: string;
+  user_id?: string;
   name: string;
   text: string;
   date: string;
+}
+
+export interface UserProfile {
+  id: string;
+  username: string;
+  display_name: string;
+  bio: string;
+  avatar_url: string;
+  role: "reader" | "writer" | "admin";
+  created_at: string;
 }
 
 export interface SectionInfo {

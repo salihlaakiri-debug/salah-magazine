@@ -6,28 +6,31 @@ import { useEffect } from "react";
 import Link from "next/link";
 import {
   BarChartIcon, FileTextIcon, MessageIcon, SettingsIcon,
-  LoginIcon, PenIcon, HomeIcon, GridIcon,
+  LogOutIcon, PenIcon, HomeIcon,
 } from "@/components/Icons";
 
 const navItems = [
   { href: "/admin/dashboard", label: "الرئيسية", icon: BarChartIcon },
   { href: "/admin/articles", label: "المقالات", icon: FileTextIcon },
+  { href: "/admin/submissions", label: "المراجعات", icon: FileTextIcon },
   { href: "/admin/comments", label: "التعليقات", icon: MessageIcon },
   { href: "/admin/settings", label: "الإعدادات", icon: SettingsIcon },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, logout } = useAuth();
+  const { user, isAdmin, loading, signOut } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!isAuthenticated && pathname !== "/admin") {
-      router.replace("/admin");
+    if (!loading) {
+      if (!user) router.replace("/login");
+      else if (!isAdmin) router.replace("/");
     }
-  }, [isAuthenticated, pathname, router]);
+  }, [user, isAdmin, loading, router]);
 
-  if (!isAuthenticated && pathname !== "/admin") return null;
+  if (loading || (!user && pathname !== "/admin")) return null;
+  if (user && !isAdmin) return null;
 
   if (pathname === "/admin") {
     return <>{children}</>;
@@ -75,10 +78,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             عرض الموقع
           </Link>
           <button
-            onClick={() => { logout(); router.push("/admin"); }}
+            onClick={() => { signOut(); router.push("/"); }}
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 transition-all w-full"
           >
-            <LoginIcon size={18} />
+            <LogOutIcon size={18} />
             خروج
           </button>
         </div>
@@ -104,7 +107,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             );
           })}
           <button
-            onClick={() => { logout(); router.push("/admin"); }}
+            onClick={() => { signOut(); router.push("/"); }}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-red-500 bg-red-500/10 whitespace-nowrap"
           >
             خروج

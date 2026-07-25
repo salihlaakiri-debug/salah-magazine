@@ -6,7 +6,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import { SettingsIcon, CheckIcon, AlertIcon } from "@/components/Icons";
 
 export default function SettingsPage() {
-  const { logout } = useAuth();
+  const { signOut } = useAuth();
   const { theme, toggle } = useTheme();
   const [newPassword, setNewPassword] = useState("");
   const [saved, setSaved] = useState(false);
@@ -99,7 +99,7 @@ export default function SettingsPage() {
             {saved ? <><CheckIcon size={16} /> تم الحفظ</> : "حفظ الإعدادات"}
           </button>
           <button
-            onClick={logout}
+            onClick={async () => { await signOut(); }}
             className="px-6 py-3 rounded-xl border border-red-500/30 text-red-500 font-medium hover:bg-red-500/10 transition-all text-sm"
           >
             خروج من لوحة التحكم
