@@ -10,8 +10,9 @@ export function generateStaticParams() {
   return SECTIONS.map((s) => ({ slug: s.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const section = SECTIONS.find((s) => s.slug === params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const section = SECTIONS.find((s) => s.slug === slug);
   if (!section) return {};
   return {
     title: `${section.name} | مجلة صلاح`,
@@ -19,8 +20,9 @@ export function generateMetadata({ params }: { params: { slug: string } }) {
   };
 }
 
-export default function SectionPage({ params }: { params: { slug: string } }) {
-  const section = SECTIONS.find((s) => s.slug === params.slug);
+export default async function SectionPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const section = SECTIONS.find((s) => s.slug === slug);
   if (!section) notFound();
 
   const articles = getArticlesBySection(section.name);

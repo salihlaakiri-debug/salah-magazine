@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { SECTIONS } from "@/lib/types";
 import { articles, getArticleById } from "@/lib/data";
 import Comments from "@/components/Comments";
 import ReadingProgress from "@/components/ReadingProgress";
@@ -11,8 +12,9 @@ export function generateStaticParams() {
   return articles.map((a) => ({ id: a.id }));
 }
 
-export function generateMetadata({ params }: { params: { id: string } }) {
-  const article = getArticleById(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const article = getArticleById(id);
   if (!article) return {};
   return {
     title: `${article.title} | مجلة صلاح`,
@@ -37,12 +39,13 @@ const sectionColors: Record<string, string> = {
   "تأملات": "from-rose-500/10 to-pink-500/10 text-rose-600 dark:text-rose-400",
 };
 
-export default function WorkPage({
+export default async function WorkPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const article = getArticleById(params.id);
+  const { id } = await params;
+  const article = getArticleById(id);
   if (!article) notFound();
 
   const colors = sectionColors[article.section] || "";
@@ -55,7 +58,7 @@ export default function WorkPage({
         <nav className="text-sm text-text-muted mb-10 flex items-center gap-1 flex-wrap">
           <Link href="/" className="hover:text-accent transition-colors">الرئيسية</Link>
           <span className="text-border">/</span>
-          <Link href={`/section/${encodeURIComponent(article.section)}`} className="hover:text-accent transition-colors">
+          <Link href={`/section/${SECTIONS.find(s => s.name === article.section)?.slug || ''}`} className="hover:text-accent transition-colors">
             {article.section}
           </Link>
           <span className="text-border">/</span>

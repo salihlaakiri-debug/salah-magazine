@@ -44,31 +44,31 @@ export interface SectionInfo {
 
 export const SECTIONS: SectionInfo[] = [
   {
-    slug: "شعر",
+    slug: "poetry",
     name: "شعر",
     description: " قصائد من الروح، تمشي على حافة الصمت والصدى",
     color: "from-amber-500 to-orange-600",
   },
   {
-    slug: "قصة",
+    slug: "story",
     name: "قصة",
     description: "حكايات تولد من تفاصيل يومية وتموت في ذاكرة القارئ",
     color: "from-blue-500 to-indigo-600",
   },
   {
-    slug: "نثر",
+    slug: "prose",
     name: "نثر",
     description: "كتابة بلا هيكل، لكنها تملك عموداً فقرياً من المعنى",
     color: "from-emerald-500 to-teal-600",
   },
   {
-    slug: "مقالات",
+    slug: "articles",
     name: "مقالات",
     description: "تأملات في اللغة والأدب والحياة",
     color: "from-purple-500 to-violet-600",
   },
   {
-    slug: "تأملات",
+    slug: "reflections",
     name: "تأملات",
     description: "لحظات صمت يولد منها السؤال",
     color: "from-rose-500 to-pink-600",
