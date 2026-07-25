@@ -28,9 +28,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-18">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent-dark flex items-center justify-center text-white shadow-lg shadow-accent/25 group-hover:shadow-accent/40 transition-shadow">
-              <PenIcon size={18} />
-            </div>
+            <img src="/logo.png" alt="السُّدفة" className="w-10 h-10 rounded-xl object-cover shadow-lg shadow-accent/25 group-hover:shadow-accent/40 transition-shadow" />
             <div className="hidden sm:block">
               <span className="text-xl font-bold font-[var(--font-heading)] gradient-text">السُّدفة</span>
               <span className="block text-[10px] text-text-muted -mt-1 tracking-wider">مجلة أدبية</span>

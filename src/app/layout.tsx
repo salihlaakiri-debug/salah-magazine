@@ -13,17 +13,23 @@ export const metadata: Metadata = {
   description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
   keywords: ["أدب عربي", "شعر", "قصة", "نثر", "تأملات", "مجلة أدبية", "السُّدفة"],
   authors: [{ name: "السُّدفة" }],
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
   openGraph: {
     type: "website",
     locale: "ar_SA",
     siteName: "السُّدفة",
     title: "السُّدفة | مجلة أدبية عربية",
     description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
+    images: ["/logo.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "السُّدفة | مجلة أدبية عربية",
     description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
+    images: ["/logo.png"],
   },
   metadataBase: new URL("https://salah-magazine.vercel.app"),
 };
