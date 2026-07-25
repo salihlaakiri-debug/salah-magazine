@@ -32,14 +32,15 @@ export default function WorkCard({ article, featured = false }: { article: Artic
       <Link href={`/work/${article.id}`} className="group block">
         <div className="relative overflow-hidden rounded-3xl bg-surface border border-border/50 card-hover">
           <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-accent-light/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-accent/[0.03] group-hover:bg-accent/[0.06] transition-colors duration-500 blur-lg" />
           <div className="relative p-8 sm:p-10">
             <div className="flex items-center gap-2 mb-4">
-              <span className={`text-xs font-semibold px-3 py-1 rounded-full bg-gradient-to-r ${colors}`}>
+              <span className={`text-xs font-semibold px-3 py-1 rounded-full bg-gradient-to-r section-badge ${colors}`}>
                 {article.section}
               </span>
               <span className="text-xs text-text-muted">{article.readTime}</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold font-[var(--font-heading)] mb-4 group-hover:text-accent transition-colors leading-tight">
+            <h2 className="text-2xl sm:text-3xl font-bold font-[var(--font-heading)] mb-4 group-hover:text-accent transition-colors duration-300 leading-tight">
               {article.title}
             </h2>
             <p className="text-text-muted leading-relaxed mb-6 line-clamp-3">
@@ -47,7 +48,7 @@ export default function WorkCard({ article, featured = false }: { article: Artic
             </p>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 text-sm text-text-muted">
-                <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-bold ring-2 ring-accent/5">
                   {getAuthorInitial(article.author)}
                 </div>
                 <div>
@@ -70,14 +71,15 @@ export default function WorkCard({ article, featured = false }: { article: Artic
     <Link href={`/work/${article.id}`} className="group block">
       <div className="relative overflow-hidden rounded-2xl bg-surface border border-border/50 p-6 card-hover">
         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-accent/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-accent/[0.03] group-hover:bg-accent/[0.06] transition-colors duration-500 blur-lg" />
         <div className="relative">
           <div className="flex items-center gap-2 mb-3">
-            <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gradient-to-r ${colors}`}>
+            <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gradient-to-r section-badge ${colors}`}>
               {article.section}
             </span>
             <span className="text-[11px] text-text-muted">{article.readTime}</span>
           </div>
-          <h3 className="text-lg font-bold font-[var(--font-heading)] mb-2 group-hover:text-accent transition-colors leading-relaxed">
+          <h3 className="text-lg font-bold font-[var(--font-heading)] mb-2 group-hover:text-accent transition-colors duration-300 leading-relaxed">
             {article.title}
           </h3>
           <p className="text-sm text-text-muted leading-relaxed mb-4 line-clamp-2">
@@ -85,14 +87,14 @@ export default function WorkCard({ article, featured = false }: { article: Artic
           </p>
           <div className="flex items-center justify-between text-xs text-text-muted">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold">
+              <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold ring-1 ring-accent/5">
                 {getAuthorInitial(article.author)}
               </div>
               <span>{article.author}</span>
               <span className="w-1 h-1 rounded-full bg-border" />
               <span>{formatDate(article.date)}</span>
             </div>
-            <span className="text-accent opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="text-accent opacity-0 group-hover:opacity-100 transition-all duration-300">
               <ArrowLeftIcon size={12} />
             </span>
           </div>

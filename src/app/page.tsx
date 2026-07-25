@@ -42,15 +42,27 @@ export default async function HomePage() {
     <div>
       {/* ── HERO ── */}
       <section className="relative min-h-[70vh] sm:min-h-[80vh] lg:min-h-[90vh] flex items-center hero-gradient overflow-hidden">
-        {/* Floating shapes - hidden on mobile for performance */}
+        {/* Animated background shapes */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden hidden sm:block">
-          <div className="absolute top-[10%] right-[5%] w-72 h-72 rounded-full bg-accent/[0.04] animate-drift" />
-          <div className="absolute bottom-[15%] left-[8%] w-48 h-48 rounded-full bg-accent/[0.06] animate-drift" style={{ animationDelay: "-7s" }} />
-          <div className="absolute top-[40%] left-[60%] w-24 h-24 rounded-full border border-accent/[0.08] animate-drift" style={{ animationDelay: "-12s" }} />
-          <div className="absolute top-[20%] left-[25%] w-3 h-3 rounded-full bg-accent/20 animate-float" style={{ animationDelay: "-3s" }} />
-          <div className="absolute bottom-[30%] right-[20%] w-2 h-2 rounded-full bg-accent/30 animate-float" style={{ animationDelay: "-5s" }} />
-          <div className="absolute top-[60%] right-[35%] w-4 h-4 rounded-full bg-accent/10 animate-float" style={{ animationDelay: "-1s" }} />
-          <div className="absolute top-[8%] left-[10%] text-[20vw] font-[var(--font-heading)] font-bold text-stroke opacity-[0.04] select-none leading-none" aria-hidden="true">س</div>
+          {/* Large orbs */}
+          <div className="absolute top-[8%] right-[3%] w-80 h-80 rounded-full bg-accent/[0.03] animate-drift blur-sm" />
+          <div className="absolute bottom-[12%] left-[5%] w-56 h-56 rounded-full bg-accent/[0.04] animate-drift blur-sm" style={{ animationDelay: "-7s" }} />
+
+          {/* Rings */}
+          <div className="absolute top-[35%] left-[55%] w-28 h-28 rounded-full border border-accent/[0.06] animate-drift" style={{ animationDelay: "-12s" }} />
+          <div className="absolute top-[60%] right-[25%] w-16 h-16 rounded-full border border-accent/[0.08] animate-drift" style={{ animationDelay: "-4s" }} />
+
+          {/* Small dots */}
+          <div className="absolute top-[18%] left-[22%] w-2.5 h-2.5 rounded-full bg-accent/25 animate-float" style={{ animationDelay: "-2s" }} />
+          <div className="absolute bottom-[28%] right-[18%] w-2 h-2 rounded-full bg-accent/35 animate-float" style={{ animationDelay: "-5s" }} />
+          <div className="absolute top-[55%] right-[32%] w-3 h-3 rounded-full bg-accent/15 animate-float" style={{ animationDelay: "-1s" }} />
+          <div className="absolute top-[70%] left-[35%] w-1.5 h-1.5 rounded-full bg-accent/20 animate-float" style={{ animationDelay: "-8s" }} />
+
+          {/* Decorative letter */}
+          <div className="absolute top-[8%] left-[10%] text-[20vw] font-[var(--font-heading)] font-bold text-stroke opacity-[0.03] select-none leading-none animate-gentle-pulse" aria-hidden="true">س</div>
+
+          {/* Gradient mesh */}
+          <div className="absolute inset-0 mesh-gradient opacity-60" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 lg:py-36 w-full">
@@ -76,14 +88,14 @@ export default async function HomePage() {
               <div className="flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 animate-fade-in-up delay-300 opacity-0">
                 <Link
                   href="/archive"
-                  className="group px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-accent text-white font-medium hover:bg-accent-dark transition-all shadow-xl shadow-accent/15 hover:shadow-accent/25 flex items-center gap-2 sm:gap-2.5 text-sm"
+                  className="group px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-accent text-white font-medium hover:bg-accent-dark transition-all duration-300 shadow-xl shadow-accent/15 hover:shadow-accent/25 hover:shadow-2xl flex items-center gap-2 sm:gap-2.5 text-sm btn-ripple active:scale-95"
                 >
                   تصفّح الأرشيف
                   <ArrowLeftIcon size={15} />
                 </Link>
                 <Link
                   href="/search"
-                  className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-border bg-surface font-medium hover:border-accent/30 hover:bg-surface-hover transition-all flex items-center gap-2 sm:gap-2.5 text-sm"
+                  className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-border bg-surface font-medium hover:border-accent/30 hover:bg-surface-hover transition-all duration-300 flex items-center gap-2 sm:gap-2.5 text-sm btn-ripple active:scale-95"
                 >
                   <SearchIcon size={15} />
                   بحث
@@ -95,13 +107,15 @@ export default async function HomePage() {
               <div className="lg:col-span-5 animate-fade-in-up delay-400 opacity-0">
                 <Link href={`/work/${featured.id}`} className="group block">
                   <div className="relative bg-surface rounded-2xl sm:rounded-3xl border border-border/60 p-6 sm:p-8 shadow-xl shadow-accent/[0.04] card-hover overflow-hidden">
+                    {/* Animated top bar */}
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-accent via-accent-light to-transparent" />
-                    <div className="absolute -top-6 -left-6 w-24 h-24 rounded-full bg-accent/[0.05]" />
+                    {/* Background glow */}
+                    <div className="absolute -top-8 -left-8 w-32 h-32 rounded-full bg-accent/[0.04] group-hover:bg-accent/[0.08] transition-colors duration-500 blur-xl" />
                     <div className="relative">
-                      <span className="text-[11px] font-semibold px-3 py-1.5 rounded-full bg-accent/10 text-accent mb-4 inline-block">
+                      <span className="text-[11px] font-semibold px-3 py-1.5 rounded-full bg-accent/10 text-accent mb-4 inline-block section-badge">
                         {featured.section}
                       </span>
-                      <h2 className="text-lg sm:text-xl lg:text-2xl font-bold font-[var(--font-heading)] mb-3 group-hover:text-accent transition-colors leading-snug">
+                      <h2 className="text-lg sm:text-xl lg:text-2xl font-bold font-[var(--font-heading)] mb-3 group-hover:text-accent transition-colors duration-300 leading-snug">
                         {featured.title}
                       </h2>
                       <p className="text-sm text-text-muted leading-relaxed line-clamp-3 mb-5 sm:mb-6">
@@ -114,7 +128,7 @@ export default async function HomePage() {
                           </div>
                           <span className="text-xs text-text-muted">{featured.author}</span>
                         </div>
-                        <span className="text-accent text-xs font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
+                        <span className="text-accent text-xs font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
                           اقرأ المزيد
                           <ArrowLeftIcon size={12} />
                         </span>
@@ -129,10 +143,10 @@ export default async function HomePage() {
       </section>
 
       {/* ── MARQUEE ── */}
-      <div className="border-y border-border/50 bg-surface/60 overflow-hidden py-4 sm:py-5">
+      <div className="border-y border-border/40 bg-surface/40 overflow-hidden py-4 sm:py-5 marquee-edge">
         <div className="flex whitespace-nowrap marquee-track">
           {[...QUOTES, ...QUOTES].map((q, i) => (
-            <span key={i} className="mx-6 sm:mx-8 text-xs sm:text-sm text-text-muted/60 italic font-[var(--font-arabic)]">
+            <span key={i} className="mx-6 sm:mx-8 text-xs sm:text-sm text-text-muted/50 italic font-[var(--font-arabic)]">
               &laquo; {q} &raquo;
             </span>
           ))}
@@ -170,7 +184,7 @@ export default async function HomePage() {
 
       {/* ── SECTIONS ── */}
       {bySection.length > 0 && (
-        <section className="bg-surface/50 border-y border-border/30">
+        <section className="bg-surface/40 border-y border-border/30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
             <ScrollReveal>
               <div className="flex items-center gap-4 mb-10 sm:mb-14">
@@ -189,11 +203,12 @@ export default async function HomePage() {
                     className="group relative bg-surface rounded-xl sm:rounded-2xl border border-border/50 p-4 sm:p-6 card-hover text-center overflow-hidden block"
                   >
                     <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-accent/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl" />
                     <div className="relative">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 sm:mb-4 rounded-xl sm:rounded-2xl bg-accent/[0.07] flex items-center justify-center text-accent group-hover:scale-110 transition-transform duration-300">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 sm:mb-4 rounded-xl sm:rounded-2xl bg-accent/[0.07] flex items-center justify-center text-accent group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-accent/10 transition-all duration-300">
                         <SectionIcon section={s.name} size={22} />
                       </div>
-                      <h3 className="font-bold text-xs sm:text-sm font-[var(--font-heading)] group-hover:text-accent transition-colors mb-1">
+                      <h3 className="font-bold text-xs sm:text-sm font-[var(--font-heading)] group-hover:text-accent transition-colors duration-300 mb-1">
                         {s.name}
                       </h3>
                       <p className="text-[10px] sm:text-[11px] text-text-muted leading-relaxed line-clamp-2 hidden sm:block">
@@ -223,7 +238,7 @@ export default async function HomePage() {
                 </div>
                 <Link
                   href={`/section/${s.slug}`}
-                  className="text-xs sm:text-sm text-accent hover:text-accent-dark transition-colors font-medium flex items-center gap-1.5"
+                  className="text-xs sm:text-sm text-accent hover:text-accent-dark transition-all duration-300 font-medium flex items-center gap-1.5 hover:translate-x-[-2px]"
                 >
                   المزيد
                   <ArrowLeftIcon size={13} />
@@ -266,26 +281,29 @@ export default async function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         <ScrollReveal>
           <div className="relative overflow-hidden rounded-2xl sm:rounded-[2rem] bg-gradient-to-br from-accent via-accent-dark to-[#0d1025] p-8 sm:p-12 lg:p-20 text-center">
+            {/* CTA background shapes */}
             <div className="absolute inset-0 pointer-events-none hidden sm:block">
               <div className="absolute top-[10%] right-[10%] w-40 h-40 rounded-full border border-white/[0.06] animate-drift" />
               <div className="absolute bottom-[15%] left-[15%] w-24 h-24 rounded-full border border-white/[0.04] animate-drift" style={{ animationDelay: "-8s" }} />
-              <div className="absolute top-[50%] left-[50%] w-60 h-60 rounded-full bg-white/[0.02]" />
+              <div className="absolute top-[50%] left-[50%] w-60 h-60 rounded-full bg-white/[0.02] animate-gentle-pulse" />
+              <div className="absolute top-[20%] left-[40%] w-2 h-2 rounded-full bg-white/20 animate-float" />
+              <div className="absolute bottom-[30%] right-[35%] w-1.5 h-1.5 rounded-full bg-white/15 animate-float" style={{ animationDelay: "-3s" }} />
             </div>
             <div className="relative z-10">
               <div className="inline-flex items-center gap-3 mb-5 sm:mb-6">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/10 flex items-center justify-center">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-sm">
                   <span className="text-xl sm:text-2xl font-bold text-white/90" style={{ fontFamily: "var(--font-heading)" }}>س</span>
                 </div>
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-[var(--font-heading)] mb-3 sm:mb-4 text-white">
                 هل تكتب؟
               </h2>
-              <p className="text-white/60 max-w-lg mx-auto mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base">
+              <p className="text-white/50 max-w-lg mx-auto mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base">
                 نفتح أبوابنا لكل كاتبٍ يحمل قلماً صادقاً. شاركنا أعمالك في أيٍّ من أقسامنا الأدبية.
               </p>
               <Link
                 href="/submit"
-                className="inline-flex px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-white text-accent-dark font-bold text-sm hover:bg-white/90 transition-all shadow-2xl shadow-black/20 items-center gap-2.5"
+                className="inline-flex px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-white text-accent-dark font-bold text-sm hover:bg-white/90 transition-all duration-300 shadow-2xl shadow-black/20 hover:shadow-black/30 items-center gap-2.5 btn-ripple active:scale-95 hover:scale-[1.02]"
               >
                 أرسل عملك
                 <ArrowLeftIcon size={15} />

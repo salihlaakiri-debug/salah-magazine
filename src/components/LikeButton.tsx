@@ -36,7 +36,7 @@ export default function LikeButton({ articleId }: { articleId: string }) {
   const toggle = async () => {
     if (!user) return;
     setAnimating(true);
-    setTimeout(() => setAnimating(false), 300);
+    setTimeout(() => setAnimating(false), 400);
 
     if (liked) {
       await supabase
@@ -67,13 +67,13 @@ export default function LikeButton({ articleId }: { articleId: string }) {
     <button
       onClick={toggle}
       title={user ? (liked ? "إلغاء الإعجاب" : "أعجبني") : "سجّل الدخول للإعجاب"}
-      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all border ${
+      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-300 border btn-ripple active:scale-90 ${
         liked
-          ? "bg-red-500/10 text-red-500 border-red-500/20"
-          : "bg-surface border-border/50 text-text-muted hover:text-red-500 hover:border-red-500/20"
+          ? "bg-red-500/10 text-red-500 border-red-500/20 shadow-lg shadow-red-500/10"
+          : "bg-surface border-border/50 text-text-muted hover:text-red-500 hover:border-red-500/20 hover:shadow-lg hover:shadow-red-500/5"
       } ${!user ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
     >
-      <HeartIcon size={14} filled={liked} className={animating ? "animate-bounce" : ""} />
+      <HeartIcon size={14} filled={liked} className={animating ? "animate-bounce-in" : "transition-transform duration-300"} />
       {count > 0 && <span>{count}</span>}
     </button>
   );
