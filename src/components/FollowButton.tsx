@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./AuthProvider";
+import { createNotification } from "@/lib/notify";
 import { UsersIcon } from "./Icons";
 
 export default function FollowButton({ authorId }: { authorId: string }) {
@@ -42,6 +43,11 @@ export default function FollowButton({ authorId }: { authorId: string }) {
       await supabase.from("follows").insert({ author_id: authorId, follower_id: user!.id });
       setFollowing(true);
       setCount((c) => c + 1);
+      const { data: profile } = await supabase.from("profiles").select("display_name,username").eq("id", user!.id).single();
+      createNotification({
+        userId: authorId, type: "follow", fromUserId: user!.id,
+        message: `${profile?.display_name || profile?.username || "شخص"} بدأ بمتابعتك`,
+      });
     }
   };
 

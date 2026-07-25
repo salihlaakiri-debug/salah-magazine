@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Comment } from "@/lib/types";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./AuthProvider";
+import { createNotification, getAuthorIdForArticle } from "@/lib/notify";
 import { MessageIcon, PlusIcon, XIcon, CheckIcon } from "./Icons";
 
 export default function Comments({ articleId }: { articleId: string }) {
@@ -61,6 +62,13 @@ export default function Comments({ articleId }: { articleId: string }) {
       setShowForm(false);
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 3000);
+      const authorId = await getAuthorIdForArticle(articleId);
+      if (authorId && user) {
+        createNotification({
+          userId: authorId, type: "comment", fromUserId: user.id, articleId,
+          message: `${authorName} علّق على عملك: "${text.trim().slice(0, 50)}..."`,
+        });
+      }
     }
   };
 

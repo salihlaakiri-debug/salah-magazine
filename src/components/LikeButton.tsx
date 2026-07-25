@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./AuthProvider";
+import { createNotification, getAuthorIdForArticle } from "@/lib/notify";
 import { HeartIcon } from "./Icons";
 
 export default function LikeButton({ articleId }: { articleId: string }) {
@@ -51,6 +52,14 @@ export default function LikeButton({ articleId }: { articleId: string }) {
         .insert({ article_id: articleId, user_id: user.id });
       setLiked(true);
       setCount((c) => c + 1);
+      const authorId = await getAuthorIdForArticle(articleId);
+      if (authorId) {
+        const { data: profile } = await supabase.from("profiles").select("display_name,username").eq("id", user.id).single();
+        createNotification({
+          userId: authorId, type: "like", fromUserId: user.id, articleId,
+          message: `${profile?.display_name || profile?.username || "شخص"} أعجب بعملك`,
+        });
+      }
     }
   };
 
