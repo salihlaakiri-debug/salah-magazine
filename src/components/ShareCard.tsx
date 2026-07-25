@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { ShareIcon, XIcon, DownloadIcon, CheckIcon } from "./Icons";
+import SudfehLogo from "./SudfehLogo";
 
 interface ShareCardProps {
   title: string;
@@ -47,7 +48,7 @@ function getSectionColor(section: string) {
   return m[section] || { bg: "#6c7bc018", fg: "#98a5e0", accent: "#6c7bc0", glow: "#6c7bc015" };
 }
 
-const LOGO_URL = "https://salah-magazine.vercel.app/logo.png";
+const LOGO_URL = "https://salah-magazine.vercel.app/logo.svg";
 
 /* ─── Card builders (return full HTML string for the capture div) ─── */
 
@@ -220,7 +221,7 @@ function PreviewClassic({ title, excerpt, section, author, compact }: { title: s
       <div className="relative z-10 flex flex-col h-full p-[7%]">
         <div className="flex items-center justify-between mb-[5%]">
           <div className="flex items-center gap-[3%]">
-            <img src="/logo.png" className="w-[7%] aspect-square rounded-[14%] object-cover" alt="السُّدفة" />
+            <SudfehLogo size={20} />
             <div>
               <span className="block font-bold text-[3%] text-white/85">السُّدفة</span>
               <span className="block text-[2%] text-white/30 -mt-[1px]">مجلة أدبية</span>
@@ -267,7 +268,7 @@ function PreviewLiterary({ title, excerpt, section, author }: { title: string; e
       <div className="relative z-10 flex flex-col h-full p-[7%]">
         <div className="flex items-center justify-between mb-[5%]">
           <div className="flex items-center gap-[3%]">
-            <img src="/logo.png" className="w-[6.5%] aspect-square rounded-full object-cover" alt="السُّدفة" />
+            <SudfehLogo size={20} />
             <div>
               <span className="block font-bold text-[2.8%]" style={{ color: "#2c1810" }}>السُّدفة</span>
               <span className="block text-[1.8%] -mt-[1px]" style={{ color: "#8b7355" }}>مجلة أدبية</span>
@@ -304,7 +305,7 @@ function PreviewModern({ title, excerpt, section, author }: { title: string; exc
       </div>
       <div className="relative z-10 flex flex-col h-full p-[6.5%]">
         <div className="flex items-center gap-[2.5%] mb-[6%]">
-          <img src="/logo.png" className="w-[5.5%] aspect-square rounded-[18%] object-cover" alt="السُّدفة" />
+          <SudfehLogo size={18} />
           <span className="font-bold text-[2.8%]" style={{ color: sc.fg, letterSpacing: "1px" }}>السُّدفة</span>
           <div className="flex-1" />
           <span className="font-semibold text-[2.2%] px-[2.5%] py-[0.6%] rounded" style={{ color: sc.fg, background: `${sc.accent}20` }}>{section}</span>

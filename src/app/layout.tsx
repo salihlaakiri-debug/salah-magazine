@@ -14,7 +14,10 @@ export const metadata: Metadata = {
   keywords: ["أدب عربي", "شعر", "قصة", "نثر", "تأملات", "مجلة أدبية", "السُّدفة"],
   authors: [{ name: "السُّدفة" }],
   icons: {
-    icon: "/logo.png",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/logo.png", sizes: "192x192", type: "image/png" },
+    ],
     apple: "/logo.png",
   },
   openGraph: {
