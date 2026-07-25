@@ -5,6 +5,7 @@ import { fetchPublishedArticles, fetchArticleById } from "@/lib/supabase-data";
 import Comments from "@/components/Comments";
 import ReadingProgress from "@/components/ReadingProgress";
 import ShareButtons from "@/components/ShareButtons";
+import ShareCard from "@/components/ShareCard";
 import LikeButton from "@/components/LikeButton";
 import BookmarkButton from "@/components/BookmarkButton";
 import MarkdownContent from "@/components/MarkdownContent";
@@ -22,6 +23,19 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return {
     title: `${article.title} | مجلة السُّدفة`,
     description: article.excerpt,
+    openGraph: {
+      title: article.title,
+      description: article.excerpt,
+      type: "article",
+      locale: "ar_SA",
+      siteName: "السُّدفة",
+      authors: [article.author],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.excerpt,
+    },
   };
 }
 
@@ -95,6 +109,13 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
               <div className="flex items-center gap-2">
                 <LikeButton articleId={article.id} />
                 <BookmarkButton articleId={article.id} />
+                <ShareCard
+                  title={article.title}
+                  excerpt={article.excerpt}
+                  section={article.section}
+                  author={article.author}
+                  articleId={article.id}
+                />
                 <ShareButtons title={article.title} url={`https://salah-magazine.vercel.app/work/${article.id}`} />
               </div>
             </div>

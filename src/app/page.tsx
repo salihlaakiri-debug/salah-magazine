@@ -3,6 +3,7 @@ import { SECTIONS } from "@/lib/types";
 import { fetchPublishedArticles } from "@/lib/supabase-data";
 import WorkCard from "@/components/WorkCard";
 import SectionIcon from "@/components/SectionIcon";
+import ScrollReveal from "@/components/ScrollReveal";
 import { ArrowLeftIcon, SearchIcon } from "@/components/Icons";
 
 const QUOTES = [
@@ -13,6 +14,18 @@ const QUOTES = [
   "حينَ يكتبُ الإنسان، لا يُسكنُ الحضور فحسب، بل يُسكنُ الغياب",
   "الاسمُ في حدِّ ذاته، يمنحُها شكلاً أكثرَ اكتمالاً مما تستحق",
 ];
+
+export const metadata = {
+  title: "السُّدفة | مجلة أدبية عربية",
+  description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت. قصاءد ونثر وتأملات وأحقيات.",
+  openGraph: {
+    title: "السُّدفة | مجلة أدبية عربية",
+    description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت.",
+    type: "website",
+    locale: "ar_SA",
+    siteName: "السُّدفة",
+  },
+};
 
 export default async function HomePage() {
   const allArticles = await fetchPublishedArticles();
@@ -28,51 +41,49 @@ export default async function HomePage() {
   return (
     <div className="overflow-hidden">
       {/* ── HERO ── */}
-      <section className="relative min-h-[90vh] flex items-center hero-gradient overflow-hidden">
-        {/* Floating shapes */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <section className="relative min-h-[70vh] sm:min-h-[80vh] lg:min-h-[90vh] flex items-center hero-gradient overflow-hidden">
+        {/* Floating shapes - hidden on mobile for performance */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden hidden sm:block">
           <div className="absolute top-[10%] right-[5%] w-72 h-72 rounded-full bg-accent/[0.04] animate-drift" />
           <div className="absolute bottom-[15%] left-[8%] w-48 h-48 rounded-full bg-accent/[0.06] animate-drift" style={{ animationDelay: "-7s" }} />
           <div className="absolute top-[40%] left-[60%] w-24 h-24 rounded-full border border-accent/[0.08] animate-drift" style={{ animationDelay: "-12s" }} />
           <div className="absolute top-[20%] left-[25%] w-3 h-3 rounded-full bg-accent/20 animate-float" style={{ animationDelay: "-3s" }} />
           <div className="absolute bottom-[30%] right-[20%] w-2 h-2 rounded-full bg-accent/30 animate-float" style={{ animationDelay: "-5s" }} />
           <div className="absolute top-[60%] right-[35%] w-4 h-4 rounded-full bg-accent/10 animate-float" style={{ animationDelay: "-1s" }} />
-          {/* Large outline letter */}
           <div className="absolute top-[8%] left-[10%] text-[20vw] font-[var(--font-heading)] font-bold text-stroke opacity-[0.04] select-none leading-none" aria-hidden="true">س</div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-36 w-full">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            {/* Right: Text */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 lg:py-36 w-full">
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             <div className="lg:col-span-7 text-center lg:text-right">
-              <div className="inline-flex items-center gap-3 mb-8 animate-fade-in-up">
+              <div className="inline-flex items-center gap-3 mb-6 sm:mb-8 animate-fade-in-up">
                 <div className="editorial-line" />
-                <span className="text-xs font-medium tracking-widest text-accent uppercase" style={{ fontFamily: "var(--font-heading)" }}>
+                <span className="text-[10px] sm:text-xs font-medium tracking-widest text-accent uppercase" style={{ fontFamily: "var(--font-heading)" }}>
                   مجلة أدبية عربية
                 </span>
               </div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-8xl xl:text-9xl font-black font-[var(--font-heading)] mb-8 animate-fade-in-up delay-100 opacity-0 leading-[0.95]">
+              <h1 className="text-4xl sm:text-5xl lg:text-7xl xl:text-8xl font-black font-[var(--font-heading)] mb-6 sm:mb-8 animate-fade-in-up delay-100 opacity-0 leading-[0.95]">
                 <span className="gradient-text">السُّدفة</span>
               </h1>
 
-              <p className="text-lg sm:text-xl text-text-muted max-w-lg mx-auto lg:mx-0 mb-10 animate-fade-in-up delay-200 opacity-0 leading-relaxed">
+              <p className="text-base sm:text-lg lg:text-xl text-text-muted max-w-lg mx-auto lg:mx-0 mb-8 sm:mb-10 animate-fade-in-up delay-200 opacity-0 leading-relaxed">
                 نكتب لنفهم، وصمتاً لنسمع.
-                <br />
+                <br className="hidden sm:block" />
                 قصائد وتأملات وحكايات من عوالم اللغة والصمت.
               </p>
 
-              <div className="flex flex-wrap justify-center lg:justify-start gap-4 animate-fade-in-up delay-300 opacity-0">
+              <div className="flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 animate-fade-in-up delay-300 opacity-0">
                 <Link
                   href="/archive"
-                  className="group px-8 py-4 rounded-2xl bg-accent text-white font-medium hover:bg-accent-dark transition-all shadow-xl shadow-accent/15 hover:shadow-accent/25 flex items-center gap-2.5 text-sm"
+                  className="group px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-accent text-white font-medium hover:bg-accent-dark transition-all shadow-xl shadow-accent/15 hover:shadow-accent/25 flex items-center gap-2 sm:gap-2.5 text-sm"
                 >
                   تصفّح الأرشيف
                   <ArrowLeftIcon size={15} />
                 </Link>
                 <Link
                   href="/search"
-                  className="px-8 py-4 rounded-2xl border-2 border-border bg-surface font-medium hover:border-accent/30 hover:bg-surface-hover transition-all flex items-center gap-2.5 text-sm"
+                  className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-border bg-surface font-medium hover:border-accent/30 hover:bg-surface-hover transition-all flex items-center gap-2 sm:gap-2.5 text-sm"
                 >
                   <SearchIcon size={15} />
                   بحث
@@ -80,21 +91,20 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Left: Featured article card */}
             {featured && (
               <div className="lg:col-span-5 animate-fade-in-up delay-400 opacity-0">
                 <Link href={`/work/${featured.id}`} className="group block">
-                  <div className="relative bg-surface rounded-3xl border border-border/60 p-8 shadow-xl shadow-accent/[0.04] card-hover overflow-hidden">
+                  <div className="relative bg-surface rounded-2xl sm:rounded-3xl border border-border/60 p-6 sm:p-8 shadow-xl shadow-accent/[0.04] card-hover overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-l from-accent via-accent-light to-transparent" />
                     <div className="absolute -top-6 -left-6 w-24 h-24 rounded-full bg-accent/[0.05]" />
                     <div className="relative">
                       <span className="text-[11px] font-semibold px-3 py-1.5 rounded-full bg-accent/10 text-accent mb-4 inline-block">
                         {featured.section}
                       </span>
-                      <h2 className="text-xl sm:text-2xl font-bold font-[var(--font-heading)] mb-3 group-hover:text-accent transition-colors leading-snug">
+                      <h2 className="text-lg sm:text-xl lg:text-2xl font-bold font-[var(--font-heading)] mb-3 group-hover:text-accent transition-colors leading-snug">
                         {featured.title}
                       </h2>
-                      <p className="text-sm text-text-muted leading-relaxed line-clamp-3 mb-6">
+                      <p className="text-sm text-text-muted leading-relaxed line-clamp-3 mb-5 sm:mb-6">
                         {featured.excerpt}
                       </p>
                       <div className="flex items-center justify-between">
@@ -119,38 +129,39 @@ export default async function HomePage() {
       </section>
 
       {/* ── MARQUEE ── */}
-      <div className="border-y border-border/50 bg-surface/60 overflow-hidden py-5">
+      <div className="border-y border-border/50 bg-surface/60 overflow-hidden py-4 sm:py-5">
         <div className="flex whitespace-nowrap marquee-track">
           {[...QUOTES, ...QUOTES].map((q, i) => (
-            <span key={i} className="mx-8 text-sm text-text-muted/60 italic font-[var(--font-arabic)]">
+            <span key={i} className="mx-6 sm:mx-8 text-xs sm:text-sm text-text-muted/60 italic font-[var(--font-arabic)]">
               &laquo; {q} &raquo;
             </span>
           ))}
         </div>
       </div>
 
-      {/* ── LATEST WORKS - Editorial Grid ── */}
+      {/* ── LATEST WORKS ── */}
       {latest.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="flex items-center gap-4 mb-12">
-            <div className="editorial-line-lg" />
-            <h2 className="text-2xl sm:text-3xl font-bold font-[var(--font-heading)]">
-              الأحدث
-            </h2>
-          </div>
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+          <ScrollReveal>
+            <div className="flex items-center gap-4 mb-10 sm:mb-12">
+              <div className="editorial-line-lg" />
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold font-[var(--font-heading)]">
+                الأحدث
+              </h2>
+            </div>
+          </ScrollReveal>
 
-          {/* Asymmetric editorial grid */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-            {/* First article: large */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-5">
             {latest[0] && (
-              <div className="md:col-span-7">
+              <ScrollReveal className="md:col-span-7" delay={100}>
                 <WorkCard article={latest[0]} featured />
-              </div>
+              </ScrollReveal>
             )}
-            {/* Second & third: stacked */}
-            <div className="md:col-span-5 flex flex-col gap-5">
-              {latest.slice(1).map((a) => (
-                <WorkCard key={a.id} article={a} />
+            <div className="md:col-span-5 flex flex-col gap-4 sm:gap-5">
+              {latest.slice(1).map((a, i) => (
+                <ScrollReveal key={a.id} delay={200 + i * 100}>
+                  <WorkCard article={a} />
+                </ScrollReveal>
               ))}
             </div>
           </div>
@@ -160,34 +171,37 @@ export default async function HomePage() {
       {/* ── SECTIONS ── */}
       {bySection.length > 0 && (
         <section className="bg-surface/50 border-y border-border/30">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-            <div className="flex items-center gap-4 mb-14">
-              <div className="editorial-line-lg" />
-              <h2 className="text-2xl sm:text-3xl font-bold font-[var(--font-heading)]">
-                أقسام المجلة
-              </h2>
-            </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+            <ScrollReveal>
+              <div className="flex items-center gap-4 mb-10 sm:mb-14">
+                <div className="editorial-line-lg" />
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold font-[var(--font-heading)]">
+                  أقسام المجلة
+                </h2>
+              </div>
+            </ScrollReveal>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
-              {SECTIONS.map((s) => (
-                <Link
-                  key={s.slug}
-                  href={`/section/${s.slug}`}
-                  className="group relative bg-surface rounded-2xl border border-border/50 p-6 card-hover text-center overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="relative">
-                    <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-accent/[0.07] flex items-center justify-center text-accent group-hover:scale-110 transition-transform duration-300">
-                      <SectionIcon section={s.name} size={24} />
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-5">
+              {SECTIONS.map((s, i) => (
+                <ScrollReveal key={s.slug} delay={i * 80}>
+                  <Link
+                    href={`/section/${s.slug}`}
+                    className="group relative bg-surface rounded-xl sm:rounded-2xl border border-border/50 p-4 sm:p-6 card-hover text-center overflow-hidden block"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="relative">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto mb-3 sm:mb-4 rounded-xl sm:rounded-2xl bg-accent/[0.07] flex items-center justify-center text-accent group-hover:scale-110 transition-transform duration-300">
+                        <SectionIcon section={s.name} size={22} />
+                      </div>
+                      <h3 className="font-bold text-xs sm:text-sm font-[var(--font-heading)] group-hover:text-accent transition-colors mb-1">
+                        {s.name}
+                      </h3>
+                      <p className="text-[10px] sm:text-[11px] text-text-muted leading-relaxed line-clamp-2 hidden sm:block">
+                        {s.description}
+                      </p>
                     </div>
-                    <h3 className="font-bold text-sm font-[var(--font-heading)] group-hover:text-accent transition-colors mb-1">
-                      {s.name}
-                    </h3>
-                    <p className="text-[11px] text-text-muted leading-relaxed line-clamp-2">
-                      {s.description}
-                    </p>
-                  </div>
-                </Link>
+                  </Link>
+                </ScrollReveal>
               ))}
             </div>
           </div>
@@ -198,25 +212,29 @@ export default async function HomePage() {
       {bySection.map((s) => {
         if (s.articles.length === 0) return null;
         return (
-          <section key={s.slug} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-4">
-                <div className="editorial-line" />
-                <h2 className="text-xl sm:text-2xl font-bold font-[var(--font-heading)]">
-                  {s.name}
-                </h2>
+          <section key={s.slug} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+            <ScrollReveal>
+              <div className="flex items-center justify-between mb-6 sm:mb-8">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="editorial-line" />
+                  <h2 className="text-lg sm:text-xl lg:text-2xl font-bold font-[var(--font-heading)]">
+                    {s.name}
+                  </h2>
+                </div>
+                <Link
+                  href={`/section/${s.slug}`}
+                  className="text-xs sm:text-sm text-accent hover:text-accent-dark transition-colors font-medium flex items-center gap-1.5"
+                >
+                  المزيد
+                  <ArrowLeftIcon size={13} />
+                </Link>
               </div>
-              <Link
-                href={`/section/${s.slug}`}
-                className="text-sm text-accent hover:text-accent-dark transition-colors font-medium flex items-center gap-1.5"
-              >
-                المزيد
-                <ArrowLeftIcon size={13} />
-              </Link>
-            </div>
-            <div className="grid gap-5 sm:grid-cols-2">
-              {s.articles.map((article) => (
-                <WorkCard key={article.id} article={article} />
+            </ScrollReveal>
+            <div className="grid gap-4 sm:gap-5 sm:grid-cols-2">
+              {s.articles.map((article, i) => (
+                <ScrollReveal key={article.id} delay={i * 100}>
+                  <WorkCard article={article} />
+                </ScrollReveal>
               ))}
             </div>
           </section>
@@ -225,50 +243,56 @@ export default async function HomePage() {
 
       {/* ── MORE ARTICLES ── */}
       {more.length > 0 && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="editorial-line-lg" />
-            <h2 className="text-2xl sm:text-3xl font-bold font-[var(--font-heading)]">
-              المزيد من الأعمال
-            </h2>
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {more.map((article) => (
-              <WorkCard key={article.id} article={article} />
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+          <ScrollReveal>
+            <div className="flex items-center gap-4 mb-6 sm:mb-8">
+              <div className="editorial-line-lg" />
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold font-[var(--font-heading)]">
+                المزيد من الأعمال
+              </h2>
+            </div>
+          </ScrollReveal>
+          <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {more.map((article, i) => (
+              <ScrollReveal key={article.id} delay={i * 80}>
+                <WorkCard article={article} />
+              </ScrollReveal>
             ))}
           </div>
         </section>
       )}
 
       {/* ── CTA ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-accent via-accent-dark to-[#0d1025] p-12 sm:p-16 lg:p-20 text-center">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-[10%] right-[10%] w-40 h-40 rounded-full border border-white/[0.06] animate-drift" />
-            <div className="absolute bottom-[15%] left-[15%] w-24 h-24 rounded-full border border-white/[0.04] animate-drift" style={{ animationDelay: "-8s" }} />
-            <div className="absolute top-[50%] left-[50%] w-60 h-60 rounded-full bg-white/[0.02]" />
-          </div>
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center">
-                <span className="text-2xl font-bold text-white/90" style={{ fontFamily: "var(--font-heading)" }}>س</span>
-              </div>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <ScrollReveal>
+          <div className="relative overflow-hidden rounded-2xl sm:rounded-[2rem] bg-gradient-to-br from-accent via-accent-dark to-[#0d1025] p-8 sm:p-12 lg:p-20 text-center">
+            <div className="absolute inset-0 pointer-events-none hidden sm:block">
+              <div className="absolute top-[10%] right-[10%] w-40 h-40 rounded-full border border-white/[0.06] animate-drift" />
+              <div className="absolute bottom-[15%] left-[15%] w-24 h-24 rounded-full border border-white/[0.04] animate-drift" style={{ animationDelay: "-8s" }} />
+              <div className="absolute top-[50%] left-[50%] w-60 h-60 rounded-full bg-white/[0.02]" />
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold font-[var(--font-heading)] mb-4 text-white">
-              هل تكتب؟
-            </h2>
-            <p className="text-white/60 max-w-lg mx-auto mb-8 leading-relaxed">
-              نفتح أبوابنا لكل كاتبٍ يحمل قلماً صادقاً. شاركنا أعمالك في أيٍّ من أقسامنا الأدبية.
-            </p>
-            <Link
-              href="/submit"
-              className="inline-flex px-10 py-4 rounded-2xl bg-white text-accent-dark font-bold text-sm hover:bg-white/90 transition-all shadow-2xl shadow-black/20 items-center gap-2.5"
-            >
-              أرسل عملك
-              <ArrowLeftIcon size={15} />
-            </Link>
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-3 mb-5 sm:mb-6">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/10 flex items-center justify-center">
+                  <span className="text-xl sm:text-2xl font-bold text-white/90" style={{ fontFamily: "var(--font-heading)" }}>س</span>
+                </div>
+              </div>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-[var(--font-heading)] mb-3 sm:mb-4 text-white">
+                هل تكتب؟
+              </h2>
+              <p className="text-white/60 max-w-lg mx-auto mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base">
+                نفتح أبوابنا لكل كاتبٍ يحمل قلماً صادقاً. شاركنا أعمالك في أيٍّ من أقسامنا الأدبية.
+              </p>
+              <Link
+                href="/submit"
+                className="inline-flex px-8 sm:px-10 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-white text-accent-dark font-bold text-sm hover:bg-white/90 transition-all shadow-2xl shadow-black/20 items-center gap-2.5"
+              >
+                أرسل عملك
+                <ArrowLeftIcon size={15} />
+              </Link>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
     </div>
   );

@@ -6,9 +6,26 @@ import ThemeProvider from "@/components/ThemeProvider";
 import AuthProvider from "@/components/AuthProvider";
 
 export const metadata: Metadata = {
-  title: "السُّدفة | مجلة أدبية",
+  title: {
+    default: "السُّدفة | مجلة أدبية عربية",
+    template: "%s | مجلة السُّدفة",
+  },
   description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
-  keywords: ["أدب عربي", "شعر", "قصة", "نثر", "تأملات", "مجلة أدبية"],
+  keywords: ["أدب عربي", "شعر", "قصة", "نثر", "تأملات", "مجلة أدبية", "السُّدفة"],
+  authors: [{ name: "السُّدفة" }],
+  openGraph: {
+    type: "website",
+    locale: "ar_SA",
+    siteName: "السُّدفة",
+    title: "السُّدفة | مجلة أدبية عربية",
+    description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "السُّدفة | مجلة أدبية عربية",
+    description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
+  },
+  metadataBase: new URL("https://salah-magazine.vercel.app"),
 };
 
 export default function RootLayout({
