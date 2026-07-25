@@ -1,33 +1,47 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Comment } from "@/lib/types";
+import { supabase } from "@/lib/supabase";
 import { TrashIcon, MessageIcon, CheckIcon, XIcon } from "@/components/Icons";
 
-const STORAGE_KEY = "salah-comments";
+interface DbComment {
+  id: string;
+  article_id: string;
+  user_id: string | null;
+  author_name: string;
+  content: string;
+  created_at: string;
+}
 
 export default function CommentsPage() {
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<DbComment[]>([]);
+  const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   useEffect(() => {
-    try {
-      const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      setComments(all);
-    } catch { setComments([]); }
+    fetchComments();
   }, []);
 
-  const deleteComment = (id: string) => {
-    const updated = comments.filter((c) => c.id !== id);
-    setComments(updated);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    setDeleteConfirm(null);
-  };
+  async function fetchComments() {
+    setLoading(true);
+    const { data } = await supabase
+      .from("comments")
+      .select("*")
+      .order("created_at", { ascending: false });
+    setComments((data || []) as DbComment[]);
+    setLoading(false);
+  }
 
-  const clearAll = () => {
+  async function deleteComment(id: string) {
+    await supabase.from("comments").delete().eq("id", id);
+    setComments((prev) => prev.filter((c) => c.id !== id));
+    setDeleteConfirm(null);
+  }
+
+  async function clearAll() {
+    await supabase.from("comments").delete().neq("id", "00000000-0000-0000-0000-000000000000");
     setComments([]);
-    localStorage.removeItem(STORAGE_KEY);
-  };
+  }
 
   return (
     <div>
@@ -60,15 +74,15 @@ export default function CommentsPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3 flex-1 min-w-0">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-sm font-bold shrink-0">
-                    {c.name[0]}
+                    {c.author_name[0]}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-bold text-sm">{c.name}</span>
-                      <span className="text-[11px] text-text-muted">{c.date}</span>
+                      <span className="font-bold text-sm">{c.author_name}</span>
+                      <span className="text-[11px] text-text-muted">{new Date(c.created_at).toLocaleDateString("ar-SA")}</span>
                     </div>
-                    <p className="text-sm text-foreground/80 leading-relaxed">{c.text}</p>
-                    <p className="text-[11px] text-text-muted mt-2">مقال #{c.articleId}</p>
+                    <p className="text-sm text-foreground/80 leading-relaxed">{c.content}</p>
+                    <p className="text-[11px] text-text-muted mt-2">مقال #{c.article_id.slice(0, 8)}</p>
                   </div>
                 </div>
                 <div className="shrink-0">

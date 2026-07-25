@@ -37,7 +37,7 @@ export default function ProfilePage() {
       const { count: followerCount } = await supabase
         .from("follows")
         .select("*", { count: "exact", head: true })
-        .eq("following_id", p.id);
+        .eq("author_id", p.id);
 
       // Fetch total likes on author's articles
       let totalLikes = 0;

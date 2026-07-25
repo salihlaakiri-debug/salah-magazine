@@ -16,11 +16,11 @@ export async function GET() {
     .map(
       (article) => `    <item>
       <title>${escapeXml(article.title)}</title>
-      <link>https://salah-magazine.vercel.app/article/${article.id}</link>
+      <link>https://salah-magazine.vercel.app/work/${article.id}</link>
       <description>${escapeXml(article.excerpt)}</description>
       <pubDate>${new Date(article.published_at || article.date).toUTCString()}</pubDate>
       <author>${escapeXml(article.author)}</author>
-      <guid isPermaLink="false">article-${escapeXml(article.id)}</guid>
+      <guid isPermaLink="false">work-${escapeXml(article.id)}</guid>
     </item>`
     )
     .join("\n");

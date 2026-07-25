@@ -1,18 +1,33 @@
 "use client";
 
-import { useState } from "react";
-import { articles as initialArticles } from "@/lib/data";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 import { Article, SECTIONS } from "@/lib/types";
 import { PlusIcon, EditIcon, TrashIcon, EyeIcon, XIcon, CheckIcon } from "@/components/Icons";
 import Link from "next/link";
 
 export default function ArticlesPage() {
-  const [articlesList, setArticlesList] = useState<Article[]>(initialArticles);
+  const [articlesList, setArticlesList] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Article | null>(null);
   const [form, setForm] = useState({ title: "", content: "", excerpt: "", section: "نثر" as Article["section"], date: new Date().toISOString().split("T")[0], author: "السُّدفة", readTime: "5 دقائق" });
   const [filter, setFilter] = useState("الكل");
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
+  async function fetchArticles() {
+    setLoading(true);
+    const { data } = await supabase
+      .from("articles")
+      .select("*")
+      .order("created_at", { ascending: false });
+    setArticlesList((data || []) as Article[]);
+    setLoading(false);
+  }
 
   const filtered = filter === "الكل" ? articlesList : articlesList.filter((a) => a.section === filter);
 
@@ -24,25 +39,50 @@ export default function ArticlesPage() {
 
   const openEdit = (a: Article) => {
     setEditing(a);
-    setForm({ title: a.title, content: a.content, excerpt: a.excerpt, section: a.section, date: a.date, author: a.author, readTime: a.readTime });
+    setForm({ title: a.title, content: a.content, excerpt: a.excerpt, section: a.section, date: a.date || a.created_at?.split("T")[0] || "", author: a.author_name || a.author, readTime: a.readTime || "5 دقائق" });
     setShowModal(true);
   };
 
-  const save = () => {
+  async function save() {
     if (!form.title.trim() || !form.content.trim()) return;
+
     if (editing) {
-      setArticlesList((prev) => prev.map((a) => a.id === editing.id ? { ...a, ...form } : a));
+      const { error } = await supabase
+        .from("articles")
+        .update({
+          title: form.title,
+          content: form.content,
+          excerpt: form.excerpt,
+          section: form.section,
+          author_name: form.author,
+          read_time: form.readTime,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", editing.id);
+      if (!error) await fetchArticles();
     } else {
-      const newArticle: Article = { ...form, id: Date.now().toString() };
-      setArticlesList((prev) => [newArticle, ...prev]);
+      const { error } = await supabase
+        .from("articles")
+        .insert({
+          title: form.title,
+          content: form.content,
+          excerpt: form.excerpt,
+          section: form.section,
+          author_name: form.author,
+          read_time: form.readTime,
+          status: "published",
+          published_at: new Date().toISOString(),
+        });
+      if (!error) await fetchArticles();
     }
     setShowModal(false);
-  };
+  }
 
-  const deleteArticle = (id: string) => {
+  async function deleteArticle(id: string) {
+    await supabase.from("articles").delete().eq("id", id);
     setArticlesList((prev) => prev.filter((a) => a.id !== id));
     setDeleteConfirm(null);
-  };
+  }
 
   return (
     <div>
