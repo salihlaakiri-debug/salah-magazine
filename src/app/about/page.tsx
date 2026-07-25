@@ -26,7 +26,7 @@ export default function AboutPage() {
       <div className="space-y-8 text-foreground/85 leading-relaxed text-lg">
         <div className="bg-surface rounded-3xl border border-border/50 p-8 sm:p-10">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-accent-dark flex items-center justify-center text-white font-bold text-xl font-[var(--font-heading)] shadow-lg shadow-accent/20">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-accent-dark flex items-center justify-center text-white font-bold text-xl font-[var(--font-heading)] shadow-lg shadow-accent/25">
               س
             </div>
             <div>

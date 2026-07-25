@@ -19,17 +19,18 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    const saved = localStorage.getItem("salah-theme") as Theme | null;
-    const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-    setTheme(saved || preferred);
+    const saved = localStorage.getItem("sudfeh-theme") as Theme | null;
+    if (saved) {
+      setTheme(saved);
+    } else {
+      setTheme("light");
+    }
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
     document.documentElement.classList.toggle("dark", theme === "dark");
-    localStorage.setItem("salah-theme", theme);
+    localStorage.setItem("sudfeh-theme", theme);
   }, [theme, mounted]);
 
   const toggle = () => setTheme((t) => (t === "light" ? "dark" : "light"));
