@@ -47,6 +47,8 @@ function getSectionColor(section: string) {
   return m[section] || { bg: "#6c7bc018", fg: "#98a5e0", accent: "#6c7bc0", glow: "#6c7bc015" };
 }
 
+const LOGO_URL = "https://salah-magazine.vercel.app/logo.png";
+
 /* ─── Card builders (return full HTML string for the capture div) ─── */
 
 function buildClassic(title: string, excerpt: string, section: string, author: string, w: number, h: number): string {
@@ -58,6 +60,7 @@ function buildClassic(title: string, excerpt: string, section: string, author: s
   const fsExcerpt = Math.round(fsTitle * 0.44);
   const fsSmall = Math.round(fsTitle * 0.28);
   const isStory = h > w;
+  const logoSize = Math.round(w * 0.044);
 
   return `<div style="width:${w}px;height:${h}px;background:linear-gradient(160deg,#0f1021 0%,#1a1a2e 40%,#141428 100%);color:#fff;display:flex;flex-direction:column;overflow:hidden;position:relative;font-family:'Noto Kufi Arabic','Noto Naskh Arabic',sans-serif;direction:rtl">
   <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden">
@@ -70,9 +73,7 @@ function buildClassic(title: string, excerpt: string, section: string, author: s
   <div style="position:relative;z-index:10;padding:${pad}px;${isStory ? `padding-top:${pad*2}px;padding-bottom:${pad*2}px` : ""};flex:1;display:flex;flex-direction:column">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${pad*0.65}px">
       <div style="display:flex;align-items:center;gap:${w*0.013}px">
-        <div style="width:${w*0.044}px;height:${w*0.044}px;border-radius:${w*0.013}px;background:linear-gradient(135deg,${sc.accent}30,${sc.accent}15);display:flex;align-items:center;justify-content:center;border:1px solid ${sc.accent}25">
-          <span style="font-size:${w*0.021}px;font-weight:800;color:${sc.fg}">س</span>
-        </div>
+        <img src="${LOGO_URL}" style="width:${logoSize}px;height:${logoSize}px;border-radius:${Math.round(logoSize*0.18)}px;object-fit:cover" />
         <div>
           <span style="font-size:${fsSmall*1.3}px;font-weight:700;color:rgba(255,255,255,0.85)">السُّدفة</span>
           <span style="display:block;font-size:${fsSmall}px;color:rgba(255,255,255,0.3);margin-top:-1px">مجلة أدبية</span>
@@ -118,6 +119,7 @@ function buildLiterary(title: string, excerpt: string, section: string, author: 
   const fsExcerpt = Math.round(fsTitle * 0.42);
   const fsSmall = Math.round(fsTitle * 0.26);
   const isStory = h > w;
+  const logoSize = Math.round(w * 0.042);
 
   return `<div style="width:${w}px;height:${h}px;background:#faf6f0;color:#2c1810;display:flex;flex-direction:column;overflow:hidden;position:relative;font-family:'Noto Kufi Arabic','Noto Naskh Arabic',Amiri,serif;direction:rtl">
   <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden">
@@ -131,9 +133,7 @@ function buildLiterary(title: string, excerpt: string, section: string, author: 
   <div style="position:relative;z-index:10;padding:${pad}px;${isStory ? `padding-top:${pad*2}px;padding-bottom:${pad*2}px` : ""};flex:1;display:flex;flex-direction:column">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${pad*0.7}px">
       <div style="display:flex;align-items:center;gap:${w*0.012}px">
-        <div style="width:${w*0.042}px;height:${w*0.042}px;border-radius:50%;background:${sc.accent};display:flex;align-items:center;justify-content:center">
-          <span style="font-size:${w*0.02}px;font-weight:800;color:#faf6f0">س</span>
-        </div>
+        <img src="${LOGO_URL}" style="width:${logoSize}px;height:${logoSize}px;border-radius:50%;object-fit:cover" />
         <div>
           <span style="font-size:${fsSmall*1.4}px;font-weight:700;color:#2c1810">السُّدفة</span>
           <span style="display:block;font-size:${fsSmall}px;color:#8b7355;margin-top:-1px">مجلة أدبية</span>
@@ -168,6 +168,7 @@ function buildModern(title: string, excerpt: string, section: string, author: st
   const fsExcerpt = Math.round(fsTitle * 0.38);
   const fsSmall = Math.round(fsTitle * 0.24);
   const isStory = h > w;
+  const logoSize = Math.round(w * 0.035);
 
   return `<div style="width:${w}px;height:${h}px;background:#09090b;color:#fafafa;display:flex;flex-direction:column;overflow:hidden;position:relative;font-family:'Noto Kufi Arabic',sans-serif;direction:rtl">
   <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden">
@@ -177,9 +178,7 @@ function buildModern(title: string, excerpt: string, section: string, author: st
   </div>
   <div style="position:relative;z-index:10;padding:${pad}px;${isStory ? `padding-top:${pad*2.5}px` : ""};flex:1;display:flex;flex-direction:column">
     <div style="display:flex;align-items:center;gap:${w*0.012}px;margin-bottom:${pad*0.8}px">
-      <div style="width:${w*0.035}px;height:${w*0.035}px;border-radius:${w*0.008}px;background:${sc.accent};display:flex;align-items:center;justify-content:center">
-        <span style="font-size:${w*0.018}px;font-weight:800;color:#09090b">س</span>
-      </div>
+      <img src="${LOGO_URL}" style="width:${logoSize}px;height:${logoSize}px;border-radius:${Math.round(logoSize*0.18)}px;object-fit:cover" />
       <span style="font-size:${fsSmall*1.3}px;font-weight:700;color:${sc.fg};letter-spacing:1px">السُّدفة</span>
       <div style="flex:1"></div>
       <span style="font-size:${fsSmall*1.1}px;font-weight:600;color:${sc.fg};background:${sc.accent}20;padding:${w*0.004}px ${w*0.014}px;border-radius:${w*0.004}px">${esc(section)}</span>
@@ -221,9 +220,7 @@ function PreviewClassic({ title, excerpt, section, author, compact }: { title: s
       <div className="relative z-10 flex flex-col h-full p-[7%]">
         <div className="flex items-center justify-between mb-[5%]">
           <div className="flex items-center gap-[3%]">
-            <div className="w-[7%] aspect-square rounded-[14%] flex items-center justify-center border" style={{ background: `linear-gradient(135deg,${sc.accent}30,${sc.accent}15)`, borderColor: `${sc.accent}25` }}>
-              <span className="font-extrabold text-[4%]" style={{ color: sc.fg }}>س</span>
-            </div>
+            <img src="/logo.png" className="w-[7%] aspect-square rounded-[14%] object-cover" alt="السُّدفة" />
             <div>
               <span className="block font-bold text-[3%] text-white/85">السُّدفة</span>
               <span className="block text-[2%] text-white/30 -mt-[1px]">مجلة أدبية</span>
@@ -270,9 +267,7 @@ function PreviewLiterary({ title, excerpt, section, author }: { title: string; e
       <div className="relative z-10 flex flex-col h-full p-[7%]">
         <div className="flex items-center justify-between mb-[5%]">
           <div className="flex items-center gap-[3%]">
-            <div className="w-[6.5%] aspect-square rounded-full flex items-center justify-center" style={{ background: sc.accent }}>
-              <span className="font-extrabold text-[3.5%]" style={{ color: "#faf6f0" }}>س</span>
-            </div>
+            <img src="/logo.png" className="w-[6.5%] aspect-square rounded-full object-cover" alt="السُّدفة" />
             <div>
               <span className="block font-bold text-[2.8%]" style={{ color: "#2c1810" }}>السُّدفة</span>
               <span className="block text-[1.8%] -mt-[1px]" style={{ color: "#8b7355" }}>مجلة أدبية</span>
@@ -309,9 +304,7 @@ function PreviewModern({ title, excerpt, section, author }: { title: string; exc
       </div>
       <div className="relative z-10 flex flex-col h-full p-[6.5%]">
         <div className="flex items-center gap-[2.5%] mb-[6%]">
-          <div className="w-[5.5%] aspect-square rounded-[18%] flex items-center justify-center" style={{ background: sc.accent }}>
-            <span className="font-extrabold text-[3%]" style={{ color: "#09090b" }}>س</span>
-          </div>
+          <img src="/logo.png" className="w-[5.5%] aspect-square rounded-[18%] object-cover" alt="السُّدفة" />
           <span className="font-bold text-[2.8%]" style={{ color: sc.fg, letterSpacing: "1px" }}>السُّدفة</span>
           <div className="flex-1" />
           <span className="font-semibold text-[2.2%] px-[2.5%] py-[0.6%] rounded" style={{ color: sc.fg, background: `${sc.accent}20` }}>{section}</span>
