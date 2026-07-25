@@ -14,8 +14,8 @@ export default function ShareButtons({ title, url }: { title: string; url: strin
   ];
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-xs text-text-muted ml-2">مشاركة:</span>
+    <div className="flex items-center gap-1.5 sm:gap-2">
+      <span className="text-xs text-text-muted ml-1 sm:ml-2 hidden sm:inline">مشاركة:</span>
       {links.map((l) => (
         <a
           key={l.name}
@@ -28,7 +28,7 @@ export default function ShareButtons({ title, url }: { title: string; url: strin
           }}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-8 h-8 rounded-lg bg-surface border border-border/50 flex items-center justify-center hover:bg-accent hover:text-white hover:border-accent transition-all text-text-muted"
+          className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-surface border border-border/50 flex items-center justify-center hover:bg-accent hover:text-white hover:border-accent transition-all text-text-muted"
           title={l.name}
         >
           <l.Icon size={14} />

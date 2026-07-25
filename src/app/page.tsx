@@ -39,7 +39,7 @@ export default async function HomePage() {
   })).filter((s) => s.articles.length > 0);
 
   return (
-    <div className="overflow-hidden">
+    <div>
       {/* ── HERO ── */}
       <section className="relative min-h-[70vh] sm:min-h-[80vh] lg:min-h-[90vh] flex items-center hero-gradient overflow-hidden">
         {/* Floating shapes - hidden on mobile for performance */}

@@ -96,7 +96,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
               {article.title}
             </h1>
 
-            <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-sm font-bold">
                   {article.author.startsWith("ال") ? (article.author[2] || article.author[0]) : article.author[0]}
@@ -106,7 +106,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
                   <span className="text-xs text-text-muted">{formatDate(article.date)}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                 <LikeButton articleId={article.id} />
                 <BookmarkButton articleId={article.id} />
                 <ShareCard

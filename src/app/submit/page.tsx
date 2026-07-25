@@ -92,7 +92,7 @@ export default function SubmitPage() {
             <input value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30" placeholder="عنوان عملك الأدبي" required />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-medium text-text-muted block mb-1.5">القسم *</label>
               <select value={section} onChange={(e) => setSection(e.target.value as Section)} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30">
