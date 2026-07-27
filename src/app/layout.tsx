@@ -23,20 +23,20 @@ export const metadata: Metadata = {
     siteName: "السُّدفة",
     title: "السُّدفة | مجلة أدبية عربية",
     description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
-    images: ["/favicon.svg"],
+    images: ["/opengraph-image"],
   },
   twitter: {
     card: "summary_large_image",
     title: "السُّدفة | مجلة أدبية عربية",
     description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
-    images: ["/favicon.svg"],
+    images: ["/opengraph-image"],
   },
   alternates: {
     types: {
       "application/rss+xml": [{ title: "السُّدفة RSS", url: "/rss" }],
     },
   },
-  metadataBase: new URL("https://salah-magazine.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://salah-magazine.vercel.app"),
 };
 
 export default function RootLayout({

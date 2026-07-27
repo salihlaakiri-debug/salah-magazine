@@ -13,6 +13,8 @@ export default function BookmarksPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => { document.title = "المحفوظات | مجلة السُّدفة"; }, []);
+
   useEffect(() => {
     if (!user) { setLoading(false); return; }
     async function load() {

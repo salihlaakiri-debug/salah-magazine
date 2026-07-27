@@ -1,5 +1,7 @@
 import { fetchPublishedArticles } from "@/lib/supabase-data";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://salah-magazine.vercel.app";
+
 function escapeXml(text: string): string {
   return text
     .replace(/&/g, "&amp;")
@@ -16,7 +18,7 @@ export async function GET() {
     .map(
       (article) => `    <item>
       <title>${escapeXml(article.title)}</title>
-      <link>https://salah-magazine.vercel.app/work/${article.id}</link>
+      <link>${SITE_URL}/work/${article.id}</link>
       <description>${escapeXml(article.excerpt)}</description>
       <pubDate>${new Date(article.published_at || article.date).toUTCString()}</pubDate>
       <author>${escapeXml(article.author)}</author>
@@ -29,10 +31,10 @@ export async function GET() {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${escapeXml("السُّدفة | مجلة أدبية عربية")}</title>
-    <link>https://salah-magazine.vercel.app</link>
+    <link>${SITE_URL}</link>
     <description>${escapeXml("مجلة أدبية عربية تنشر القصائد والتأملات والحكايات")}</description>
     <language>ar</language>
-    <atom:link href="https://salah-magazine.vercel.app/rss" rel="self" type="application/rss+xml" />
+    <atom:link href="${SITE_URL}/rss" rel="self" type="application/rss+xml" />
 ${items}
   </channel>
 </rss>`;
@@ -40,6 +42,7 @@ ${items}
   return new Response(xml, {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "s-maxage=3600, stale-while-revalidate",
     },
   });
 }

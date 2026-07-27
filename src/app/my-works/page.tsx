@@ -20,6 +20,9 @@ export default function MyWorksPage() {
   const router = useRouter();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  useEffect(() => { document.title = "أعمالي | مجلة السُّدفة"; }, []);
 
   useEffect(() => {
     if (!loading && !user) router.replace("/login");
@@ -38,6 +41,7 @@ export default function MyWorksPage() {
   const deleteArticle = async (id: string) => {
     await supabase.from("articles").delete().eq("id", id);
     setArticles((prev) => prev.filter((a) => a.id !== id));
+    setDeleteConfirm(null);
   };
 
   if (loading || !user) return <div className="min-h-[60vh] flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>;
@@ -84,7 +88,14 @@ export default function MyWorksPage() {
                   )}
                   <Link href={`/submit?edit=${a.id}`} className="p-2 rounded-lg hover:bg-accent/10 text-text-muted hover:text-accent transition-all"><EditIcon size={16} /></Link>
                   {a.status !== "published" && (
-                    <button onClick={() => deleteArticle(a.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-all"><TrashIcon size={16} /></button>
+                    deleteConfirm === a.id ? (
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => deleteArticle(a.id)} className="p-2 rounded-lg bg-red-500 text-white"><CheckIcon size={14} /></button>
+                        <button onClick={() => setDeleteConfirm(null)} className="p-2 rounded-lg bg-border text-foreground"><XIcon size={14} /></button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setDeleteConfirm(a.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-all"><TrashIcon size={16} /></button>
+                    )
                   )}
                 </div>
               </div>

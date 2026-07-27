@@ -21,6 +21,8 @@ export default function WriterDashboard() {
   const [stats, setStats] = useState({ published: 0, pending: 0, rejected: 0, totalLikes: 0, totalComments: 0, followers: 0 });
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => { document.title = "لوحة التحكم | مجلة السُّدفة"; }, []);
+
   useEffect(() => {
     if (!user) return;
     async function load() {

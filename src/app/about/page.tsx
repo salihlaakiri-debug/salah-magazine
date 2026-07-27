@@ -1,11 +1,11 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import ScrollReveal from "@/components/ScrollReveal";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import { ArrowLeftIcon } from "@/components/Icons";
-
-export const metadata = {
-  title: "من نحن | مجلة السُّدفة",
-};
+import { supabase } from "@/lib/supabase";
 
 const VALUES = [
   {
@@ -31,13 +31,27 @@ const TEAM = [
   { name: "يوسف الناثر", role: "النثر والتأملات", initials: "يـ" },
 ];
 
-const STATS = [
-  { value: "8+", label: "أعمال منشورة" },
-  { value: "5", label: "أقسام أدبية" },
-  { value: "100+", label: "قارئ" },
-];
-
 export default function AboutPage() {
+  const [stats, setStats] = useState([
+    { value: "0", label: "أعمال منشورة" },
+    { value: "5", label: "أقسام أدبية" },
+    { value: "0", label: "قارئ" },
+  ]);
+
+  useEffect(() => {
+    async function loadStats() {
+      const [{ count: articles }, { count: users }] = await Promise.all([
+        supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "published"),
+        supabase.from("profiles").select("*", { count: "exact", head: true }),
+      ]);
+      setStats([
+        { value: `${articles || 0}+`, label: "أعمال منشورة" },
+        { value: "5", label: "أقسام أدبية" },
+        { value: `${users || 0}+`, label: "قارئ" },
+      ]);
+    }
+    loadStats();
+  }, []);
   return (
     <div className="min-h-screen">
       {/* ── BREADCRUMB ── */}
@@ -174,7 +188,7 @@ export default function AboutPage() {
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-24">
         <ScrollReveal>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
-            {STATS.map((stat) => (
+            {stats.map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="text-4xl sm:text-5xl font-bold font-[var(--font-heading)] gradient-text mb-2">
                   {stat.value}

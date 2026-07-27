@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/lib/supabase";
 import { SECTIONS, Section } from "@/lib/types";
@@ -56,7 +57,7 @@ export default function SubmitPage() {
           <PenIcon size={48} className="mx-auto text-text-muted/20 mb-4" />
           <h2 className="text-xl font-bold mb-2">سجّل الدخول أولاً</h2>
           <p className="text-sm text-text-muted mb-4">تحتاج إلى حساب لنشر أعمالك الأدبية</p>
-          <a href="/login" className="px-6 py-2.5 rounded-xl bg-accent text-white text-sm font-medium hover:bg-accent-dark transition-all">تسجيل الدخول</a>
+          <Link href="/login" className="px-6 py-2.5 rounded-xl bg-accent text-white text-sm font-medium hover:bg-accent-dark transition-all">تسجيل الدخول</Link>
         </div>
       </div>
     );
