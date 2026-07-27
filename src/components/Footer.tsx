@@ -24,20 +24,20 @@ export default function Footer() {
                 والتأملات والحكايات من عوالم اللغة والصمت.
               </p>
               <div className="flex gap-3">
-                {[
-                  { name: "تويتر", letter: "ت", href: "#" },
-                  { name: "فيسبوك", letter: "ف", href: "#" },
-                  { name: "انستغرام", letter: "ا", href: "#" },
-                ].map((social) => (
-                  <a
-                    key={social.name}
-                    href={social.href}
-                    aria-label={social.name}
-                    className="w-9 h-9 rounded-xl bg-white/8 hover:bg-white/15 flex items-center justify-center text-xs font-bold transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-white/5 active:scale-95"
-                  >
-                    {social.letter}
-                  </a>
-                ))}
+                <a
+                  href="mailto:contact@sudfeh.com"
+                  aria-label="تواصل معنا"
+                  className="w-9 h-9 rounded-xl bg-white/8 hover:bg-white/15 flex items-center justify-center text-xs font-bold transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-white/5 active:scale-95"
+                >
+                  @
+                </a>
+                <a
+                  href="/rss"
+                  aria-label="خلاصة RSS"
+                  className="w-9 h-9 rounded-xl bg-white/8 hover:bg-white/15 flex items-center justify-center text-xs font-bold transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-white/5 active:scale-95"
+                >
+                  RSS
+                </a>
               </div>
             </div>
 
@@ -83,10 +83,21 @@ export default function Footer() {
             {/* Info */}
             <div className="lg:col-span-2">
               <h4 className="font-bold mb-4 text-sm tracking-wider opacity-80">معلومات</h4>
-              <ul className="space-y-2.5 text-sm opacity-50">
-                <li className="hover:opacity-100 transition-opacity cursor-default">نشرة بريدية</li>
-                <li className="hover:opacity-100 transition-opacity cursor-default">سياسة الخصوصية</li>
-                <li className="hover:opacity-100 transition-opacity cursor-default">شروط الاستخدام</li>
+              <ul className="space-y-2.5">
+                {[
+                  { href: "/privacy", label: "سياسة الخصوصية" },
+                  { href: "/terms", label: "شروط الاستخدام" },
+                  { href: "/rss", label: "خلاصة RSS" },
+                ].map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm opacity-50 hover:opacity-100 transition-all duration-300 inline-block hover:translate-x-[-4px]"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
