@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
-import { BoldIcon, ItalicIcon, HeadingIcon, QuoteIcon, ListIcon, ImageIcon, LinkIcon, CodeIcon } from "./Icons";
+import { BoldIcon, ItalicIcon, HeadingIcon, QuoteIcon, ListIcon, ImageIcon, LinkIcon, CodeIcon, CheckIcon } from "./Icons";
 
 interface RichEditorProps {
   value: string;
@@ -104,8 +104,8 @@ export default function RichEditor({ value, onChange, placeholder }: RichEditorP
       <div className="flex items-center justify-between px-4 py-2 border-t border-border/50 text-[11px] text-text-muted">
         <span>{wordCount} كلمة · {charCount} حرف</span>
         <span className="flex items-center gap-2">
-          <span className="flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+          <span className="flex items-center gap-1.5">
+            <CodeIcon size={12} className="text-accent/60" />
             Markdown
           </span>
         </span>

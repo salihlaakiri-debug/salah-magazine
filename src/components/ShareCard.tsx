@@ -522,11 +522,11 @@ export default function ShareCard({ title, excerpt, section, author, articleId }
                 {generating ? (<><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />جاري التوليد...</>) : (<><DownloadIcon size={14} />تحميل الصورة</>)}
               </button>
               <div className="flex gap-2">
-                <button onClick={copyImage} disabled={generating} className="flex-1 py-2.5 rounded-xl border border-border text-text-muted text-xs font-medium hover:bg-surface-hover transition-all disabled:opacity-50">
-                  {copiedImage ? "تم النسخ ✓" : "نسخ الصورة"}
+                <button onClick={copyImage} disabled={generating} className="flex-1 py-2.5 rounded-xl border border-border text-text-muted text-xs font-medium hover:bg-surface-hover transition-all disabled:opacity-50 flex items-center justify-center gap-1.5">
+                  {copiedImage ? <><CheckIcon size={12} /> تم النسخ</> : "نسخ الصورة"}
                 </button>
-                <button onClick={copyLink} className="flex-1 py-2.5 rounded-xl border border-border text-text-muted text-xs font-medium hover:bg-surface-hover transition-all">
-                  {copiedLink ? "تم النسخ ✓" : "نسخ الرابط"}
+                <button onClick={copyLink} className="flex-1 py-2.5 rounded-xl border border-border text-text-muted text-xs font-medium hover:bg-surface-hover transition-all flex items-center justify-center gap-1.5">
+                  {copiedLink ? <><CheckIcon size={12} /> تم النسخ</> : "نسخ الرابط"}
                 </button>
               </div>
               {typeof navigator !== "undefined" && "share" in navigator && (

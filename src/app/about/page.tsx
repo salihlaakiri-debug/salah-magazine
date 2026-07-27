@@ -5,7 +5,7 @@ import Link from "next/link";
 import ScrollReveal from "@/components/ScrollReveal";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import { ArrowLeftIcon } from "@/components/Icons";
-import { RootIcon, FeatherIcon, LightbulbIcon } from "@/components/ValueIcon";
+import { RootIcon, SparkleIcon, LightbulbIcon } from "@/components/ValueIcon";
 import { supabase } from "@/lib/supabase";
 
 const VALUES = [
@@ -17,7 +17,7 @@ const VALUES = [
   {
     title: "الإبداع",
     description: "نفتح أبوابنا لأصوات جديدة وآفاق غير مطروقة، لأنّ كلّ صوتٍ صادق يستحقّ أن يُسمع.",
-    icon: FeatherIcon,
+    icon: SparkleIcon,
   },
   {
     title: "التنوير",

@@ -78,10 +78,27 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  function translateAuthError(msg: string): string {
+    const map: Record<string, string> = {
+      "Invalid login credentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+      "Email not confirmed": "البريد الإلكتروني غير مُكَدّس. يُرجى التحقق من بريدك أو التواصل مع الدعم",
+      "User already registered": "هذا البريد الإلكتروني مسجّل بالفعل",
+      "Password should be at least 6 characters": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+      "Unable to validate email address: invalid format": "صيغة البريد الإلكتروني غير صحيحة",
+      "Signup requires a valid password": "يُرجى إدخال كلمة مرور صالحة",
+      "Email rate limit exceeded": "تم تجاوز الحد المسموح من المحاولات. يُرجى المحاولة لاحقاً",
+      "New password should be different from the old password": "كلمة المرور الجديدة يجب أن تختلف عن القديمة",
+    };
+    for (const [key, val] of Object.entries(map)) {
+      if (msg.toLowerCase().includes(key.toLowerCase())) return val;
+    }
+    return msg || "حدث خطأ غير متوقع";
+  }
+
   async function signIn(email: string, password: string) {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) return { error: error.message };
+      if (error) return { error: translateAuthError(error.message) };
       return {};
     } catch {
       return { error: "حدث خطأ غير متوقع" };
@@ -90,14 +107,17 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signUp(email: string, password: string, username: string) {
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: { username, display_name: username },
         },
       });
-      if (error) return { error: error.message };
+      if (error) return { error: translateAuthError(error.message) };
+      if (data.user && !data.session) {
+        return { error: "تم إنشاء الحساب بنجاح. يُرجى تسجيل الدخول." };
+      }
       return {};
     } catch {
       return { error: "حدث خطأ غير متوقع" };

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SECTIONS } from "@/lib/types";
 import SudfehLogo from "./SudfehLogo";
 import NewsletterSignup from "./NewsletterSignup";
+import { MailIcon, RssIcon } from "./Icons";
 
 export default function Footer() {
   return (
@@ -28,16 +29,16 @@ export default function Footer() {
                 <a
                   href="mailto:contact@sudfeh.com"
                   aria-label="تواصل معنا"
-                  className="w-9 h-9 rounded-xl bg-white/8 hover:bg-white/15 flex items-center justify-center text-xs font-bold transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-white/5 active:scale-95"
+                  className="w-9 h-9 rounded-xl bg-white/8 hover:bg-white/15 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-white/5 active:scale-95"
                 >
-                  @
+                  <MailIcon size={16} />
                 </a>
                 <a
                   href="/rss"
                   aria-label="خلاصة RSS"
-                  className="w-9 h-9 rounded-xl bg-white/8 hover:bg-white/15 flex items-center justify-center text-xs font-bold transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-white/5 active:scale-95"
+                  className="w-9 h-9 rounded-xl bg-white/8 hover:bg-white/15 flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-white/5 active:scale-95"
                 >
-                  RSS
+                  <RssIcon size={16} />
                 </a>
               </div>
             </div>

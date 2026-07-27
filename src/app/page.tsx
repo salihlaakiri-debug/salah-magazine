@@ -5,6 +5,8 @@ import WorkCard from "@/components/WorkCard";
 import SectionIcon from "@/components/SectionIcon";
 import ScrollReveal from "@/components/ScrollReveal";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import OrnamentalDivider from "@/components/OrnamentalDivider";
+import SudfehIcon from "@/components/SudfehIcon";
 import { ArrowLeftIcon, SearchIcon } from "@/components/Icons";
 
 const QUOTES = [
@@ -42,7 +44,7 @@ export default async function HomePage() {
   return (
     <div>
       {/* ── HERO ── */}
-      <section className="relative min-h-[70vh] sm:min-h-[80vh] lg:min-h-[90vh] flex items-center hero-gradient overflow-hidden">
+      <section className="relative min-h-[70vh] sm:min-h-[80vh] lg:min-h-[90vh] flex items-center hero-gradient overflow-hidden arabesque-bg">
         {/* Animated background shapes */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden hidden sm:block">
           {/* Large orbs */}
@@ -52,6 +54,15 @@ export default async function HomePage() {
           {/* Rings */}
           <div className="absolute top-[35%] left-[55%] w-28 h-28 rounded-full border border-accent/[0.06] animate-drift" style={{ animationDelay: "-12s" }} />
           <div className="absolute top-[60%] right-[25%] w-16 h-16 rounded-full border border-accent/[0.08] animate-drift" style={{ animationDelay: "-4s" }} />
+
+          {/* Diamonds */}
+          <div className="absolute top-[20%] right-[40%] w-6 h-6 shape-diamond border border-accent/[0.1] animate-drift" style={{ animationDelay: "-3s" }} />
+          <div className="absolute bottom-[35%] left-[30%] w-4 h-4 shape-diamond bg-accent/[0.06] animate-drift" style={{ animationDelay: "-9s" }} />
+          <div className="absolute top-[65%] right-[15%] w-8 h-8 shape-diamond border border-accent/[0.05] animate-drift" style={{ animationDelay: "-6s" }} />
+
+          {/* Diagonal lines */}
+          <div className="absolute top-[15%] right-[20%] w-20 h-px bg-accent/[0.08] rotate-45 animate-drift" style={{ animationDelay: "-11s" }} />
+          <div className="absolute bottom-[25%] left-[45%] w-16 h-px bg-accent/[0.06] -rotate-30 animate-drift" style={{ animationDelay: "-5s" }} />
 
           {/* Small dots */}
           <div className="absolute top-[18%] left-[22%] w-2.5 h-2.5 rounded-full bg-accent/25 animate-float" style={{ animationDelay: "-2s" }} />
@@ -155,6 +166,8 @@ export default async function HomePage() {
           ))}
         </div>
       </div>
+
+      <OrnamentalDivider className="py-6" />
 
       {/* ── LATEST WORKS ── */}
       {latest.length > 0 && (
@@ -295,7 +308,7 @@ export default async function HomePage() {
             <div className="relative z-10">
               <div className="inline-flex items-center gap-3 mb-5 sm:mb-6">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-sm">
-                  <span className="text-xl sm:text-2xl font-bold text-white/90" style={{ fontFamily: "var(--font-heading)" }}>س</span>
+                  <SudfehIcon size={24} className="text-white/90" />
                 </div>
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-[var(--font-heading)] mb-3 sm:mb-4 text-white">
