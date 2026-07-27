@@ -36,7 +36,7 @@ export const metadata: Metadata = {
       "application/rss+xml": [{ title: "السُّدفة RSS", url: "/rss" }],
     },
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://salah-magazine.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://al-sudfeh.vercel.app"),
 };
 
 export default function RootLayout({

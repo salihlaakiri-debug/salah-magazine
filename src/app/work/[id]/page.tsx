@@ -120,7 +120,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
                   author={article.author}
                   articleId={article.id}
                 />
-                <ShareButtons title={article.title} url={`https://salah-magazine.vercel.app/work/${article.id}`} />
+                <ShareButtons title={article.title} url={`${process.env.NEXT_PUBLIC_SITE_URL || "https://al-sudfeh.vercel.app"}/work/${article.id}`} />
               </div>
             </div>
           </header>

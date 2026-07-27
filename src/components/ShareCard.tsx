@@ -48,7 +48,8 @@ function getSectionColor(section: string) {
   return m[section] || { bg: "#6c7bc018", fg: "#98a5e0", accent: "#6c7bc0", glow: "#6c7bc015" };
 }
 
-const LOGO_URL = "https://salah-magazine.vercel.app/logo.svg";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://al-sudfeh.vercel.app";
+const LOGO_URL = `${SITE_URL}/logo.svg`;
 
 /* ─── Card builders (return full HTML string for the capture div) ─── */
 
