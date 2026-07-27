@@ -26,12 +26,6 @@ const VALUES = [
   },
 ];
 
-const TEAM = [
-  { name: "أحمد السُّدفي", role: "الرئيسية", initials: "أس" },
-  { name: "ليلى الكاتبة", role: "القصة القصيرة", initials: "لـ" },
-  { name: "يوسف الناثر", role: "النثر والتأملات", initials: "يـ" },
-];
-
 export default function AboutPage() {
   const [stats, setStats] = useState([
     { value: "0", label: "أعمال منشورة" },
@@ -149,39 +143,6 @@ export default function AboutPage() {
               </div>
             </ScrollReveal>
           ))}
-        </div>
-      </section>
-
-      {/* ── TEAM ── */}
-      <section className="border-y border-border/30 bg-surface/40">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-24">
-          <ScrollReveal>
-            <div className="text-center mb-14">
-              <div className="editorial-line-lg mx-auto mb-6" />
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold font-[var(--font-heading)] mb-4">فريق العمل</h2>
-              <p className="text-text-muted text-sm sm:text-base max-w-md mx-auto">
-                ناس يؤمنون بأنّ الأدب ليس ترفاً، بل هو ضرورة.
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-8 max-w-3xl mx-auto">
-            {TEAM.map((member, i) => (
-              <ScrollReveal key={member.name} delay={i * 120}>
-                <div className="group text-center">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-5 rounded-full bg-gradient-to-br from-accent via-accent-light to-accent-dark flex items-center justify-center shadow-lg shadow-accent/20 group-hover:shadow-xl group-hover:shadow-accent/30 group-hover:scale-105 transition-all duration-300">
-                    <span className="text-2xl sm:text-3xl font-bold text-white font-[var(--font-heading)]">
-                      {member.initials}
-                    </span>
-                  </div>
-                  <h3 className="font-bold font-[var(--font-heading)] text-base mb-1 group-hover:text-accent transition-colors duration-300">
-                    {member.name}
-                  </h3>
-                  <p className="text-sm text-text-muted">{member.role}</p>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
         </div>
       </section>
 
