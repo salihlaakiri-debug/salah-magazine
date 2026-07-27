@@ -5,23 +5,24 @@ import Link from "next/link";
 import ScrollReveal from "@/components/ScrollReveal";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import { ArrowLeftIcon } from "@/components/Icons";
+import { RootIcon, FeatherIcon, LightbulbIcon } from "@/components/ValueIcon";
 import { supabase } from "@/lib/supabase";
 
 const VALUES = [
   {
     title: "الأصالة",
     description: "نحافظ على جذور اللغة العربية ونكرّم تراثها الأدبي الغني بكل ما تحمله من معاني عميقة وجمال لفظي فريد.",
-    icon: "🌱",
+    icon: RootIcon,
   },
   {
     title: "الإبداع",
     description: "نفتح أبوابنا لأصوات جديدة وآفاق غير مطروقة، لأنّ كلّ صوتٍ صادق يستحقّ أن يُسمع.",
-    icon: "✦",
+    icon: FeatherIcon,
   },
   {
     title: "التنوير",
     description: "نؤمن بالقوة المُحَوِّلة للأدب في تشكيل الوعي وإثراء الحوارات الفكرية والثقافية.",
-    icon: "💡",
+    icon: LightbulbIcon,
   },
 ];
 
@@ -135,8 +136,8 @@ export default function AboutPage() {
               <div className="group relative bg-surface rounded-2xl sm:rounded-3xl border border-border/50 p-7 sm:p-8 card-hover overflow-hidden h-full">
                 <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative">
-                  <div className="w-14 h-14 rounded-2xl bg-accent/[0.08] flex items-center justify-center text-2xl mb-5 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-accent/10 transition-all duration-300">
-                    {v.icon}
+                  <div className="w-14 h-14 rounded-2xl bg-accent/[0.08] flex items-center justify-center text-accent mb-5 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-accent/10 transition-all duration-300">
+                    <v.icon className="w-7 h-7" />
                   </div>
                   <h3 className="text-lg font-bold font-[var(--font-heading)] mb-3 group-hover:text-accent transition-colors duration-300">
                     {v.title}
