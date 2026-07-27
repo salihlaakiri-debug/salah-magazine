@@ -18,53 +18,59 @@ export async function POST(req: NextRequest) {
 
     const admin = createClient(url, serviceKey);
 
-    const { data: signInData, error: signInError } = await admin.auth.signInWithPassword({
+    const { error: signInError } = await admin.auth.signInWithPassword({ email, password });
+
+    if (!signInError) {
+      return NextResponse.json({ success: true });
+    }
+
+    if (signInError.message === "Invalid login credentials") {
+      return NextResponse.json({ error: "Invalid login credentials" }, { status: 401 });
+    }
+
+    if (!signInError.message.includes("Email not confirmed")) {
+      return NextResponse.json({ error: signInError.message }, { status: 400 });
+    }
+
+    let targetUser: { id: string } | null = null;
+    let page = 1;
+    const perPage = 50;
+
+    while (!targetUser) {
+      const { data, error: listError } = await admin.auth.admin.listUsers({ page, perPage });
+      if (listError || !data?.users?.length) break;
+
+      targetUser = data.users.find((u) => u.email === email) || null;
+      if (data.users.length < perPage) break;
+      page++;
+    }
+
+    if (!targetUser) {
+      return NextResponse.json({ error: "المستخدم غير موجود" }, { status: 404 });
+    }
+
+    const { error: confirmError } = await admin.auth.admin.updateUserById(targetUser.id, {
+      email_confirm: true,
+    });
+
+    if (confirmError) {
+      return NextResponse.json({ error: "فشل تأكيد البريد" }, { status: 500 });
+    }
+
+    const { data: retryData, error: retryError } = await admin.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (!signInError && signInData.session) {
-      return NextResponse.json({ success: true, autoSignedIn: true });
+    if (retryError) {
+      return NextResponse.json({ error: retryError.message }, { status: 400 });
     }
 
-    if (signInError && signInError.message.includes("Email not confirmed")) {
-      const { data: users, error: listError } = await admin.auth.admin.listUsers();
-
-      if (listError || !users?.users?.length) {
-        return NextResponse.json({ error: "المستخدم غير موجود" }, { status: 404 });
-      }
-
-      const user = users.users.find((u) => u.email === email);
-      if (!user) {
-        return NextResponse.json({ error: "المستخدم غير موجود" }, { status: 404 });
-      }
-
-      const { error: confirmError } = await admin.auth.admin.updateUserById(user.id, {
-        email_confirm: true,
-      });
-
-      if (confirmError) {
-        return NextResponse.json({ error: "فشل تأكيد البريد" }, { status: 500 });
-      }
-
-      const { data: retryData, error: retryError } = await admin.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (retryError) {
-        return NextResponse.json({ error: retryError.message }, { status: 400 });
-      }
-
-      return NextResponse.json({
-        success: true,
-        autoSignedIn: true,
-        access_token: retryData.session?.access_token,
-        refresh_token: retryData.session?.refresh_token,
-      });
-    }
-
-    return NextResponse.json({ error: signInError?.message || "خطأ غير معروف" }, { status: 400 });
+    return NextResponse.json({
+      success: true,
+      access_token: retryData.session?.access_token,
+      refresh_token: retryData.session?.refresh_token,
+    });
   } catch {
     return NextResponse.json({ error: "حدث خطأ غير متوقع" }, { status: 500 });
   }

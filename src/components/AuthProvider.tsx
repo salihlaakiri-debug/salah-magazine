@@ -81,13 +81,12 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   function translateAuthError(msg: string): string {
     const map: Record<string, string> = {
       "Invalid login credentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-      "Email not confirmed": "البريد الإلكتروني غير مُكَدّس. يُرجى التحقق من بريدك أو التواصل مع الدعم",
+      "Email not confirmed": "البريد الإلكتروني غير مُكَدّس",
       "User already registered": "هذا البريد الإلكتروني مسجّل بالفعل",
       "Password should be at least 6 characters": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
       "Unable to validate email address: invalid format": "صيغة البريد الإلكتروني غير صحيحة",
       "Signup requires a valid password": "يُرجى إدخال كلمة مرور صالحة",
       "Email rate limit exceeded": "تم تجاوز الحد المسموح من المحاولات. يُرجى المحاولة لاحقاً",
-      "New password should be different from the old password": "كلمة المرور الجديدة يجب أن تختلف عن القديمة",
     };
     for (const [key, val] of Object.entries(map)) {
       if (msg.toLowerCase().includes(key.toLowerCase())) return val;
@@ -97,26 +96,24 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signIn(email: string, password: string) {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        if (error.message.includes("Email not confirmed")) {
-          const res = await fetch("/api/auth/auto-confirm", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-          });
-          const result = await res.json();
-          if (result.success && result.access_token && result.refresh_token) {
-            await supabase.auth.setSession({
-              access_token: result.access_token,
-              refresh_token: result.refresh_token,
-            });
-            return {};
-          }
-          return { error: result.error || "فشل تأكيد البريد. يُرجى المحاولة مرة أخرى." };
-        }
-        return { error: translateAuthError(error.message) };
+      const res = await fetch("/api/auth/auto-confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const result = await res.json();
+
+      if (result.error) {
+        return { error: translateAuthError(result.error) };
       }
+
+      if (result.access_token && result.refresh_token) {
+        await supabase.auth.setSession({
+          access_token: result.access_token,
+          refresh_token: result.refresh_token,
+        });
+      }
+
       return {};
     } catch {
       return { error: "حدث خطأ غير متوقع" };
@@ -125,31 +122,26 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signUp(email: string, password: string, username: string) {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { username, display_name: username },
-        },
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, username }),
       });
-      if (error) return { error: translateAuthError(error.message) };
-      if (data.user && !data.session) {
-        const res = await fetch("/api/auth/auto-confirm", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        });
-        const result = await res.json();
-        if (result.success && result.access_token && result.refresh_token) {
-          await supabase.auth.setSession({
-            access_token: result.access_token,
-            refresh_token: result.refresh_token,
-          });
-          return {};
-        }
-        return { error: "تم إنشاء الحساب بنجاح. يُرجى تسجيل الدخول." };
+      const result = await res.json();
+
+      if (result.error) {
+        return { error: translateAuthError(result.error) };
       }
-      return {};
+
+      if (result.access_token && result.refresh_token) {
+        await supabase.auth.setSession({
+          access_token: result.access_token,
+          refresh_token: result.refresh_token,
+        });
+        return {};
+      }
+
+      return { error: result.message || "تم إنشاء الحساب بنجاح. يُرجى تسجيل الدخول." };
     } catch {
       return { error: "حدث خطأ غير متوقع" };
     }
