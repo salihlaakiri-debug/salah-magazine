@@ -82,6 +82,7 @@ export default function MyWorksPage() {
                   {a.status === "published" && (
                     <Link href={`/work/${a.id}`} target="_blank" className="p-2 rounded-lg hover:bg-surface-hover text-text-muted hover:text-foreground transition-all"><EyeIcon size={16} /></Link>
                   )}
+                  <Link href={`/submit?edit=${a.id}`} className="p-2 rounded-lg hover:bg-accent/10 text-text-muted hover:text-accent transition-all"><EditIcon size={16} /></Link>
                   {a.status !== "published" && (
                     <button onClick={() => deleteArticle(a.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-all"><TrashIcon size={16} /></button>
                   )}

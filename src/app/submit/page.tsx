@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/lib/supabase";
 import { SECTIONS, Section } from "@/lib/types";
@@ -11,6 +11,10 @@ import { PenIcon, CheckIcon } from "@/components/Icons";
 export default function SubmitPage() {
   const { user, profile, loading } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit");
+  const isEditing = !!editId;
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [excerpt, setExcerpt] = useState("");
@@ -19,8 +23,31 @@ export default function SubmitPage() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [loadingArticle, setLoadingArticle] = useState(false);
 
-  if (loading) return <div className="min-h-[60vh] flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>;
+  useEffect(() => {
+    if (editId && user) {
+      setLoadingArticle(true);
+      supabase
+        .from("articles")
+        .select("*")
+        .eq("id", editId)
+        .eq("author_id", user.id)
+        .single()
+        .then(({ data }) => {
+          if (data) {
+            setTitle(data.title);
+            setContent(data.content);
+            setExcerpt(data.excerpt || "");
+            setSection(data.section as Section);
+            setReadTime(data.read_time || "3 دقائق");
+          }
+          setLoadingArticle(false);
+        });
+    }
+  }, [editId, user]);
+
+  if (loading || loadingArticle) return <div className="min-h-[60vh] flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>;
 
   if (!user) {
     return (
@@ -42,23 +69,46 @@ export default function SubmitPage() {
     setSubmitting(true);
     setError("");
 
-    const { error: insertError } = await supabase.from("articles").insert({
-      title: title.trim(),
-      content: content.trim(),
-      excerpt: excerpt.trim() || content.trim().replace(/[#*>\-!\[\]()]/g, "").slice(0, 200),
-      section,
-      author_id: user.id,
-      author_name: profile?.display_name || profile?.username || "مجهول",
-      status: "pending",
-      read_time: readTime,
-    });
+    if (isEditing) {
+      const { error: updateError } = await supabase
+        .from("articles")
+        .update({
+          title: title.trim(),
+          content: content.trim(),
+          excerpt: excerpt.trim() || content.trim().replace(/[#*>\-!\[\]()]/g, "").slice(0, 200),
+          section,
+          read_time: readTime,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", editId)
+        .eq("author_id", user.id);
 
-    if (insertError) {
-      setError("حدث خطأ أثناء الإرسال. حاول مرة أخرى.");
-      setSubmitting(false);
+      if (updateError) {
+        setError("حدث خطأ أثناء التعديل. حاول مرة أخرى.");
+        setSubmitting(false);
+      } else {
+        setSuccess(true);
+        setTimeout(() => router.push("/my-works"), 2000);
+      }
     } else {
-      setSuccess(true);
-      setTimeout(() => router.push("/my-works"), 2000);
+      const { error: insertError } = await supabase.from("articles").insert({
+        title: title.trim(),
+        content: content.trim(),
+        excerpt: excerpt.trim() || content.trim().replace(/[#*>\-!\[\]()]/g, "").slice(0, 200),
+        section,
+        author_id: user.id,
+        author_name: profile?.display_name || profile?.username || "مجهول",
+        status: "pending",
+        read_time: readTime,
+      });
+
+      if (insertError) {
+        setError("حدث خطأ أثناء الإرسال. حاول مرة أخرى.");
+        setSubmitting(false);
+      } else {
+        setSuccess(true);
+        setTimeout(() => router.push("/my-works"), 2000);
+      }
     }
   };
 
@@ -69,8 +119,8 @@ export default function SubmitPage() {
           <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 mx-auto mb-4">
             <CheckIcon size={32} />
           </div>
-          <h2 className="text-xl font-bold mb-2">تم الإرسال بنجاح!</h2>
-          <p className="text-sm text-text-muted">سيتم مراجعة عملك من قبل المشرفين ونشره قريباً</p>
+          <h2 className="text-xl font-bold mb-2">{isEditing ? "تم التعديل بنجاح!" : "تم الإرسال بنجاح!"}</h2>
+          <p className="text-sm text-text-muted">{isEditing ? "تم حفظ التعديلات على عملك" : "سيتم مراجعة عملك من قبل المشرفين ونشره قريباً"}</p>
         </div>
       </div>
     );
@@ -80,7 +130,7 @@ export default function SubmitPage() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
       <div className="flex items-center gap-3 mb-8">
         <div className="w-1 h-8 rounded-full bg-accent" />
-        <h1 className="text-2xl font-bold font-[var(--font-heading)]">إرسال عمل جديد</h1>
+        <h1 className="text-2xl font-bold font-[var(--font-heading)]">{isEditing ? "تعديل العمل" : "إرسال عمل جديد"}</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
@@ -125,7 +175,7 @@ export default function SubmitPage() {
 
         <div className="flex gap-3 pt-2">
           <button type="submit" disabled={submitting} className="flex-1 py-3.5 rounded-xl bg-accent text-white font-medium hover:bg-accent-dark transition-all shadow-lg shadow-accent/20 flex items-center justify-center gap-2 disabled:opacity-50">
-            {submitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><PenIcon size={16} /> إرسال للمراجعة</>}
+            {submitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><PenIcon size={16} /> {isEditing ? "حفظ التعديلات" : "إرسال للمراجعة"}</>}
           </button>
         </div>
       </form>

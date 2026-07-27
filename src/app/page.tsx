@@ -4,6 +4,7 @@ import { fetchPublishedArticles } from "@/lib/supabase-data";
 import WorkCard from "@/components/WorkCard";
 import SectionIcon from "@/components/SectionIcon";
 import ScrollReveal from "@/components/ScrollReveal";
+import NewsletterSignup from "@/components/NewsletterSignup";
 import { ArrowLeftIcon, SearchIcon } from "@/components/Icons";
 
 const QUOTES = [
@@ -310,6 +311,13 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
+        </ScrollReveal>
+      </section>
+
+      {/* ── NEWSLETTER ── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        <ScrollReveal>
+          <NewsletterSignup />
         </ScrollReveal>
       </section>
     </div>

@@ -23,7 +23,7 @@ export async function fetchPublishedArticles(): Promise<Article[]> {
   const supabase = getSupabaseServer();
   const { data } = await supabase
     .from("articles")
-    .select("*")
+    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at")
     .eq("status", "published")
     .order("published_at", { ascending: false });
   return (data || []).map(mapArticle);
@@ -33,7 +33,7 @@ export async function fetchArticlesBySection(section: Section): Promise<Article[
   const supabase = getSupabaseServer();
   const { data } = await supabase
     .from("articles")
-    .select("*")
+    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at")
     .eq("status", "published")
     .eq("section", section)
     .order("published_at", { ascending: false });
@@ -44,7 +44,7 @@ export async function fetchArticleById(id: string): Promise<Article | null> {
   const supabase = getSupabaseServer();
   const { data } = await supabase
     .from("articles")
-    .select("*")
+    .select("id, title, content, excerpt, section, author_id, author_name, read_time, status, published_at, created_at")
     .eq("id", id)
     .single();
   if (!data) return null;
@@ -52,15 +52,21 @@ export async function fetchArticleById(id: string): Promise<Article | null> {
 }
 
 export async function fetchRecentArticles(count: number): Promise<Article[]> {
-  const all = await fetchPublishedArticles();
-  return all.slice(0, count);
+  const supabase = getSupabaseServer();
+  const { data } = await supabase
+    .from("articles")
+    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at")
+    .eq("status", "published")
+    .order("published_at", { ascending: false })
+    .limit(count);
+  return (data || []).map(mapArticle);
 }
 
 export async function searchArticlesServer(query: string): Promise<Article[]> {
   const supabase = getSupabaseServer();
   const { data } = await supabase
     .from("articles")
-    .select("*")
+    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at")
     .eq("status", "published")
     .or(`title.ilike.%${query}%,content.ilike.%${query}%,excerpt.ilike.%${query}%`)
     .order("published_at", { ascending: false });
