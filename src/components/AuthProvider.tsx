@@ -97,8 +97,26 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signIn(email: string, password: string) {
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) return { error: translateAuthError(error.message) };
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        if (error.message.includes("Email not confirmed")) {
+          const res = await fetch("/api/auth/auto-confirm", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+          const result = await res.json();
+          if (result.success && result.access_token && result.refresh_token) {
+            await supabase.auth.setSession({
+              access_token: result.access_token,
+              refresh_token: result.refresh_token,
+            });
+            return {};
+          }
+          return { error: result.error || "فشل تأكيد البريد. يُرجى المحاولة مرة أخرى." };
+        }
+        return { error: translateAuthError(error.message) };
+      }
       return {};
     } catch {
       return { error: "حدث خطأ غير متوقع" };
@@ -116,6 +134,19 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       });
       if (error) return { error: translateAuthError(error.message) };
       if (data.user && !data.session) {
+        const res = await fetch("/api/auth/auto-confirm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        const result = await res.json();
+        if (result.success && result.access_token && result.refresh_token) {
+          await supabase.auth.setSession({
+            access_token: result.access_token,
+            refresh_token: result.refresh_token,
+          });
+          return {};
+        }
         return { error: "تم إنشاء الحساب بنجاح. يُرجى تسجيل الدخول." };
       }
       return {};
