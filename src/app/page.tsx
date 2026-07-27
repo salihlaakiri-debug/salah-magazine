@@ -18,7 +18,7 @@ const QUOTES = [
 
 export const metadata = {
   title: "السُّدفة | مجلة أدبية عربية",
-  description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت. قصاءد ونثر وتأملات وأحقيات.",
+  description: "حيث تولد الكلمة من الصمت، ويعود الصمت حاملاً المعنى. نفتح صفحاتٍ للغةٍ تتنفّس، وللأدبِ يهمس. شعرٌ ونثرٌ وتأملاتٌ من عوالمِ لا يسمعها إلا مَن يصغي.",
   openGraph: {
     title: "السُّدفة | مجلة أدبية عربية",
     description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت.",
@@ -80,10 +80,12 @@ export default async function HomePage() {
                 <span className="gradient-text">السُّدفة</span>
               </h1>
 
-              <p className="text-base sm:text-lg lg:text-xl text-text-muted max-w-lg mx-auto lg:mx-0 mb-8 sm:mb-10 animate-fade-in-up delay-200 opacity-0 leading-relaxed">
-                نكتب لنفهم، وصمتاً لنسمع.
+              <p className="text-base sm:text-lg lg:text-xl text-text-muted max-w-xl mx-auto lg:mx-0 mb-8 sm:mb-10 animate-fade-in-up delay-200 opacity-0 leading-relaxed">
+                حيث تولد الكلمة من الصمت، ويعود الصمت حاملاً المعنى.
                 <br className="hidden sm:block" />
-                قصائد وتأملات وحكايات من عوالم اللغة والصمت.
+                نفتح صفحاتٍ للغةٍ تتنفّس، وللأدبِ يهمس.
+                <br className="hidden sm:block" />
+                <span className="text-accent/70">شعرٌ ونثرٌ وتأملاتٌ من عوالمِ لا يسمعها إلا مَن يصغي.</span>
               </p>
 
               <div className="flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 animate-fade-in-up delay-300 opacity-0">
