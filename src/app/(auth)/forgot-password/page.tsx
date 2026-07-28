@@ -16,15 +16,34 @@ export default function ForgotPasswordPage() {
     setLoading(true);
     setError("");
 
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback`,
-    });
+    try {
+      const res = await fetch("/api/auth/custom-reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
-    if (resetError) {
-      setError(resetError.message);
-      setLoading(false);
-    } else {
+      const result = await res.json();
+
+      if (result.error) {
+        setError(result.error);
+        setLoading(false);
+        return;
+      }
+
       setSent(true);
+    } catch {
+      // Fallback to Supabase's built-in email
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      });
+
+      if (resetError) {
+        setError(resetError.message);
+      } else {
+        setSent(true);
+      }
+    } finally {
       setLoading(false);
     }
   };

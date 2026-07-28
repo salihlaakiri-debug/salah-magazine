@@ -29,12 +29,19 @@ export default function CallbackPage() {
     const hash = window.location.hash;
     if (hash) {
       // Supabase client handles hash automatically via onAuthStateChange
-      // Wait for session to be established
+      // AuthProvider will catch PASSWORD_RECOVERY and redirect to /reset-password
+      // Wait a short bit for the session to be established
       const checkSession = setInterval(async () => {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
           clearInterval(checkSession);
-          router.replace(next);
+          // If this is a recovery flow, let AuthProvider handle redirect to reset-password
+          const type = new URLSearchParams(hash.replace("#", "?")).get("type");
+          if (type === "recovery") {
+            router.replace("/reset-password");
+          } else {
+            router.replace(next);
+          }
         }
       }, 200);
 
