@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { SECTIONS } from "@/lib/types";
 import { useTheme } from "./ThemeProvider";
 import { useAuth } from "./AuthProvider";
-import { MenuIcon, XIcon, MoonIcon, SunIcon, PenIcon, SearchIcon, ShieldIcon, UserIcon, LogOutIcon, BookmarkIcon } from "./Icons";
+import { MenuIcon, XIcon, MoonIcon, SunIcon, PenIcon, SearchIcon, ShieldIcon, UserIcon, LogOutIcon, BookmarkIcon, SettingsIcon } from "./Icons";
 import NotificationsBell from "./NotificationsBell";
 import SudfehLogo from "./SudfehLogo";
 
@@ -77,6 +77,9 @@ export default function Header() {
                       <Link href="/bookmarks" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200">
                         <BookmarkIcon size={16} /> المحفوظات
                       </Link>
+                      <Link href="/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200">
+                        <SettingsIcon size={16} /> إعدادات الحساب
+                      </Link>
                       {isAdmin && (
                         <Link href="/admin/dashboard" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200 text-accent">
                           <ShieldIcon size={16} /> لوحة التحكم
@@ -122,7 +125,7 @@ export default function Header() {
                 { href: "/search", label: "بحث" },
                 { href: "/about", label: "من نحن" },
                 { href: "/submit", label: "إرسال عمل" },
-                ...(user ? [{ href: "/dashboard", label: "لوحة الكاتب" }, { href: "/bookmarks", label: "المحفوظات" }, { href: "/my-works", label: "أعمالي" }] : []),
+                ...(user ? [{ href: "/dashboard", label: "لوحة الكاتب" }, { href: "/bookmarks", label: "المحفوظات" }, { href: "/my-works", label: "أعمالي" }, { href: "/settings", label: "إعدادات الحساب" }] : []),
                 ...(!user ? [{ href: "/login", label: "دخول" }] : []),
               ].map((item, i) => (
                 <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)} className="px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-surface-hover transition-all duration-200 active:scale-[0.98] animate-fade-in-up" style={{ animationDelay: `${i * 30}ms` }}>

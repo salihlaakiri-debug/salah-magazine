@@ -33,6 +33,7 @@ export interface UserProfile {
   display_name: string;
   bio: string;
   avatar_url: string;
+  cover_url: string;
   role: "reader" | "writer" | "admin";
   created_at: string;
 }
