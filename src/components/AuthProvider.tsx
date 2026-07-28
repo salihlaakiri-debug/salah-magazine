@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import { UserProfile } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 interface AuthContextType {
   user: User | null;
@@ -11,7 +12,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
   signUp: (email: string, password: string, username: string) => Promise<{ error?: string }>;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: (redirectTo?: string) => Promise<void>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
   isWriter: boolean;
@@ -37,6 +38,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -48,13 +50,17 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile(session.user.id);
       } else {
         setProfile(null);
         setLoading(false);
+      }
+
+      if (event === "PASSWORD_RECOVERY") {
+        router.push("/reset-password");
       }
     });
 
@@ -81,7 +87,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   function translateAuthError(msg: string): string {
     const map: Record<string, string> = {
       "Invalid login credentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-      "Email not confirmed": "البريد الإلكتروني غير مُكَدّس",
+      "Email not confirmed": "البريد الإلكتروني غير مُؤَكَّد",
       "User already registered": "هذا البريد الإلكتروني مسجّل بالفعل",
       "Password should be at least 6 characters": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
       "Unable to validate email address: invalid format": "صيغة البريد الإلكتروني غير صحيحة",
@@ -147,10 +153,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function signInWithGoogle() {
+  async function signInWithGoogle(redirectTo?: string) {
+    const next = redirectTo || "/";
     await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/` },
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
     });
   }
 

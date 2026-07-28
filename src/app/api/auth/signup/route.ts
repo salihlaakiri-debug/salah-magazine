@@ -26,19 +26,6 @@ export async function POST(req: NextRequest) {
     });
 
     if (signUpError) {
-      const { data: signInData, error: signInError } = await admin.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (!signInError && signInData.session) {
-        return NextResponse.json({
-          success: true,
-          access_token: signInData.session.access_token,
-          refresh_token: signInData.session.refresh_token,
-        });
-      }
-
       return NextResponse.json({ error: "هذا البريد الإلكتروني مسجّل بالفعل. يُرجى تسجيل الدخول." }, { status: 409 });
     }
 

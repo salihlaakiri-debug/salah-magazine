@@ -33,16 +33,11 @@ export async function POST(req: NextRequest) {
     }
 
     let targetUser: { id: string } | null = null;
-    let page = 1;
-    const perPage = 50;
-
-    while (!targetUser) {
-      const { data, error: listError } = await admin.auth.admin.listUsers({ page, perPage });
+    for (let page = 1; page <= 5; page++) {
+      const { data, error: listError } = await admin.auth.admin.listUsers({ page, perPage: 100 });
       if (listError || !data?.users?.length) break;
-
       targetUser = data.users.find((u) => u.email === email) || null;
-      if (data.users.length < perPage) break;
-      page++;
+      if (targetUser || data.users.length < 100) break;
     }
 
     if (!targetUser) {

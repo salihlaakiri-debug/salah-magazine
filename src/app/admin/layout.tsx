@@ -78,7 +78,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             عرض الموقع
           </Link>
           <button
-            onClick={() => { signOut(); router.push("/"); }}
+            onClick={async () => { await signOut(); router.push("/"); }}
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-500/10 transition-all w-full"
           >
             <LogOutIcon size={18} />
@@ -107,7 +107,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             );
           })}
           <button
-            onClick={() => { signOut(); router.push("/"); }}
+            onClick={async () => { await signOut(); router.push("/"); }}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium text-red-500 bg-red-500/10 whitespace-nowrap"
           >
             خروج
