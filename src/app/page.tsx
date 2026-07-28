@@ -157,8 +157,8 @@ export default async function HomePage() {
       </section>
 
       {/* ── MARQUEE ── */}
-      <div className="border-y border-border/40 bg-surface/40 overflow-hidden py-4 sm:py-5 marquee-edge">
-        <div className="flex whitespace-nowrap marquee-track">
+      <div className="border-y border-border/40 bg-surface/40 overflow-hidden py-4 sm:py-5 marquee-edge" role="marquee" aria-label="اقتباسات أدبية">
+        <div className="flex whitespace-nowrap marquee-track" aria-hidden="true">
           {[...QUOTES, ...QUOTES].map((q, i) => (
             <span key={i} className="mx-6 sm:mx-8 text-xs sm:text-sm text-text-muted/50 italic font-[var(--font-arabic)]">
               &laquo; {q} &raquo;
@@ -211,12 +211,14 @@ export default async function HomePage() {
               </div>
             </ScrollReveal>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-5" role="list" aria-label="أقسام المجلة">
               {SECTIONS.map((s, i) => (
                 <ScrollReveal key={s.slug} delay={i * 80}>
                   <Link
                     href={`/section/${s.slug}`}
                     className="group relative bg-surface rounded-xl sm:rounded-2xl border border-border/50 p-4 sm:p-6 card-hover text-center overflow-hidden block"
+                    role="listitem"
+                    aria-label={s.name}
                   >
                     <div className="absolute inset-0 bg-gradient-to-b from-accent/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <div className="absolute inset-0 bg-accent/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl" />

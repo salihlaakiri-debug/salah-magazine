@@ -54,11 +54,7 @@ export default function NotificationsBell() {
 
   const markAllRead = async () => {
     if (!user) return;
-    await supabase
-      .from("notifications")
-      .update({ read: true })
-      .eq("user_id", user.id)
-      .eq("read", false);
+    await supabase.rpc("mark_notifications_read", { p_user_id: user.id });
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     setUnread(0);
   };

@@ -3,28 +3,38 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { SECTIONS } from "@/lib/types";
-import { BarChartIcon, FileTextIcon, MessageIcon, TrendingUpIcon, ClockIcon, UsersIcon } from "@/components/Icons";
+import { BarChartIcon, FileTextIcon, MessageIcon, TrendingUpIcon, ClockIcon, UsersIcon, MailIcon, EyeIcon, TrendingIcon } from "@/components/Icons";
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState({ articles: 0, comments: 0, users: 0, pending: 0 });
+  const [stats, setStats] = useState({ articles: 0, comments: 0, users: 0, pending: 0, subscribers: 0, totalViews: 0 });
   const [recentArticles, setRecentArticles] = useState<any[]>([]);
   const [sectionCounts, setSectionCounts] = useState<Record<string, number>>({});
+  const [recentComments, setRecentComments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
-      const [{ count: articles }, { count: comments }, { count: users }, { count: pending }] = await Promise.all([
+      const [{ count: articles }, { count: comments }, { count: users }, { count: pending }, { count: subscribers }] = await Promise.all([
         supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "published"),
         supabase.from("comments").select("*", { count: "exact", head: true }),
         supabase.from("profiles").select("*", { count: "exact", head: true }),
         supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("subscribers").select("*", { count: "exact", head: true }).eq("confirmed", true).eq("unsubscribed", false),
       ]);
+
+      let totalViews = 0;
+      try {
+        const { count: views } = await supabase.from("article_views").select("*", { count: "exact", head: true });
+        totalViews = views || 0;
+      } catch {}
 
       setStats({
         articles: articles || 0,
         comments: comments || 0,
         users: users || 0,
         pending: pending || 0,
+        subscribers: subscribers || 0,
+        totalViews,
       });
 
       const { data: recent } = await supabase
@@ -33,6 +43,13 @@ export default function DashboardPage() {
         .order("created_at", { ascending: false })
         .limit(6);
       setRecentArticles(recent || []);
+
+      const { data: recentC } = await supabase
+        .from("comments")
+        .select("id, article_id, author_name, content, created_at")
+        .order("created_at", { ascending: false })
+        .limit(5);
+      setRecentComments(recentC || []);
 
       const counts: Record<string, number> = {};
       for (const s of SECTIONS) {
@@ -54,6 +71,8 @@ export default function DashboardPage() {
     { label: "قيد المراجعة", value: stats.pending, icon: ClockIcon, color: "from-amber-500 to-orange-600" },
     { label: "التعليقات", value: stats.comments, icon: MessageIcon, color: "from-emerald-500 to-teal-600" },
     { label: "المستخدمون", value: stats.users, icon: UsersIcon, color: "from-purple-500 to-violet-600" },
+    { label: "المشتركون", value: stats.subscribers, icon: MailIcon, color: "from-rose-500 to-pink-600" },
+    { label: "مشاهدات", value: stats.totalViews, icon: EyeIcon, color: "from-cyan-500 to-blue-600" },
   ];
 
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>;
@@ -131,6 +150,38 @@ export default function DashboardPage() {
               );
             })}
           </div>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <div className="bg-surface rounded-2xl border border-border/50 p-6">
+          <h3 className="font-bold font-[var(--font-heading)] mb-4 flex items-center gap-2">
+            <MessageIcon size={18} className="text-accent" />
+            آخر التعليقات
+          </h3>
+          {recentComments.length === 0 ? (
+            <p className="text-sm text-text-muted">لا توجد تعليقات بعد.</p>
+          ) : (
+            <div className="space-y-3">
+              {recentComments.map((c) => (
+                <div key={c.id} className="flex items-start gap-3 p-3 rounded-xl hover:bg-surface-hover transition-colors">
+                  <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-bold shrink-0">
+                    {c.author_name?.[0] || "؟"}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="text-xs font-bold">{c.author_name}</span>
+                      <span className="text-[10px] text-text-muted">مقال #{c.article_id.slice(0, 8)}</span>
+                    </div>
+                    <p className="text-xs text-foreground/80 line-clamp-2">{c.content}</p>
+                  </div>
+                  <span className="text-[10px] text-text-muted shrink-0">
+                    {new Date(c.created_at).toLocaleDateString("ar-SA")}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

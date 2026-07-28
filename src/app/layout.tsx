@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import ThemeProvider from "@/components/ThemeProvider";
 import AuthProvider from "@/components/AuthProvider";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import { WebsiteJsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: {
@@ -12,11 +13,16 @@ export const metadata: Metadata = {
     template: "%s | مجلة السُّدفة",
   },
   description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
-  keywords: ["أدب عربي", "شعر", "قصة", "نثر", "تأملات", "مجلة أدبية", "السُّدفة"],
+  keywords: ["أدب عربي", "شعر", "قصة", "نثر", "تأملات", "مجلة أدبية", "السُّدفة", "أدب", "كتابة"],
   authors: [{ name: "السُّدفة" }],
+  creator: "السُّدفة",
+  publisher: "السُّدفة",
+  formatDetection: { telephone: false, email: false, address: false },
   icons: {
     icon: "/favicon.svg",
+    apple: "/favicon.svg",
   },
+  manifest: "/manifest.json",
   openGraph: {
     type: "website",
     locale: "ar_SA",
@@ -30,6 +36,11 @@ export const metadata: Metadata = {
     title: "السُّدفة | مجلة أدبية عربية",
     description: "مجلة أدبية عربية تنشر القصائد والتأملات والحكايات من عوالم اللغة والصمت",
     images: ["/opengraph-image"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-video-preview": -1, "max-image-preview": "large", "max-snippet": -1 },
   },
   alternates: {
     types: {
@@ -46,12 +57,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning className="h-full">
+      <head>
+        <WebsiteJsonLd />
+      </head>
       <body className="min-h-full flex flex-col">
         <ServiceWorkerRegister />
         <ThemeProvider>
           <AuthProvider>
+            <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:right-4 focus:z-[999] focus:px-4 focus:py-2 focus:rounded-xl focus:bg-accent focus:text-white focus:outline-none focus:ring-2 focus:ring-accent/50">
+              الانتقال إلى المحتوى الرئيسي
+            </a>
             <Header />
-            <main className="flex-1">{children}</main>
+            <main id="main-content" className="flex-1" role="main">
+              {children}
+            </main>
             <Footer />
           </AuthProvider>
         </ThemeProvider>

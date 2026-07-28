@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import { UserProfile, Article } from "@/lib/types";
+import { UserProfile, Article, SECTIONS } from "@/lib/types";
 import WorkCard from "@/components/WorkCard";
 import FollowButton from "@/components/FollowButton";
 import { UserIcon, ClockIcon, FileTextIcon, HeartIcon, UsersIcon } from "@/components/Icons";
@@ -71,6 +71,12 @@ export default function ProfilePage() {
     ? (profile.display_name[2] || profile.display_name[0])
     : (profile.display_name?.[0] || profile.username[0]);
 
+  const sectionBreakdown = SECTIONS.map(s => ({
+    name: s.name,
+    slug: s.slug,
+    count: articles.filter(a => a.section === s.name).length,
+  })).filter(s => s.count > 0).sort((a, b) => b.count - a.count);
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
       <div className="bg-surface rounded-3xl border border-border/50 p-8 sm:p-10 mb-10">
@@ -101,6 +107,18 @@ export default function ProfilePage() {
                 <span><strong className="text-foreground">{stats.followers}</strong> متابع</span>
               </div>
             </div>
+
+            {/* Section breakdown */}
+            {sectionBreakdown.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-4">
+                {sectionBreakdown.map(s => (
+                  <Link key={s.slug} href={`/section/${s.slug}`} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/5 border border-accent/10 text-xs font-medium text-accent hover:bg-accent/10 transition-all">
+                    {s.name}
+                    <span className="w-5 h-5 rounded-full bg-accent/15 flex items-center justify-center text-[10px] font-bold">{s.count}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
 
             <div className="flex items-center gap-1.5 mt-3 text-xs text-text-muted">
               <ClockIcon size={12} />

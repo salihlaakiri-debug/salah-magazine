@@ -6,7 +6,7 @@ import { MailIcon, RssIcon } from "./Icons";
 
 export default function Footer() {
   return (
-    <footer className="relative bg-foreground text-background mt-auto overflow-hidden">
+    <footer className="relative bg-foreground text-background mt-auto overflow-hidden" role="contentinfo">
       {/* Decorative top gradient */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-l from-transparent via-accent-light/30 to-transparent" />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-32 bg-accent/10 blur-3xl rounded-full pointer-events-none" />
@@ -45,8 +45,8 @@ export default function Footer() {
 
             {/* Sections */}
             <div className="lg:col-span-3">
-              <h4 className="font-bold mb-4 text-sm tracking-wider opacity-80">الأقسام</h4>
-              <ul className="space-y-2.5">
+              <h4 className="font-bold mb-4 text-sm tracking-wider opacity-80" id="footer-sections">الأقسام</h4>
+              <ul className="space-y-2.5" aria-labelledby="footer-sections">
                 {SECTIONS.map((s) => (
                   <li key={s.slug}>
                     <Link
@@ -62,8 +62,8 @@ export default function Footer() {
 
             {/* Links */}
             <div className="lg:col-span-2">
-              <h4 className="font-bold mb-4 text-sm tracking-wider opacity-80">روابط</h4>
-              <ul className="space-y-2.5">
+              <h4 className="font-bold mb-4 text-sm tracking-wider opacity-80" id="footer-links">روابط</h4>
+              <ul className="space-y-2.5" aria-labelledby="footer-links">
                 {[
                   { href: "/archive", label: "الأرشيف" },
                   { href: "/search", label: "بحث" },
@@ -84,8 +84,8 @@ export default function Footer() {
 
             {/* Info */}
             <div className="lg:col-span-2">
-              <h4 className="font-bold mb-4 text-sm tracking-wider opacity-80">معلومات</h4>
-              <ul className="space-y-2.5">
+              <h4 className="font-bold mb-4 text-sm tracking-wider opacity-80" id="footer-info">معلومات</h4>
+              <ul className="space-y-2.5" aria-labelledby="footer-info">
                 {[
                   { href: "/privacy", label: "سياسة الخصوصية" },
                   { href: "/terms", label: "شروط الاستخدام" },

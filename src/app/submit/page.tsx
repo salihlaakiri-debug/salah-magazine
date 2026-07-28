@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/lib/supabase";
 import { SECTIONS, Section } from "@/lib/types";
 import RichEditor from "@/components/RichEditor";
-import { PenIcon, CheckIcon } from "@/components/Icons";
+import { TagInput } from "@/components/TagBadge";
+import { PenIcon, CheckIcon, SaveIcon } from "@/components/Icons";
 
 export default function SubmitPage() {
   const { user, profile, loading } = useAuth();
@@ -21,10 +22,62 @@ export default function SubmitPage() {
   const [excerpt, setExcerpt] = useState("");
   const [section, setSection] = useState<Section>("نثر");
   const [readTime, setReadTime] = useState("3 دقائق");
+  const [tags, setTags] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [loadingArticle, setLoadingArticle] = useState(false);
+  const [autoSaved, setAutoSaved] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Word/character count
+  const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0;
+  const charCount = content.length;
+
+  // Auto-save every 30 seconds
+  useEffect(() => {
+    if (!user || !title.trim() || !content.trim()) return;
+
+    autoSaveTimer.current = setTimeout(async () => {
+      const draftKey = isEditing ? `draft-${editId}` : "draft-new";
+      const draft = { title, content, excerpt, section, readTime, tags, savedAt: new Date().toISOString() };
+      localStorage.setItem(draftKey, JSON.stringify(draft));
+      setAutoSaved(true);
+      setLastSaved(new Date());
+      setTimeout(() => setAutoSaved(false), 2000);
+    }, 30000);
+
+    return () => { if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current); };
+  }, [title, content, excerpt, section, readTime, tags, user, isEditing, editId]);
+
+  // Load draft on mount
+  useEffect(() => {
+    if (!user) return;
+    const draftKey = isEditing ? `draft-${editId}` : "draft-new";
+    const saved = localStorage.getItem(draftKey);
+    if (saved && !title) {
+      try {
+        const draft = JSON.parse(saved);
+        if (draft.title) setTitle(draft.title);
+        if (draft.content) setContent(draft.content);
+        if (draft.excerpt) setExcerpt(draft.excerpt);
+        if (draft.section) setSection(draft.section);
+        if (draft.readTime) setReadTime(draft.readTime);
+        if (draft.tags) setTags(draft.tags);
+      } catch {}
+    }
+  }, [user, isEditing, editId]);
+
+  // Manual save
+  const saveDraft = useCallback(() => {
+    const draftKey = isEditing ? `draft-${editId}` : "draft-new";
+    const draft = { title, content, excerpt, section, readTime, tags, savedAt: new Date().toISOString() };
+    localStorage.setItem(draftKey, JSON.stringify(draft));
+    setAutoSaved(true);
+    setLastSaved(new Date());
+    setTimeout(() => setAutoSaved(false), 2000);
+  }, [title, content, excerpt, section, readTime, tags, isEditing, editId]);
 
   useEffect(() => {
     if (editId && user) {
@@ -167,18 +220,43 @@ export default function SubmitPage() {
             <label className="text-xs font-medium text-text-muted block mb-1.5">المقتطف (اختياري)</label>
             <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 resize-none" placeholder="جملة قصيرة تلخص عملك..." />
           </div>
+
+          <div>
+            <label className="text-xs font-medium text-text-muted block mb-1.5">الوسوم (حد أقصى 5)</label>
+            <TagInput tags={tags} onChange={setTags} />
+          </div>
         </div>
 
         <div>
-          <label className="text-xs font-medium text-text-muted block mb-2">المحتوى *</label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-xs font-medium text-text-muted">المحتوى *</label>
+            <div className="flex items-center gap-3 text-[11px] text-text-muted">
+              {lastSaved && (
+                <span className="flex items-center gap-1">
+                  <SaveIcon size={10} />
+                  آخر حفظ: {lastSaved.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" })}
+                </span>
+              )}
+              <span>{wordCount} كلمة</span>
+              <span>{charCount} حرف</span>
+            </div>
+          </div>
           <RichEditor value={content} onChange={setContent} placeholder="اكتب محتواك هنا... يمكنك استخدام **غامق** و *مائل* و ## عنوان" />
         </div>
 
         <div className="flex gap-3 pt-2">
+          <button type="button" onClick={saveDraft} className="px-5 py-3.5 rounded-xl border border-border bg-surface font-medium text-sm hover:bg-surface-hover transition-all flex items-center gap-2">
+            <SaveIcon size={14} />
+            حفظ مسودة
+          </button>
           <button type="submit" disabled={submitting} className="flex-1 py-3.5 rounded-xl bg-accent text-white font-medium hover:bg-accent-dark transition-all shadow-lg shadow-accent/20 flex items-center justify-center gap-2 disabled:opacity-50">
             {submitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><PenIcon size={16} /> {isEditing ? "حفظ التعديلات" : "إرسال للمراجعة"}</>}
           </button>
         </div>
+
+        {autoSaved && (
+          <p className="text-center text-xs text-accent animate-fade-in">تم حفظ المسودة تلقائياً</p>
+        )}
       </form>
     </div>
   );

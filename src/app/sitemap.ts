@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { fetchPublishedArticles } from "@/lib/supabase-data";
 import { SECTIONS } from "@/lib/types";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://salah-magazine.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://al-sudfeh.vercel.app";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const articles = await fetchPublishedArticles();

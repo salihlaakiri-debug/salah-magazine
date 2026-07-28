@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import { Article, SECTIONS } from "@/lib/types";
+import { Article, SECTIONS, Tag } from "@/lib/types";
 import { PlusIcon, EditIcon, TrashIcon, EyeIcon, XIcon, CheckIcon } from "@/components/Icons";
+import { TagInput } from "@/components/TagBadge";
 import Link from "next/link";
 
 export default function ArticlesPage() {
@@ -12,6 +13,8 @@ export default function ArticlesPage() {
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Article | null>(null);
   const [form, setForm] = useState({ title: "", content: "", excerpt: "", section: "نثر" as Article["section"], date: new Date().toISOString().split("T")[0], author: "السُّدفة", readTime: "5 دقائق" });
+  const [formTags, setFormTags] = useState<string[]>([]);
+  const [articleTagsMap, setArticleTagsMap] = useState<Record<string, Tag[]>>({});
   const [filter, setFilter] = useState("الكل");
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
@@ -26,6 +29,20 @@ export default function ArticlesPage() {
       .select("*")
       .order("created_at", { ascending: false });
     setArticlesList((data || []) as Article[]);
+
+    const ids = (data || []).map((a: any) => a.id);
+    if (ids.length > 0) {
+      const { data: at } = await supabase
+        .from("article_tags")
+        .select("article_id, tags(id, name, slug)")
+        .in("article_id", ids);
+      const map: Record<string, Tag[]> = {};
+      (at || []).forEach((row: any) => {
+        if (!map[row.article_id]) map[row.article_id] = [];
+        map[row.article_id].push(row.tags);
+      });
+      setArticleTagsMap(map);
+    }
     setLoading(false);
   }
 
@@ -34,14 +51,35 @@ export default function ArticlesPage() {
   const openNew = () => {
     setEditing(null);
     setForm({ title: "", content: "", excerpt: "", section: "نثر", date: new Date().toISOString().split("T")[0], author: "السُّدفة", readTime: "5 دقائق" });
+    setFormTags([]);
     setShowModal(true);
   };
 
   const openEdit = (a: Article) => {
     setEditing(a);
     setForm({ title: a.title, content: a.content, excerpt: a.excerpt, section: a.section, date: a.date || a.created_at?.split("T")[0] || "", author: a.author_name || a.author, readTime: a.readTime || "5 دقائق" });
+    setFormTags((articleTagsMap[a.id] || []).map((t) => t.name));
     setShowModal(true);
   };
+
+  async function saveTags(articleId: string, tagNames: string[]) {
+    await supabase.from("article_tags").delete().eq("article_id", articleId);
+    if (tagNames.length === 0) return;
+    for (const name of tagNames) {
+      const slug = name.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^\p{L}\p{N}-]/gu, "");
+      const { data: tag } = await supabase
+        .from("tags")
+        .upsert({ name: name.trim(), slug }, { onConflict: "name" })
+        .select("id")
+        .single();
+      if (tag) {
+        await supabase.from("article_tags").upsert(
+          { article_id: articleId, tag_id: tag.id },
+          { onConflict: "article_id,tag_id" }
+        );
+      }
+    }
+  }
 
   async function save() {
     if (!form.title.trim() || !form.content.trim()) return;
@@ -59,9 +97,12 @@ export default function ArticlesPage() {
           updated_at: new Date().toISOString(),
         })
         .eq("id", editing.id);
-      if (!error) await fetchArticles();
+      if (!error) {
+        await saveTags(editing.id, formTags);
+        await fetchArticles();
+      }
     } else {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("articles")
         .insert({
           title: form.title,
@@ -72,13 +113,19 @@ export default function ArticlesPage() {
           read_time: form.readTime,
           status: "published",
           published_at: new Date().toISOString(),
-        });
-      if (!error) await fetchArticles();
+        })
+        .select("id")
+        .single();
+      if (!error && data) {
+        await saveTags(data.id, formTags);
+        await fetchArticles();
+      }
     }
     setShowModal(false);
   }
 
   async function deleteArticle(id: string) {
+    await supabase.from("article_tags").delete().eq("article_id", id);
     await supabase.from("articles").delete().eq("id", id);
     setArticlesList((prev) => prev.filter((a) => a.id !== id));
     setDeleteConfirm(null);
@@ -119,12 +166,19 @@ export default function ArticlesPage() {
         {filtered.map((a) => (
           <div key={a.id} className="bg-surface rounded-2xl border border-border/50 p-5 flex items-center gap-4 card-hover">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-accent/10 text-accent">{a.section}</span>
                 <span className="text-[11px] text-text-muted">{a.date}</span>
               </div>
               <h3 className="font-bold text-sm truncate">{a.title}</h3>
               <p className="text-xs text-text-muted truncate mt-0.5">{a.excerpt}</p>
+              {articleTagsMap[a.id] && articleTagsMap[a.id].length > 0 && (
+                <div className="flex gap-1.5 mt-2 flex-wrap">
+                  {articleTagsMap[a.id].map((t) => (
+                    <span key={t.id} className="text-[10px] px-2 py-0.5 rounded-full bg-accent/5 text-accent/70">#{t.name}</span>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-1.5 shrink-0">
               <Link
@@ -216,6 +270,10 @@ export default function ArticlesPage() {
                     className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30"
                   />
                 </div>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-text-muted block mb-1.5">الوسوم</label>
+                <TagInput tags={formTags} onChange={setFormTags} />
               </div>
               <div>
                 <label className="text-xs font-medium text-text-muted block mb-1.5">المقتطف</label>

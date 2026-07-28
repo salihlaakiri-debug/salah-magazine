@@ -25,15 +25,15 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 glass-strong border-b border-border/40">
+    <header className="sticky top-0 z-50 glass-strong border-b border-border/40" role="banner">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-18">
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center gap-3 group" aria-label="السُّدفة - الصفحة الرئيسية">
             <SudfehLogo size={38} className="sm:h-10 h-9" showText={false} />
             <span className="hidden sm:block text-xl font-bold font-[var(--font-heading)] gradient-text leading-none">السُّدفة</span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-0.5">
+          <nav className="hidden lg:flex items-center gap-0.5" aria-label="القائمة الرئيسية">
             <NavLink href="/">الرئيسية</NavLink>
             {SECTIONS.map((s) => (
               <NavLink key={s.slug} href={`/section/${encodeURIComponent(s.slug)}`}>{s.name}</NavLink>
@@ -114,7 +114,7 @@ export default function Header() {
 
         {menuOpen && (
           <div className="lg:hidden pb-4 border-t border-border/40 mt-2 pt-3 animate-blur-in">
-            <nav className="flex flex-col gap-0.5">
+            <nav className="flex flex-col gap-0.5" aria-label="القائمة المحمولة">
               {[
                 { href: "/", label: "الرئيسية" },
                 ...SECTIONS.map((s) => ({ href: `/section/${encodeURIComponent(s.slug)}`, label: s.name })),

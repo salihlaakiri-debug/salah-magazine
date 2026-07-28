@@ -12,6 +12,8 @@ export interface Article {
   status?: "draft" | "pending" | "published" | "rejected";
   published_at?: string;
   created_at?: string;
+  tags?: Tag[];
+  view_count?: number;
 }
 
 export type Section = "شعر" | "قصة" | "نثر" | "مقالات" | "تأملات";
@@ -40,6 +42,22 @@ export interface SectionInfo {
   name: Section;
   description: string;
   color: string;
+}
+
+export interface Tag {
+  id: string;
+  name: string;
+  slug: string;
+  article_count: number;
+  created_at?: string;
+}
+
+export interface Subscriber {
+  id: string;
+  email: string;
+  name?: string;
+  confirmed: boolean;
+  created_at: string;
 }
 
 export const SECTIONS: SectionInfo[] = [

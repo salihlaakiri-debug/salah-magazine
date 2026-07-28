@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { supabase } from "@/lib/supabase";
 import { ArrowLeftIcon } from "./Icons";
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "duplicate" | "error">("idle");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -14,19 +15,29 @@ export default function NewsletterSignup() {
 
     setStatus("loading");
 
-    const { error } = await supabase
-      .from("newsletter_subscribers")
-      .insert({ email: email.trim(), subscribed_at: new Date().toISOString() });
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), name: name.trim() || undefined }),
+      });
+      const data = await res.json();
 
-    if (error) {
-      if (error.code === "23505") {
+      if (res.ok) {
+        setStatus("success");
+        setMessage(data.message);
+        setEmail("");
+        setName("");
+      } else if (res.status === 409) {
         setStatus("duplicate");
+        setMessage(data.error || "أنت مشترك بالفعل");
       } else {
         setStatus("error");
+        setMessage(data.error || "حدث خطأ");
       }
-    } else {
-      setStatus("success");
-      setEmail("");
+    } catch {
+      setStatus("error");
+      setMessage("حدث خطأ في الاتصال");
     }
   };
 
@@ -53,49 +64,54 @@ export default function NewsletterSignup() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <p className="text-foreground font-medium">تم الاشتراك بنجاح!</p>
-              <p className="text-text-muted text-sm">شكراً لك، ستتصلك الرسالة قريباً</p>
+              <p className="text-foreground font-medium">{message || "تم الاشتراك بنجاح!"}</p>
+              <p className="text-text-muted text-sm">شكراً لك</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
               <input
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (status !== "idle") setStatus("idle");
-                }}
-                placeholder="بريدك الإلكتروني"
-                required
-                dir="ltr"
-                className="input-focus flex-1 px-5 py-3.5 rounded-xl bg-white/80 dark:bg-white/5 border border-border text-foreground placeholder:text-text-muted text-sm outline-none transition-all"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="اسمك (اختياري)"
+                className="input-focus px-5 py-3 rounded-xl bg-white/80 dark:bg-white/5 border border-border text-foreground placeholder:text-text-muted text-sm outline-none transition-all"
               />
-              <button
-                type="submit"
-                disabled={status === "loading"}
-                className="btn-ripple flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-accent text-white font-medium text-sm hover:bg-accent-dark transition-all shadow-lg shadow-accent/25 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
-              >
-                {status === "loading" ? (
-                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <ArrowLeftIcon size={16} />
-                    <span>اشترك</span>
-                  </>
-                )}
-              </button>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (status !== "idle") setStatus("idle");
+                  }}
+                  placeholder="بريدك الإلكتروني"
+                  required
+                  dir="ltr"
+                  className="input-focus flex-1 px-5 py-3.5 rounded-xl bg-white/80 dark:bg-white/5 border border-border text-foreground placeholder:text-text-muted text-sm outline-none transition-all"
+                />
+                <button
+                  type="submit"
+                  disabled={status === "loading"}
+                  className="btn-ripple flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-accent text-white font-medium text-sm hover:bg-accent-dark transition-all shadow-lg shadow-accent/25 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+                >
+                  {status === "loading" ? (
+                    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <ArrowLeftIcon size={16} />
+                      <span>اشترك</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </form>
           )}
 
           {status === "duplicate" && (
-            <p className="mt-4 text-sm text-amber-600 dark:text-amber-400 animate-fade-in">
-              هذا البريد مشترك بالفعل
-            </p>
+            <p className="mt-4 text-sm text-amber-600 dark:text-amber-400 animate-fade-in">{message}</p>
           )}
           {status === "error" && (
-            <p className="mt-4 text-sm text-red-600 dark:text-red-400 animate-fade-in">
-              حدث خطأ، يرجى المحاولة مرة أخرى
-            </p>
+            <p className="mt-4 text-sm text-red-600 dark:text-red-400 animate-fade-in">{message}</p>
           )}
         </div>
       </div>

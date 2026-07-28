@@ -19,24 +19,37 @@ function mapArticle(row: any): Article {
   };
 }
 
-export async function fetchPublishedArticles(): Promise<Article[]> {
+export async function fetchPublishedArticles(limit?: number, offset?: number): Promise<Article[]> {
   const supabase = getSupabaseServer();
-  const { data } = await supabase
+  let query = supabase
     .from("articles")
     .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at")
     .eq("status", "published")
     .order("published_at", { ascending: false });
+  if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
+  const { data } = await query;
   return (data || []).map(mapArticle);
 }
 
-export async function fetchArticlesBySection(section: Section): Promise<Article[]> {
+export async function fetchPublishedArticlesCount(): Promise<number> {
   const supabase = getSupabaseServer();
-  const { data } = await supabase
+  const { count } = await supabase
+    .from("articles")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "published");
+  return count || 0;
+}
+
+export async function fetchArticlesBySection(section: Section, limit?: number, offset?: number): Promise<Article[]> {
+  const supabase = getSupabaseServer();
+  let query = supabase
     .from("articles")
     .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at")
     .eq("status", "published")
     .eq("section", section)
     .order("published_at", { ascending: false });
+  if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
+  const { data } = await query;
   return (data || []).map(mapArticle);
 }
 

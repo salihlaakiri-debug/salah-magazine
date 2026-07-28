@@ -1,0 +1,21 @@
+{
+  "name": "السُّدفة | مجلة أدبية عربية",
+  "short_name": "السُّدفة",
+  "description": "مجلة أدبية عربية مستقلة. شعر وقصة ونثر وتأملات ومقالات.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f6fa",
+  "theme_color": "#2d3561",
+  "orientation": "portrait-primary",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["books", "education", "news"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

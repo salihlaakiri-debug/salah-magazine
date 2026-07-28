@@ -2,16 +2,19 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { SECTIONS } from "@/lib/types";
 import { fetchPublishedArticles, fetchArticleById } from "@/lib/supabase-data";
-import Comments from "@/components/Comments";
 import ReadingProgress from "@/components/ReadingProgress";
-import ReadingMode from "@/components/ReadingMode";
-import TableOfContents from "@/components/TableOfContents";
-import ShareButtons from "@/components/ShareButtons";
-import ShareCard from "@/components/ShareCard";
 import LikeButton from "@/components/LikeButton";
 import BookmarkButton from "@/components/BookmarkButton";
 import MarkdownContent from "@/components/MarkdownContent";
+import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
 import { ArrowLeftIcon } from "@/components/Icons";
+import {
+  ClientComments,
+  ClientReadingMode,
+  ClientTableOfContents,
+  ClientShareButtons,
+  ClientShareCard,
+} from "@/components/ClientComponents";
 
 export async function generateStaticParams() {
   const articles = await fetchPublishedArticles();
@@ -74,7 +77,22 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
   return (
     <>
       <ReadingProgress />
-      <ReadingMode />
+      <ClientReadingMode />
+      <ArticleJsonLd
+        title={article.title}
+        excerpt={article.excerpt}
+        author={article.author}
+        datePublished={article.date}
+        section={article.section}
+        id={article.id}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "الرئيسية", url: "/" },
+          { name: article.section, url: `/section/${sectionSlug}` },
+          { name: article.title, url: `/work/${article.id}` },
+        ]}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="max-w-3xl mx-auto lg:ml-auto lg:mr-0">
         <nav className="text-sm text-text-muted mb-10 flex items-center gap-1 flex-wrap">
@@ -113,14 +131,14 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
               <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                 <LikeButton articleId={article.id} />
                 <BookmarkButton articleId={article.id} />
-                <ShareCard
+                <ClientShareCard
                   title={article.title}
                   excerpt={article.excerpt}
                   section={article.section}
                   author={article.author}
                   articleId={article.id}
                 />
-                <ShareButtons title={article.title} url={`${process.env.NEXT_PUBLIC_SITE_URL || "https://al-sudfeh.vercel.app"}/work/${article.id}`} />
+                <ClientShareButtons title={article.title} url={`${process.env.NEXT_PUBLIC_SITE_URL || "https://al-sudfeh.vercel.app"}/work/${article.id}`} />
               </div>
             </div>
           </header>
@@ -130,12 +148,12 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
           </div>
         </article>
 
-        <Comments articleId={article.id} />
+        <ClientComments articleId={article.id} />
         </div>
 
         {/* Desktop TOC sidebar */}
         <div className="hidden lg:block">
-          <TableOfContents content={article.content} />
+          <ClientTableOfContents content={article.content} />
         </div>
       </div>
 
