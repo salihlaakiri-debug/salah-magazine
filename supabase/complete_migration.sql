@@ -1,5 +1,5 @@
 -- =============================================
--- Complete Migration: 002 → 011
+-- Complete Migration: 002 → 011 (safe version)
 -- Run ONCE in Supabase SQL Editor
 -- =============================================
 
@@ -108,15 +108,21 @@ DROP POLICY IF EXISTS "article_views_insert" ON article_views; CREATE POLICY "ar
 DROP POLICY IF EXISTS "article_views_select" ON article_views; CREATE POLICY "article_views_select" ON article_views FOR SELECT USING (true);
 
 -- =============================================
--- 003: Notifications, Follows, Likes, Bookmarks
+-- Follows table (already exists from 002_follows_notifications)
+-- Ensure 'author_id' is renamed to 'following_id' for consistency
 -- =============================================
 
-CREATE TABLE IF NOT EXISTS follows (
-  follower_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  following_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  created_at timestamptz DEFAULT now(),
-  PRIMARY KEY (follower_id, following_id)
-);
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM pg_tables WHERE tablename = 'follows') THEN
+    IF EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'follows' AND column_name = 'author_id') THEN
+      ALTER TABLE follows RENAME COLUMN author_id TO following_id;
+    END IF;
+  END IF;
+END $$;
+
+-- Ensure column exists
+ALTER TABLE follows ADD COLUMN IF NOT EXISTS following_id uuid REFERENCES auth.users(id) ON DELETE CASCADE;
 
 ALTER TABLE follows ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "follows_select" ON follows; CREATE POLICY "follows_select" ON follows FOR SELECT USING (true);
@@ -124,6 +130,10 @@ DROP POLICY IF EXISTS "follows_insert" ON follows; CREATE POLICY "follows_insert
 DROP POLICY IF EXISTS "follows_delete" ON follows; CREATE POLICY "follows_delete" ON follows FOR DELETE USING (auth.uid() = follower_id);
 CREATE INDEX IF NOT EXISTS idx_follows_following ON follows(following_id);
 CREATE INDEX IF NOT EXISTS idx_follows_follower ON follows(follower_id);
+
+-- =============================================
+-- Likes table
+-- =============================================
 
 CREATE TABLE IF NOT EXISTS likes (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -140,6 +150,10 @@ DROP POLICY IF EXISTS "likes_delete" ON likes; CREATE POLICY "likes_delete" ON l
 CREATE INDEX IF NOT EXISTS idx_likes_article ON likes(article_id);
 CREATE INDEX IF NOT EXISTS idx_likes_user ON likes(user_id);
 
+-- =============================================
+-- Bookmarks table
+-- =============================================
+
 CREATE TABLE IF NOT EXISTS bookmarks (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -155,15 +169,23 @@ DROP POLICY IF EXISTS "bookmarks_delete" ON bookmarks; CREATE POLICY "bookmarks_
 CREATE INDEX IF NOT EXISTS idx_bookmarks_article ON bookmarks(article_id);
 CREATE INDEX IF NOT EXISTS idx_bookmarks_user ON bookmarks(user_id);
 
+-- =============================================
+-- Notifications table
+-- =============================================
+
 CREATE TABLE IF NOT EXISTS notifications (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   type text NOT NULL,
   message text NOT NULL,
   article_id uuid,
+  from_user_id uuid,
   read boolean DEFAULT false,
   created_at timestamptz DEFAULT now()
 );
+
+-- Drop check constraint if exists (from old migration)
+ALTER TABLE notifications DROP CONSTRAINT IF EXISTS notifications_type_check;
 
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "notifications_select_own" ON notifications; CREATE POLICY "notifications_select_own" ON notifications FOR SELECT USING (auth.uid() = user_id);
@@ -178,6 +200,10 @@ CREATE OR REPLACE FUNCTION mark_notifications_read(p_user_id uuid)
 RETURNS void AS $$
   UPDATE notifications SET read = true WHERE user_id = p_user_id AND read = false;
 $$ LANGUAGE sql SECURITY DEFINER;
+
+-- =============================================
+-- Notification Triggers
+-- =============================================
 
 CREATE OR REPLACE FUNCTION notify_on_comment()
 RETURNS TRIGGER AS $$
@@ -323,7 +349,7 @@ ALTER TABLE comments ADD COLUMN IF NOT EXISTS parent_id UUID REFERENCES comments
 CREATE INDEX IF NOT EXISTS idx_comments_parent_id ON comments(parent_id);
 
 -- =============================================
--- 008: Images Bucket (separate from profiles bucket)
+-- 008: Images Bucket
 -- =============================================
 
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -347,7 +373,7 @@ ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'images' AND a
 -- 009: Account Features
 -- =============================================
 
-ALTER TABLE notifications ADD COLUMN IF NOT EXISTS from_user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL;
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS from_user_id uuid;
 CREATE INDEX IF NOT EXISTS idx_notifications_from_user ON notifications(from_user_id);
 
 DO $$
@@ -415,8 +441,8 @@ DROP POLICY IF EXISTS "tags_insert" ON tags;
 DROP POLICY IF EXISTS "tags_update" ON tags;
 DROP POLICY IF EXISTS "tags_delete" ON tags;
 CREATE POLICY "tags_select" ON tags FOR SELECT USING (true);
-CREATE POLICY "tags_insert" ON tags FOR INSERT WITH CHECK (public.is_admin() OR true);
-CREATE POLICY "tags_update" ON tags FOR UPDATE USING (public.is_admin() OR true);
+CREATE POLICY "tags_insert" ON tags FOR INSERT WITH CHECK (true);
+CREATE POLICY "tags_update" ON tags FOR UPDATE USING (true);
 CREATE POLICY "tags_delete" ON tags FOR DELETE USING (public.is_admin());
 
 -- =============================================
