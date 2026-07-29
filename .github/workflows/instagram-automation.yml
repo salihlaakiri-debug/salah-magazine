@@ -5,6 +5,9 @@ on:
     - cron: '0 6,18 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 concurrency:
   group: instagram-automation
   cancel-in-progress: false
@@ -15,7 +18,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
         with:
@@ -52,6 +56,7 @@ jobs:
         run: |
           git config user.name "Al-Sudfeh Bot"
           git config user.email "bot@sudfeh.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add scripts/instagram-automation/posting_log.json
           git add scripts/instagram-automation/generated_images/ -A 2>/dev/null || true
           if git diff --cached --quiet; then
