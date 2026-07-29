@@ -150,3 +150,31 @@ src/
 ## الترخيص — License
 
 All rights reserved.
+
+---
+
+## النشر التلقائي إلى Vercel — Auto Deploy to Vercel
+
+لجعل أي تغيير يظهر مباشرة على الموقع المنشور في Vercel عند الدفع إلى الفرع الرئيسي (`main`)، اتبع الخطوات التالية:
+
+1. اربط المستودع الخاص بك بـ Vercel عبر لوحة تحكم Vercel أو فعّل Git integration.
+2. أضف أسرار GitHub التالية في إعدادات المستودع (`Settings > Secrets > Actions`):
+    - `VERCEL_TOKEN` — توكن الوصول الشخصي من حساب Vercel (من `Account > Tokens`).
+    - `VERCEL_ORG_ID` — معرف المؤسسة/الفريق في Vercel.
+    - `VERCEL_PROJECT_ID` — معرف المشروع في Vercel.
+
+3. يوجد سير عمل جاهز في `.github/workflows/vercel-deploy.yml` سيبني المشروع ثم ينشره إلى Vercel عند كل `push` إلى `main`.
+
+بدائل:
+- لا تريد استخدام GitHub Actions؟ استخدم ربط Git التلقائي من Vercel (Recommended) بحيث يقوم Vercel بالنشر على كل دفعة إلى الفرع المرتبط.
+- تنفّذ نشر يدوي سريع عبر Vercel CLI:
+
+```bash
+# تثبيت Vercel CLI
+npm i -g vercel
+
+# نشر سريع (سيطلب توكن أو يمكنك تمريره كمتغير بيئة)
+vercel --prod --token $VERCEL_TOKEN
+```
+
+ملاحظة: عمليات النشر التلقائي تحتاج إعداداً بسيطاً للأسرار في GitHub أو الربط المباشر مع Vercel؛ بعد إتمام ذلك سيظهر أي تغيير تقرره ودمجه في `main` مباشرةً على الموقع المباشر.

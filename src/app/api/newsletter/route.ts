@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
     if (!nameResult.valid) return NextResponse.json({ error: nameResult.error }, { status: 400 });
 
     const supabase = getSupabaseServer();
+    if (!supabase) return NextResponse.json({ error: "خطأ في الاتصال بقاعدة البيانات" }, { status: 500 });
     const cleanedEmail = email.toLowerCase().trim();
 
     const { data: existing } = await supabase

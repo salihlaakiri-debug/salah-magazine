@@ -27,6 +27,7 @@ async function enrichArticles(articles: Article[]): Promise<Article[]> {
   if (authorIds.length === 0) return articles;
 
   const supabase = getSupabaseServer();
+  if (!supabase) return articles;
   const { data: profiles } = await supabase
     .from("profiles")
     .select("id, username, avatar_url")
@@ -44,6 +45,7 @@ async function enrichArticles(articles: Article[]): Promise<Article[]> {
 
 export async function fetchPublishedArticles(limit?: number, offset?: number): Promise<Article[]> {
   const supabase = getSupabaseServer();
+  if (!supabase) return [];
   let query = supabase
     .from("articles")
     .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
@@ -57,6 +59,7 @@ export async function fetchPublishedArticles(limit?: number, offset?: number): P
 
 export async function fetchPublishedArticlesCount(): Promise<number> {
   const supabase = getSupabaseServer();
+  if (!supabase) return 0;
   const { count } = await supabase
     .from("articles")
     .select("*", { count: "exact", head: true })
@@ -67,6 +70,7 @@ export async function fetchPublishedArticlesCount(): Promise<number> {
 
 export async function fetchArticlesBySection(section: Section, limit?: number, offset?: number): Promise<Article[]> {
   const supabase = getSupabaseServer();
+  if (!supabase) return [];
   let query = supabase
     .from("articles")
     .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
@@ -81,6 +85,7 @@ export async function fetchArticlesBySection(section: Section, limit?: number, o
 
 export async function fetchArticleById(id: string): Promise<Article | null> {
   const supabase = getSupabaseServer();
+  if (!supabase) return null;
   const { data } = await supabase
     .from("articles")
     .select("id, title, content, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
@@ -93,6 +98,7 @@ export async function fetchArticleById(id: string): Promise<Article | null> {
 
 export async function fetchRecentArticles(count: number): Promise<Article[]> {
   const supabase = getSupabaseServer();
+  if (!supabase) return [];
   const { data } = await supabase
     .from("articles")
     .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
@@ -105,6 +111,7 @@ export async function fetchRecentArticles(count: number): Promise<Article[]> {
 
 export async function searchArticlesServer(query: string): Promise<Article[]> {
   const supabase = getSupabaseServer();
+  if (!supabase) return [];
   const { data } = await supabase
     .from("articles")
     .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
@@ -117,6 +124,7 @@ export async function searchArticlesServer(query: string): Promise<Article[]> {
 
 export async function fetchArticleCount(): Promise<number> {
   const supabase = getSupabaseServer();
+  if (!supabase) return 0;
   const { count } = await supabase
     .from("articles")
     .select("*", { count: "exact", head: true })
@@ -127,6 +135,7 @@ export async function fetchArticleCount(): Promise<number> {
 
 export async function fetchPendingCount(): Promise<number> {
   const supabase = getSupabaseServer();
+  if (!supabase) return 0;
   const { count } = await supabase
     .from("articles")
     .select("*", { count: "exact", head: true })
@@ -136,6 +145,7 @@ export async function fetchPendingCount(): Promise<number> {
 
 export async function fetchCommentCount(): Promise<number> {
   const supabase = getSupabaseServer();
+  if (!supabase) return 0;
   const { count } = await supabase
     .from("comments")
     .select("*", { count: "exact", head: true });
@@ -144,6 +154,7 @@ export async function fetchCommentCount(): Promise<number> {
 
 export async function fetchUserCount(): Promise<number> {
   const supabase = getSupabaseServer();
+  if (!supabase) return 0;
   const { count } = await supabase
     .from("profiles")
     .select("*", { count: "exact", head: true });
@@ -152,6 +163,7 @@ export async function fetchUserCount(): Promise<number> {
 
 export async function fetchLikeCount(articleId: string): Promise<number> {
   const supabase = getSupabaseServer();
+  if (!supabase) return 0;
   const { count } = await supabase
     .from("likes")
     .select("*", { count: "exact", head: true })

@@ -23,6 +23,7 @@ import {
 
 export async function generateStaticParams() {
   const supabase = getSupabaseServer();
+  if (!supabase) return [];
   const { data } = await supabase
     .from("articles")
     .select("id")
@@ -82,7 +83,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
     .slice(0, 3);
 
   const supabase = getSupabaseServer();
-  const { data: authorProfile } = article.author_id ? await supabase
+  const { data: authorProfile } = (article.author_id && supabase) ? await supabase
     .from("profiles")
     .select("display_name, username, avatar_url, bio, created_at")
     .eq("id", article.author_id)

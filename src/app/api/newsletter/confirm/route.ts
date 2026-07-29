@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
   }
 
   const supabase = getSupabaseServer();
+  if (!supabase) return NextResponse.redirect(new URL("/?error=server-error", req.url));
   const { data, error } = await supabase.rpc("confirm_subscriber", { token });
 
   if (error || !data) {

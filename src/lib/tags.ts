@@ -3,6 +3,7 @@ import { Tag } from "./types";
 
 export async function fetchAllTags(): Promise<Tag[]> {
   const supabase = getSupabaseServer();
+  if (!supabase) return [];
   const { data } = await supabase
     .from("tags")
     .select("id, name, slug, article_count, created_at")
@@ -12,6 +13,7 @@ export async function fetchAllTags(): Promise<Tag[]> {
 
 export async function fetchTagBySlug(slug: string): Promise<Tag | null> {
   const supabase = getSupabaseServer();
+  if (!supabase) return null;
   const { data } = await supabase
     .from("tags")
     .select("id, name, slug, article_count, created_at")
@@ -22,6 +24,7 @@ export async function fetchTagBySlug(slug: string): Promise<Tag | null> {
 
 export async function fetchTagsByArticle(articleId: string): Promise<Tag[]> {
   const supabase = getSupabaseServer();
+  if (!supabase) return [];
   const { data } = await supabase
     .from("article_tags")
     .select("tags(id, name, slug, article_count)")
@@ -32,6 +35,7 @@ export async function fetchTagsByArticle(articleId: string): Promise<Tag[]> {
 
 export async function fetchArticlesByTagSlug(slug: string): Promise<any[]> {
   const supabase = getSupabaseServer();
+  if (!supabase) return [];
   const { data: tag } = await supabase
     .from("tags")
     .select("id")
@@ -58,6 +62,7 @@ export async function fetchArticlesByTagSlug(slug: string): Promise<any[]> {
 export async function upsertTag(name: string): Promise<Tag | null> {
   const slug = name.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^\p{L}\p{N}-]/gu, "");
   const supabase = getSupabaseServer();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from("tags")
     .upsert({ name: name.trim(), slug }, { onConflict: "name" })
@@ -69,13 +74,12 @@ export async function upsertTag(name: string): Promise<Tag | null> {
 
 export async function setArticleTags(articleId: string, tagNames: string[]): Promise<void> {
   const supabase = getSupabaseServer();
+  if (!supabase) return;
 
-  // Remove old tags
   await supabase.from("article_tags").delete().eq("article_id", articleId);
 
   if (tagNames.length === 0) return;
 
-  // Upsert each tag and link
   for (const name of tagNames) {
     const tag = await upsertTag(name);
     if (tag) {

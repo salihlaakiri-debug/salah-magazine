@@ -15,6 +15,16 @@ function initials(name: string, fallback: string): string {
 
 export default async function WritersPage() {
   const supabase = getSupabaseServer();
+  if (!supabase) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl sm:text-4xl font-bold font-[var(--font-heading)] mb-3">الكتّاب</h1>
+          <p className="text-text-muted max-w-lg mx-auto">خطأ في الاتصال بقاعدة البيانات</p>
+        </div>
+      </div>
+    );
+  }
 
   const { data: writers } = await supabase
     .from("profiles")

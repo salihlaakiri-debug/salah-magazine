@@ -6,7 +6,8 @@ from config import config
 from supabase_client import fetch_unposted_articles
 from content_generator import generate_post_content
 from image_generator import generate_post_image
-from instagram_poster import post_to_instagram
+from instagram_selenium import post_to_instagram as post_to_instagram_selenium
+from instagram_poster import post_to_instagram as post_to_instagram_instagrapi
 from posting_log import load_posted_ids, mark_posted, get_stats
 
 logging.basicConfig(
@@ -66,7 +67,10 @@ def run_once():
         caption = build_caption(content)
 
         if config.INSTAGRAM_USERNAME and config.INSTAGRAM_USERNAME != "placeholder":
-            success = post_to_instagram(image_path, caption)
+            success = post_to_instagram_selenium(image_path, caption)
+            if not success:
+                logger.info("Falling back to instagrapi...")
+                success = post_to_instagram_instagrapi(image_path, caption)
             mark_posted(article_id, success, f"Posted: {title}")
             if success:
                 logger.info(f"Posted successfully: {title}")

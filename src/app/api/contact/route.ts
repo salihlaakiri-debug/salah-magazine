@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
     if (!subjectResult.valid) return NextResponse.json({ error: subjectResult.error }, { status: 400 });
 
     const supabase = getSupabaseServer();
+    if (!supabase) return NextResponse.json({ error: "خطأ في الاتصال بقاعدة البيانات" }, { status: 500 });
     const { error } = await supabase.from("contact_messages").insert({
       name: name.trim(),
       email: email.toLowerCase().trim(),
