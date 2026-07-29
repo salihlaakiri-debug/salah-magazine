@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { SECTIONS } from "@/lib/types";
 import { fetchPublishedArticles } from "@/lib/supabase-data";
 import WorkCard from "@/components/WorkCard";
@@ -136,11 +137,26 @@ export default async function HomePage() {
                       </p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold">
-                            {featured.author.startsWith("ال") ? featured.author[2] || featured.author[0] : featured.author[0]}
-                          </div>
-                          <span className="text-xs text-text-muted">{featured.author}</span>
-                        </div>
+                        {featured.author_username ? (
+                          <Link href={`/profile/${featured.author_username}`} className="flex items-center gap-2 group/author">
+                            <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold overflow-hidden">
+                              {featured.author_avatar_url ? (
+                                <Image src={featured.author_avatar_url} alt="" width={28} height={28} className="w-full h-full object-cover" />
+                              ) : (
+                                featured.author.startsWith("ال") ? featured.author[2] || featured.author[0] : featured.author[0]
+                              )}
+                            </div>
+                            <span className="text-xs text-text-muted group-hover/author:text-accent transition-colors">{featured.author}</span>
+                          </Link>
+                        ) : (
+                          <>
+                            <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold">
+                              {featured.author.startsWith("ال") ? featured.author[2] || featured.author[0] : featured.author[0]}
+                            </div>
+                            <span className="text-xs text-text-muted">{featured.author}</span>
+                          </>
+                        )}
+                      </div>
                         <span className="text-accent text-xs font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
                           اقرأ المزيد
                           <ArrowLeftIcon size={12} />

@@ -78,6 +78,7 @@ export default function Footer() {
                   { href: "/about", label: "من نحن" },
                   { href: "/writers", label: "الكتّاب" },
                   { href: "/contact", label: "تواصل معنا" },
+                  { href: "/subscribe", label: "الاشتراكات" },
                   { href: "/submit", label: "إرسال عمل" },
                 ].map((link) => (
                   <li key={link.href}>
