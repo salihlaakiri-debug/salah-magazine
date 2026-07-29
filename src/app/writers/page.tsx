@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { FileTextIcon, HeartIcon, UsersIcon } from "@/components/Icons";
 
@@ -77,7 +78,7 @@ export default async function WritersPage() {
             <div className="flex flex-col items-center text-center">
               <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-2xl font-bold font-[var(--font-heading)] overflow-hidden mb-4 ring-2 ring-accent/5 group-hover:ring-accent/20 transition-all">
                 {writer.avatar_url ? (
-                  <img src={writer.avatar_url} alt="" className="w-full h-full object-cover" />
+                  <Image src={writer.avatar_url} alt="" width={80} height={80} className="w-full h-full object-cover" />
                 ) : (
                   initials(writer.display_name, writer.username)
                 )}

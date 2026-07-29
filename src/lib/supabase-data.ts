@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { getSupabaseServer } from "./supabase-server";
 import { Article, Section, UserProfile } from "./types";
 
@@ -43,7 +44,7 @@ async function enrichArticles(articles: Article[]): Promise<Article[]> {
   }));
 }
 
-export async function fetchPublishedArticles(limit?: number, offset?: number): Promise<Article[]> {
+export const fetchPublishedArticles = cache(async (limit?: number, offset?: number): Promise<Article[]> => {
   const supabase = getSupabaseServer();
   if (!supabase) return [];
   let query = supabase
@@ -55,7 +56,7 @@ export async function fetchPublishedArticles(limit?: number, offset?: number): P
   if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
   const { data } = await query;
   return enrichArticles((data || []).map(mapArticle));
-}
+});
 
 export async function fetchPublishedArticlesCount(): Promise<number> {
   const supabase = getSupabaseServer();
@@ -83,7 +84,7 @@ export async function fetchArticlesBySection(section: Section, limit?: number, o
   return enrichArticles((data || []).map(mapArticle));
 }
 
-export async function fetchArticleById(id: string): Promise<Article | null> {
+export const fetchArticleById = cache(async (id: string): Promise<Article | null> => {
   const supabase = getSupabaseServer();
   if (!supabase) return null;
   const { data } = await supabase
@@ -94,7 +95,7 @@ export async function fetchArticleById(id: string): Promise<Article | null> {
     .single();
   if (!data) return null;
   return (await enrichArticles([mapArticle(data)]))[0];
-}
+});
 
 export async function fetchRecentArticles(count: number): Promise<Article[]> {
   const supabase = getSupabaseServer();

@@ -31,7 +31,7 @@ export const metadata = {
 };
 
 export default async function HomePage() {
-  const allArticles = await fetchPublishedArticles();
+  const allArticles = await fetchPublishedArticles(12);
   const featured = allArticles[0];
   const latest = allArticles.slice(1, 4);
   const more = allArticles.slice(4, 8);
@@ -141,7 +141,7 @@ export default async function HomePage() {
                           <Link href={`/profile/${featured.author_username}`} className="flex items-center gap-2 group/author">
                             <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold overflow-hidden">
                               {featured.author_avatar_url ? (
-                                <Image src={featured.author_avatar_url} alt="" width={28} height={28} className="w-full h-full object-cover" />
+                                <Image src={featured.author_avatar_url} alt="" width={28} height={28} className="w-full h-full object-cover" priority />
                               ) : (
                                 featured.author.startsWith("ال") ? featured.author[2] || featured.author[0] : featured.author[0]
                               )}

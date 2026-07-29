@@ -115,7 +115,7 @@ export default function WorkCard({ article, featured = false }: { article: Artic
             <AuthorLink username={article.author_username} className="flex items-center gap-2 group/author">
               <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold ring-1 ring-accent/5 overflow-hidden shrink-0 relative transition-transform duration-300 group-hover/author:scale-110">
                 {article.author_avatar_url ? (
-                  <Image src={article.author_avatar_url} alt="" fill className="object-cover" />
+                  <Image src={article.author_avatar_url} alt="" width={24} height={24} className="object-cover" />
                 ) : (
                   getAuthorInitial(article.author)
                 )}

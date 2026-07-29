@@ -141,7 +141,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
               <AuthorLink username={article.author_username} className="flex items-center gap-3 group/author">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-sm font-bold overflow-hidden shrink-0 relative">
                   {article.author_avatar_url ? (
-                    <Image src={article.author_avatar_url} alt="" fill className="object-cover" />
+                    <Image src={article.author_avatar_url} alt="" fill sizes="40px" className="object-cover" priority />
                   ) : (
                     article.author.startsWith("ال") ? (article.author[2] || article.author[0]) : article.author[0]
                   )}
@@ -208,7 +208,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
               <Link href={`/profile/${authorProfile.username}`}>
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-lg font-bold overflow-hidden shrink-0 ring-2 ring-accent/10 relative">
                   {authorProfile.avatar_url ? (
-                    <Image src={authorProfile.avatar_url} alt="" fill className="object-cover rounded-2xl" />
+                    <Image src={authorProfile.avatar_url} alt="" fill sizes="64px" className="object-cover rounded-2xl" />
                   ) : (
                     authorProfile.display_name?.[0] || authorProfile.username[0]
                   )}

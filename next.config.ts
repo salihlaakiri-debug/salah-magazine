@@ -36,6 +36,10 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
+  experimental: {
+    optimizePackageImports: ["@supabase/supabase-js"],
+    scrollRestoration: true,
+  },
   async headers() {
     return [
       {

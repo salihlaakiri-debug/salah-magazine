@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/AuthProvider";
 import { UserProfile, Article, SECTIONS } from "@/lib/types";
@@ -113,7 +114,7 @@ export default function ProfilePage() {
       {/* Cover */}
       <div className="relative h-48 sm:h-56 rounded-3xl overflow-hidden">
         {profile.cover_url ? (
-          <img src={profile.cover_url} alt="" className="w-full h-full object-cover" />
+          <Image src={profile.cover_url} alt="" fill className="object-cover" sizes="(max-width: 768px) 100vw, 768px" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-accent/10 via-accent/5 to-background" />
         )}
@@ -122,9 +123,9 @@ export default function ProfilePage() {
       {/* Profile card */}
       <div className="bg-surface rounded-3xl border border-border/50 p-8 sm:p-10 -mt-16 relative z-10 shadow-lg">
         <div className="flex flex-col sm:flex-row items-start gap-6">
-          <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-accent/25 to-accent-light/25 flex items-center justify-center text-accent text-3xl font-bold font-[var(--font-heading)] shrink-0 overflow-hidden ring-4 ring-surface shadow-xl -mt-14 sm:-mt-20">
+          <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-accent/25 to-accent-light/25 flex items-center justify-center text-accent text-3xl font-bold font-[var(--font-heading)] shrink-0 overflow-hidden ring-4 ring-surface shadow-xl -mt-14 sm:-mt-20 relative">
             {profile.avatar_url ? (
-              <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+              <Image src={profile.avatar_url} alt="" fill className="object-cover" sizes="96px" />
             ) : (
               avatarInitial
             )}
