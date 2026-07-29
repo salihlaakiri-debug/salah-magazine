@@ -12,7 +12,7 @@ import { SaveIcon, AlertIcon, ArrowLeftIcon } from "@/components/Icons";
 export default function SettingsPage() {
   const { user, profile, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [form, setForm] = useState({ display_name: "", username: "", bio: "" });
+  const [form, setForm] = useState({ display_name: "", username: "", bio: "", website: "", twitter: "", instagram: "" });
   const [avatarUrl, setAvatarUrl] = useState("");
   const [coverUrl, setCoverUrl] = useState("");
   const [saving, setSaving] = useState(false);
@@ -33,7 +33,7 @@ export default function SettingsPage() {
 
     if (data) {
       const p = data as UserProfile;
-      setForm({ display_name: p.display_name || "", username: p.username || "", bio: p.bio || "" });
+      setForm({ display_name: p.display_name || "", username: p.username || "", bio: p.bio || "", website: p.website || "", twitter: p.twitter || "", instagram: p.instagram || "" });
       setAvatarUrl(p.avatar_url || "");
       setCoverUrl(p.cover_url || "");
     }
@@ -50,6 +50,9 @@ export default function SettingsPage() {
         display_name: form.display_name,
         username: form.username,
         bio: form.bio,
+        website: form.website,
+        twitter: form.twitter,
+        instagram: form.instagram,
         avatar_url: avatarUrl,
         cover_url: coverUrl,
       })
@@ -125,6 +128,46 @@ export default function SettingsPage() {
             rows={4}
             className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 resize-none"
           />
+        </div>
+
+        {/* Social links */}
+        <div className="pt-2 border-t border-border/40">
+          <p className="text-xs font-medium text-text-muted mb-4">روابط التواصل</p>
+          <div className="space-y-4">
+            <div>
+              <label className="text-xs font-medium text-text-muted block mb-1.5">الموقع الإلكتروني</label>
+              <input
+                type="url"
+                value={form.website}
+                onChange={(e) => setForm({ ...form, website: e.target.value })}
+                placeholder="https://example.com"
+                className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30"
+                dir="ltr"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-text-muted block mb-1.5">تويتر</label>
+              <input
+                type="text"
+                value={form.twitter}
+                onChange={(e) => setForm({ ...form, twitter: e.target.value })}
+                placeholder="username"
+                className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30"
+                dir="ltr"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-text-muted block mb-1.5">إنستغرام</label>
+              <input
+                type="text"
+                value={form.instagram}
+                onChange={(e) => setForm({ ...form, instagram: e.target.value })}
+                placeholder="username"
+                className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30"
+                dir="ltr"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Message */}

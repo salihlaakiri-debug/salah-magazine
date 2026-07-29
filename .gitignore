@@ -36,6 +36,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# instagram automation
+scripts/instagram-automation/generated_images/
+scripts/instagram-automation/instagram_session.json
+scripts/instagram-automation/test_output.png
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

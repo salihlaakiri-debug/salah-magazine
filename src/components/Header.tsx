@@ -39,6 +39,7 @@ export default function Header() {
               <NavLink key={s.slug} href={`/section/${encodeURIComponent(s.slug)}`}>{s.name}</NavLink>
             ))}
             <NavLink href="/archive">الأرشيف</NavLink>
+            <NavLink href="/writers">الكتّاب</NavLink>
             <NavLink href="/search"><SearchIcon size={14} className="inline-block ml-1" />بحث</NavLink>
             <NavLink href="/about">من نحن</NavLink>
           </nav>
@@ -122,6 +123,7 @@ export default function Header() {
                 { href: "/", label: "الرئيسية" },
                 ...SECTIONS.map((s) => ({ href: `/section/${encodeURIComponent(s.slug)}`, label: s.name })),
                 { href: "/archive", label: "الأرشيف" },
+                { href: "/writers", label: "الكتّاب" },
                 { href: "/search", label: "بحث" },
                 { href: "/about", label: "من نحن" },
                 { href: "/submit", label: "إرسال عمل" },

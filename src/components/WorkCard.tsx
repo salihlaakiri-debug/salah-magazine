@@ -16,6 +16,11 @@ function formatDate(dateStr: string): string {
   });
 }
 
+function AuthorLink({ username, className, children }: { username?: string; className?: string; children: React.ReactNode }) {
+  if (!username) return <div className={className}>{children}</div>;
+  return <Link href={`/profile/${username}`} className={className}>{children}</Link>;
+}
+
 const sectionColors: Record<string, string> = {
   "شعر": "from-amber-500/10 to-orange-500/10 text-amber-600 dark:text-amber-400",
   "قصة": "from-blue-500/10 to-indigo-500/10 text-blue-600 dark:text-blue-400",
@@ -47,15 +52,19 @@ export default function WorkCard({ article, featured = false }: { article: Artic
               {article.excerpt}
             </p>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 text-sm text-text-muted">
-                <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-bold ring-2 ring-accent/5">
-                  {getAuthorInitial(article.author)}
+              <AuthorLink username={article.author_username} className="flex items-center gap-3 text-sm text-text-muted group/author">
+                <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-bold ring-2 ring-accent/5 overflow-hidden">
+                  {article.author_avatar_url ? (
+                    <img src={article.author_avatar_url} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    getAuthorInitial(article.author)
+                  )}
                 </div>
                 <div>
-                  <span className="block font-medium text-foreground text-xs">{article.author}</span>
+                  <span className="block font-medium text-foreground text-xs group-hover/author:text-accent transition-colors">{article.author}</span>
                   <span className="text-xs">{formatDate(article.date)}</span>
                 </div>
-              </div>
+              </AuthorLink>
               <span className="text-sm text-accent opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0 flex items-center gap-1">
                 اقرأ المزيد
                 <ArrowLeftIcon size={14} />
@@ -86,14 +95,18 @@ export default function WorkCard({ article, featured = false }: { article: Artic
             {article.excerpt}
           </p>
           <div className="flex items-center justify-between text-xs text-text-muted">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold ring-1 ring-accent/5">
-                {getAuthorInitial(article.author)}
+            <AuthorLink username={article.author_username} className="flex items-center gap-2 group/author">
+              <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold ring-1 ring-accent/5 overflow-hidden shrink-0">
+                {article.author_avatar_url ? (
+                  <img src={article.author_avatar_url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  getAuthorInitial(article.author)
+                )}
               </div>
-              <span>{article.author}</span>
+              <span className="group-hover/author:text-accent transition-colors">{article.author}</span>
               <span className="w-1 h-1 rounded-full bg-border" />
               <span>{formatDate(article.date)}</span>
-            </div>
+            </AuthorLink>
             <span className="text-accent opacity-0 group-hover:opacity-100 transition-all duration-300">
               <ArrowLeftIcon size={12} />
             </span>

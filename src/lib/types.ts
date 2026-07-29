@@ -8,6 +8,8 @@ export interface Article {
   author: string;
   author_id?: string;
   author_name?: string;
+  author_username?: string;
+  author_avatar_url?: string;
   readTime: string;
   status?: "draft" | "pending" | "published" | "rejected";
   published_at?: string;
@@ -34,6 +36,9 @@ export interface UserProfile {
   bio: string;
   avatar_url: string;
   cover_url: string;
+  website: string;
+  twitter: string;
+  instagram: string;
   role: "reader" | "writer" | "admin";
   created_at: string;
 }

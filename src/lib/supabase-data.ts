@@ -1,5 +1,5 @@
 import { getSupabaseServer } from "./supabase-server";
-import { Article, Section } from "./types";
+import { Article, Section, UserProfile } from "./types";
 
 function mapArticle(row: any): Article {
   return {
@@ -12,11 +12,33 @@ function mapArticle(row: any): Article {
     author: row.author_name || "السُّدفة",
     author_id: row.author_id || undefined,
     author_name: row.author_name || undefined,
+    author_username: row.author_username || undefined,
+    author_avatar_url: row.author_avatar_url || undefined,
     readTime: row.read_time || "3 دقائق",
     status: row.status,
     published_at: row.published_at,
     created_at: row.created_at,
   };
+}
+
+async function enrichArticles(articles: Article[]): Promise<Article[]> {
+  const authorIds = articles.filter(a => a.author_id).map(a => a.author_id!).filter(Boolean);
+  if (authorIds.length === 0) return articles;
+
+  const supabase = getSupabaseServer();
+  const { data: profiles } = await supabase
+    .from("profiles")
+    .select("id, username, avatar_url")
+    .in("id", authorIds);
+
+  if (!profiles?.length) return articles;
+
+  const profileMap = new Map(profiles.map((p: any) => [p.id, p]));
+  return articles.map(a => ({
+    ...a,
+    author_username: profileMap.get(a.author_id!)?.username || a.author_username,
+    author_avatar_url: profileMap.get(a.author_id!)?.avatar_url || a.author_avatar_url,
+  }));
 }
 
 export async function fetchPublishedArticles(limit?: number, offset?: number): Promise<Article[]> {
@@ -28,7 +50,7 @@ export async function fetchPublishedArticles(limit?: number, offset?: number): P
     .order("published_at", { ascending: false });
   if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
   const { data } = await query;
-  return (data || []).map(mapArticle);
+  return enrichArticles((data || []).map(mapArticle));
 }
 
 export async function fetchPublishedArticlesCount(): Promise<number> {
@@ -50,7 +72,7 @@ export async function fetchArticlesBySection(section: Section, limit?: number, o
     .order("published_at", { ascending: false });
   if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
   const { data } = await query;
-  return (data || []).map(mapArticle);
+  return enrichArticles((data || []).map(mapArticle));
 }
 
 export async function fetchArticleById(id: string): Promise<Article | null> {
@@ -61,7 +83,7 @@ export async function fetchArticleById(id: string): Promise<Article | null> {
     .eq("id", id)
     .single();
   if (!data) return null;
-  return mapArticle(data);
+  return (await enrichArticles([mapArticle(data)]))[0];
 }
 
 export async function fetchRecentArticles(count: number): Promise<Article[]> {
@@ -72,7 +94,7 @@ export async function fetchRecentArticles(count: number): Promise<Article[]> {
     .eq("status", "published")
     .order("published_at", { ascending: false })
     .limit(count);
-  return (data || []).map(mapArticle);
+  return enrichArticles((data || []).map(mapArticle));
 }
 
 export async function searchArticlesServer(query: string): Promise<Article[]> {
@@ -83,7 +105,7 @@ export async function searchArticlesServer(query: string): Promise<Article[]> {
     .eq("status", "published")
     .or(`title.ilike.%${query}%,content.ilike.%${query}%,excerpt.ilike.%${query}%`)
     .order("published_at", { ascending: false });
-  return (data || []).map(mapArticle);
+  return enrichArticles((data || []).map(mapArticle));
 }
 
 export async function fetchArticleCount(): Promise<number> {
