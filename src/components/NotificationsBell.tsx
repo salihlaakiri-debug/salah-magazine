@@ -94,7 +94,7 @@ export default function NotificationsBell() {
                 notifications.map((n) => (
                   <Link
                     key={n.id}
-                    href={`/work/${n.article_id}`}
+                    href={n.article_id ? `/work/${n.article_id}` : "#"}
                     onClick={() => setOpen(false)}
                     className={`block px-4 py-3 hover:bg-surface-hover transition-colors border-b border-border/20 ${
                       !n.read ? "bg-accent/5" : ""
@@ -108,6 +108,13 @@ export default function NotificationsBell() {
                 ))
               )}
             </div>
+            <Link
+              href="/notifications"
+              onClick={() => setOpen(false)}
+              className="block text-center text-xs text-accent hover:text-accent-dark py-3 border-t border-border/20 font-medium transition-colors"
+            >
+              عرض كل الإشعارات
+            </Link>
           </div>
         </>
       )}

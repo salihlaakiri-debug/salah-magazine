@@ -174,6 +174,28 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Notification preferences */}
+        <div className="pt-2 border-t border-border/40">
+          <p className="text-xs font-medium text-text-muted mb-4">تفضيلات الإشعارات</p>
+          <div className="space-y-3">
+            {[
+              { key: "like", label: "الإعجابات", desc: "عندما يعجب أحدهم بعملك" },
+              { key: "comment", label: "التعليقات", desc: "عندما يعلّق أحدهم على عملك" },
+              { key: "follow", label: "المتابعات", desc: "عندما يتابعك أحدهم" },
+              { key: "publish", label: "الأعمال الجديدة", desc: "عند نشر عمل جديد" },
+              { key: "bookmark", label: "الحفظ", desc: "عندما يحفظ أحدهم عملك" },
+            ].map((item) => (
+              <label key={item.key} className="flex items-center justify-between py-2">
+                <div>
+                  <p className="text-sm font-medium">{item.label}</p>
+                  <p className="text-xs text-text-muted">{item.desc}</p>
+                </div>
+                <input type="checkbox" className="w-5 h-5 rounded-lg border-border text-accent focus:ring-accent/30" defaultChecked />
+              </label>
+            ))}
+          </div>
+        </div>
+
         {/* Message */}
         {message && (
           <div className={`flex items-center gap-2 p-3 rounded-xl text-xs ${message.type === "success" ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-500"}`}>

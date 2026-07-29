@@ -7,9 +7,11 @@ import { fetchPublishedArticles, fetchArticleById } from "@/lib/supabase-data";
 import ReadingProgress from "@/components/ReadingProgress";
 import LikeButton from "@/components/LikeButton";
 import BookmarkButton from "@/components/BookmarkButton";
+import ReadingListButton from "@/components/ReadingListButton";
 import MarkdownContent from "@/components/MarkdownContent";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
 import { ArrowLeftIcon, ClockIcon, FileTextIcon } from "@/components/Icons";
+import TrackView from "@/components/TrackView";
 import {
   ClientComments,
   ClientReadingMode,
@@ -102,6 +104,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
           { name: article.title, url: `/work/${article.id}` },
         ]}
       />
+      <TrackView articleId={article.id} readTime={article.readTime} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
         <div className="max-w-3xl mx-auto lg:ml-auto lg:mr-0">
         <nav className="text-sm text-text-muted mb-10 flex items-center gap-1 flex-wrap">
@@ -144,6 +147,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
               <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                 <LikeButton articleId={article.id} />
                 <BookmarkButton articleId={article.id} />
+                <ReadingListButton articleId={article.id} />
                 <ClientShareCard
                   title={article.title}
                   excerpt={article.excerpt}
