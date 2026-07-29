@@ -40,6 +40,7 @@ yarn-error.log*
 scripts/instagram-automation/generated_images/
 scripts/instagram-automation/instagram_session.json
 scripts/instagram-automation/test_output.png
+scripts/instagram-automation/__pycache__/
 
 # typescript
 *.tsbuildinfo
