@@ -44,6 +44,13 @@ export default function WorkCard({ article, featured = false }: { article: Artic
               <span className={`text-xs font-semibold px-3 py-1 rounded-full bg-gradient-to-r section-badge ${colors}`}>
                 {article.section}
               </span>
+              {article.visibility && article.visibility !== "public" && (
+                <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${
+                  article.visibility === "private" ? "bg-rose-500/10 text-rose-600 dark:text-rose-400" : "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                }`}>
+                  {article.visibility === "private" ? "خاص" : "متابعون"}
+                </span>
+              )}
               <span className="text-xs text-text-muted">{article.readTime}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold font-[var(--font-heading)] mb-4 group-hover:text-accent transition-colors duration-300 leading-tight">
@@ -87,6 +94,13 @@ export default function WorkCard({ article, featured = false }: { article: Artic
             <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gradient-to-r section-badge ${colors}`}>
               {article.section}
             </span>
+            {article.visibility && article.visibility !== "public" && (
+              <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                article.visibility === "private" ? "bg-rose-500/10 text-rose-600 dark:text-rose-400" : "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+              }`}>
+                {article.visibility === "private" ? "خاص" : "متابعون"}
+              </span>
+            )}
             <span className="text-[11px] text-text-muted">{article.readTime}</span>
           </div>
           <h3 className="text-lg font-bold font-[var(--font-heading)] mb-2 group-hover:text-accent transition-colors duration-300 leading-relaxed">

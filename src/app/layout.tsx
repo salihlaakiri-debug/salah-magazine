@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Script from "next/script";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ThemeProvider from "@/components/ThemeProvider";
@@ -8,6 +9,7 @@ import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import CookiesConsent from "@/components/CookiesConsent";
 import ToastProvider from "@/components/ToastProvider";
 import { WebsiteJsonLd } from "@/components/JsonLd";
+import { notoNaskhArabic, notoKufiArabic } from "@/lib/fonts";
 
 export const metadata: Metadata = {
   title: {
@@ -15,7 +17,7 @@ export const metadata: Metadata = {
     template: "%s | مجلة السُّدفة",
   },
   description: "مجلة أدبية عربية مستقلة. حيث تلتقي القصيدة بالتأمل، وتولد الحكاية من رحم الصمت.",
-  keywords: ["أدب عربي", "شعر", "قصة", "نثر", "تأملات", "مجلة أدبية", "السُّدفة", "أدب", "كتابة"],
+  keywords: ["السُّدفة", "Al-Sudfeh", "مجلة أدبية عربية", "أدب عربي", "شعر", "قصة", "نثر", "مقالات", "تأملات", "مجلة أدبية", "أدب", "كتابة عربية", "السدفة"],
   authors: [{ name: "السُّدفة" }],
   creator: "السُّدفة",
   publisher: "السُّدفة",
@@ -58,11 +60,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning className="h-full">
+    <html lang="ar" dir="rtl" suppressHydrationWarning className={`h-full ${notoNaskhArabic.variable} ${notoKufiArabic.variable}`}>
       <head>
         <WebsiteJsonLd />
       </head>
       <body className="min-h-full flex flex-col">
+        <Script defer src="https://cloud.umami.is/script.js" data-website-id="a11145f5-cd87-4536-927a-637681dd9e7e" strategy="lazyOnload" />
         <ServiceWorkerRegister />
         <ThemeProvider>
           <AuthProvider>

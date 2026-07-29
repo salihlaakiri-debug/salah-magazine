@@ -12,6 +12,7 @@ import MarkdownContent from "@/components/MarkdownContent";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
 import { ArrowLeftIcon, ClockIcon, FileTextIcon } from "@/components/Icons";
 import TrackView from "@/components/TrackView";
+import VisibilityGuard from "@/components/VisibilityGuard";
 import {
   ClientComments,
   ClientReadingMode,
@@ -21,8 +22,13 @@ import {
 } from "@/components/ClientComponents";
 
 export async function generateStaticParams() {
-  const articles = await fetchPublishedArticles();
-  return articles.map((a) => ({ id: a.id }));
+  const supabase = getSupabaseServer();
+  const { data } = await supabase
+    .from("articles")
+    .select("id")
+    .eq("status", "published")
+    .eq("visibility", "public");
+  return (data || []).map((a: any) => ({ id: a.id }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
@@ -86,7 +92,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
   const colors = sectionColors[article.section] || "";
 
   return (
-    <>
+    <VisibilityGuard articleId={article.id} authorId={article.author_id} visibility={article.visibility}>
       <ReadingProgress />
       <ClientReadingMode />
       <ArticleJsonLd
@@ -239,7 +245,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
             العودة إلى الصفحة الرئيسية
           </Link>
       </div>
-    </>
+    </VisibilityGuard>
   );
 }
 

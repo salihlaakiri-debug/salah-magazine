@@ -7,12 +7,16 @@ import Link from "next/link";
 import {
   BarChartIcon, FileTextIcon, MessageIcon, SettingsIcon,
   LogOutIcon, PenIcon, HomeIcon, MailIcon,
+  UsersIcon, TagIcon, RssIcon,
 } from "@/components/Icons";
 
 const navItems = [
   { href: "/admin/dashboard", label: "الرئيسية", icon: BarChartIcon },
+  { href: "/admin/submissions", label: "المراجعات", icon: PenIcon },
   { href: "/admin/articles", label: "المقالات", icon: FileTextIcon },
-  { href: "/admin/submissions", label: "المراجعات", icon: FileTextIcon },
+  { href: "/admin/users", label: "المستخدمون", icon: UsersIcon },
+  { href: "/admin/tags", label: "الوسوم", icon: TagIcon },
+  { href: "/admin/subscribers", label: "المشتركون", icon: RssIcon },
   { href: "/admin/comments", label: "التعليقات", icon: MessageIcon },
   { href: "/admin/messages", label: "الرسائل", icon: MailIcon },
   { href: "/admin/settings", label: "الإعدادات", icon: SettingsIcon },

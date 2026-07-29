@@ -116,7 +116,7 @@ export function OrganizationJsonLd() {
           url: process.env.NEXT_PUBLIC_SITE_URL || "https://al-sudfeh.vercel.app",
           logo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://al-sudfeh.vercel.app"}/favicon.svg`,
           description: "مجلة أدبية عربية مستقلة",
-          sameAs: [],
+          sameAs: ["https://www.instagram.com/al_sudfeh/"],
         }),
       }}
     />

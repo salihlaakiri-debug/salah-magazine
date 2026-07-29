@@ -25,6 +25,7 @@ export default function SubmitPage() {
   const [section, setSection] = useState<Section>("نثر");
   const [readTime, setReadTime] = useState("3 دقائق");
   const [tags, setTags] = useState<string[]>([]);
+  const [visibility, setVisibility] = useState<"public" | "followers" | "private">("public");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -43,7 +44,7 @@ export default function SubmitPage() {
 
     autoSaveTimer.current = setTimeout(async () => {
       const draftKey = isEditing ? `draft-${editId}` : "draft-new";
-      const draft = { title, content, excerpt, section, readTime, tags, savedAt: new Date().toISOString() };
+      const draft = { title, content, excerpt, section, readTime, tags, visibility, savedAt: new Date().toISOString() };
       localStorage.setItem(draftKey, JSON.stringify(draft));
       setAutoSaved(true);
       setLastSaved(new Date());
@@ -51,7 +52,7 @@ export default function SubmitPage() {
     }, 30000);
 
     return () => { if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current); };
-  }, [title, content, excerpt, section, readTime, tags, user, isEditing, editId]);
+  }, [title, content, excerpt, section, readTime, tags, visibility, user, isEditing, editId]);
 
   // Load draft on mount
   useEffect(() => {
@@ -67,6 +68,7 @@ export default function SubmitPage() {
         if (draft.section) setSection(draft.section);
         if (draft.readTime) setReadTime(draft.readTime);
         if (draft.tags) setTags(draft.tags);
+        if (draft.visibility) setVisibility(draft.visibility);
       } catch {}
     }
   }, [user, isEditing, editId]);
@@ -74,12 +76,12 @@ export default function SubmitPage() {
   // Manual save
   const saveDraft = useCallback(() => {
     const draftKey = isEditing ? `draft-${editId}` : "draft-new";
-    const draft = { title, content, excerpt, section, readTime, tags, savedAt: new Date().toISOString() };
+    const draft = { title, content, excerpt, section, readTime, tags, visibility, savedAt: new Date().toISOString() };
     localStorage.setItem(draftKey, JSON.stringify(draft));
     setAutoSaved(true);
     setLastSaved(new Date());
     setTimeout(() => setAutoSaved(false), 2000);
-  }, [title, content, excerpt, section, readTime, tags, isEditing, editId]);
+  }, [title, content, excerpt, section, readTime, tags, visibility, isEditing, editId]);
 
   useEffect(() => {
     if (editId && user) {
@@ -97,6 +99,7 @@ export default function SubmitPage() {
             setExcerpt(data.excerpt || "");
             setSection(data.section as Section);
             setReadTime(data.read_time || "3 دقائق");
+            setVisibility(data.visibility || "public");
           }
           setLoadingArticle(false);
         });
@@ -134,6 +137,7 @@ export default function SubmitPage() {
           excerpt: excerpt.trim() || content.trim().replace(/[#*>\-!\[\]()]/g, "").slice(0, 200),
           section,
           read_time: readTime,
+          visibility,
           updated_at: new Date().toISOString(),
         })
         .eq("id", editId)
@@ -158,6 +162,7 @@ export default function SubmitPage() {
         author_name: profile?.display_name || profile?.username || "مجهول",
         status: "pending",
         read_time: readTime,
+        visibility,
       });
 
       if (insertError) {
@@ -222,8 +227,28 @@ export default function SubmitPage() {
             </div>
           </div>
 
-          <div>
-            <label className="text-xs font-medium text-text-muted block mb-1.5">المقتطف (اختياري)</label>
+            <div>
+              <label className="text-xs font-medium text-text-muted block mb-1.5">الرؤية *</label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {(["public", "followers", "private"] as const).map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => setVisibility(v)}
+                    className={`px-4 py-3 rounded-xl border text-sm text-right transition-all ${
+                      visibility === v
+                        ? "border-accent bg-accent/10 text-accent font-medium"
+                        : "border-border bg-background text-text-muted hover:border-accent/30"
+                    }`}
+                  >
+                    {v === "public" ? "للعامة" : v === "followers" ? "للمتابعين فقط" : "لك فقط"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-text-muted block mb-1.5">المقتطف (اختياري)</label>
             <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 resize-none" placeholder="جملة قصيرة تلخص عملك..." />
           </div>
 

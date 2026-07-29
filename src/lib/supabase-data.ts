@@ -18,6 +18,7 @@ function mapArticle(row: any): Article {
     status: row.status,
     published_at: row.published_at,
     created_at: row.created_at,
+    visibility: row.visibility || "public",
   };
 }
 
@@ -45,8 +46,9 @@ export async function fetchPublishedArticles(limit?: number, offset?: number): P
   const supabase = getSupabaseServer();
   let query = supabase
     .from("articles")
-    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at")
+    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
     .eq("status", "published")
+    .eq("visibility", "public")
     .order("published_at", { ascending: false });
   if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
   const { data } = await query;
@@ -58,7 +60,8 @@ export async function fetchPublishedArticlesCount(): Promise<number> {
   const { count } = await supabase
     .from("articles")
     .select("*", { count: "exact", head: true })
-    .eq("status", "published");
+    .eq("status", "published")
+    .eq("visibility", "public");
   return count || 0;
 }
 
@@ -66,8 +69,9 @@ export async function fetchArticlesBySection(section: Section, limit?: number, o
   const supabase = getSupabaseServer();
   let query = supabase
     .from("articles")
-    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at")
+    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
     .eq("status", "published")
+    .eq("visibility", "public")
     .eq("section", section)
     .order("published_at", { ascending: false });
   if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
@@ -79,7 +83,8 @@ export async function fetchArticleById(id: string): Promise<Article | null> {
   const supabase = getSupabaseServer();
   const { data } = await supabase
     .from("articles")
-    .select("id, title, content, excerpt, section, author_id, author_name, read_time, status, published_at, created_at")
+    .select("id, title, content, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
+    .eq("status", "published")
     .eq("id", id)
     .single();
   if (!data) return null;
@@ -90,8 +95,9 @@ export async function fetchRecentArticles(count: number): Promise<Article[]> {
   const supabase = getSupabaseServer();
   const { data } = await supabase
     .from("articles")
-    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at")
+    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
     .eq("status", "published")
+    .eq("visibility", "public")
     .order("published_at", { ascending: false })
     .limit(count);
   return enrichArticles((data || []).map(mapArticle));
@@ -101,8 +107,9 @@ export async function searchArticlesServer(query: string): Promise<Article[]> {
   const supabase = getSupabaseServer();
   const { data } = await supabase
     .from("articles")
-    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at")
+    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
     .eq("status", "published")
+    .eq("visibility", "public")
     .or(`title.ilike.%${query}%,content.ilike.%${query}%,excerpt.ilike.%${query}%`)
     .order("published_at", { ascending: false });
   return enrichArticles((data || []).map(mapArticle));
@@ -113,7 +120,8 @@ export async function fetchArticleCount(): Promise<number> {
   const { count } = await supabase
     .from("articles")
     .select("*", { count: "exact", head: true })
-    .eq("status", "published");
+    .eq("status", "published")
+    .eq("visibility", "public");
   return count || 0;
 }
 

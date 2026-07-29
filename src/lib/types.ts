@@ -16,6 +16,7 @@ export interface Article {
   created_at?: string;
   tags?: Tag[];
   view_count?: number;
+  visibility?: "public" | "followers" | "private";
 }
 
 export type Section = "شعر" | "قصة" | "نثر" | "مقالات" | "تأملات";
