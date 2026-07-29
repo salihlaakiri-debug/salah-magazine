@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { SECTIONS } from "@/lib/types";
 import SudfehLogo from "./SudfehLogo";
-import NewsletterSignup from "./NewsletterSignup";
 import { MailIcon, RssIcon } from "./Icons";
 
 export default function Footer() {
@@ -111,15 +110,6 @@ export default function Footer() {
                 ))}
               </ul>
             </div>
-          </div>
-        </div>
-
-        {/* Newsletter */}
-        <div className="py-8 border-t border-white/8">
-          <div className="max-w-md mx-auto text-center">
-            <h4 className="font-bold text-sm mb-2 opacity-80">النشرة البريدية</h4>
-            <p className="text-xs opacity-40 mb-4">احصل على آخر الأعمال الأدبية مباشرة في بريدك</p>
-            <NewsletterSignup />
           </div>
         </div>
 
