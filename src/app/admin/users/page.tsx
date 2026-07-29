@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { UsersIcon, ShieldIcon, PenIcon, UserIcon, CheckIcon, XIcon } from "@/components/Icons";
+import { useAdminRealtime } from "@/hooks/useAdminRealtime";
 
 interface Profile {
   id: string; username: string; display_name: string; email?: string;
@@ -18,6 +19,18 @@ export default function UsersPage() {
   const [changingRole, setChangingRole] = useState<string | null>(null);
 
   useEffect(() => { fetchUsers(); }, []);
+
+  useAdminRealtime("admin-users", [
+    { table: "profiles", event: "INSERT" },
+    { table: "profiles", event: "UPDATE" },
+  ], useCallback((payload: any) => {
+    const { eventType, new: record } = payload;
+    if (eventType === "INSERT") {
+      setUsers(prev => [...prev, { ...record, article_count: 0 }]);
+    } else if (eventType === "UPDATE") {
+      setUsers(prev => prev.map(u => u.id === record.id ? { ...u, ...record } : u));
+    }
+  }, []));
 
   async function fetchUsers() {
     setLoading(true);

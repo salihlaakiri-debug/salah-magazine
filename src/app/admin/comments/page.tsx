@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { TrashIcon, MessageIcon, CheckIcon, XIcon } from "@/components/Icons";
+import { useAdminRealtime } from "@/hooks/useAdminRealtime";
 
 interface DbComment {
   id: string;
@@ -27,6 +28,18 @@ export default function CommentsPage() {
   useEffect(() => {
     fetchComments();
   }, []);
+
+  useAdminRealtime("admin-comments", [
+    { table: "comments", event: "INSERT" },
+    { table: "comments", event: "DELETE" },
+  ], useCallback((payload: any) => {
+    const { eventType, new: record, old: oldRecord } = payload;
+    if (eventType === "INSERT") {
+      setComments(prev => [record as DbComment, ...prev]);
+    } else if (eventType === "DELETE") {
+      setComments(prev => prev.filter(c => c.id !== oldRecord.id));
+    }
+  }, []));
 
   async function fetchComments() {
     setLoading(true);

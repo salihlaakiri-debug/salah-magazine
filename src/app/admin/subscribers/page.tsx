@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { MailIcon, DownloadIcon, CheckIcon, XIcon, TrashIcon } from "@/components/Icons";
+import { useAdminRealtime } from "@/hooks/useAdminRealtime";
 
 export default function SubscribersPage() {
   const [subscribers, setSubscribers] = useState<any[]>([]);
@@ -10,6 +11,21 @@ export default function SubscribersPage() {
   const [filter, setFilter] = useState<"all" | "confirmed" | "unconfirmed">("all");
 
   useEffect(() => { fetchSubscribers(); }, []);
+
+  useAdminRealtime("admin-subscribers", [
+    { table: "subscribers", event: "INSERT" },
+    { table: "subscribers", event: "UPDATE" },
+    { table: "subscribers", event: "DELETE" },
+  ], useCallback((payload: any) => {
+    const { eventType, new: record, old: oldRecord } = payload;
+    if (eventType === "INSERT") {
+      setSubscribers(prev => [record, ...prev]);
+    } else if (eventType === "UPDATE") {
+      setSubscribers(prev => prev.map(s => s.id === record.id ? { ...s, ...record } : s));
+    } else if (eventType === "DELETE") {
+      setSubscribers(prev => prev.filter(s => s.id !== oldRecord.id));
+    }
+  }, []));
 
   async function fetchSubscribers() {
     setLoading(true);

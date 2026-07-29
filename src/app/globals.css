@@ -861,12 +861,14 @@ h1, h2, h3, h4, h5, h6 {
   transform: translateX(-50%) translateY(-8px);
 }
 
-/* ── DARK MODE TRANSITION ── */
+/* ── THEME TRANSITION ── */
 
-.dark * {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
-}
-
-.dark a, .dark button {
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+.theme-transition,
+.theme-transition *,
+.theme-transition a,
+.theme-transition button {
+  transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }

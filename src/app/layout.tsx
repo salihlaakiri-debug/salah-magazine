@@ -63,6 +63,9 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" suppressHydrationWarning className={`h-full ${notoNaskhArabic.variable} ${notoKufiArabic.variable}`}>
       <head>
         <WebsiteJsonLd />
+        <script dangerouslySetInnerHTML={{
+          __html: `(function(){try{var t=localStorage.getItem('sudfeh-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}})()`
+        }} />
       </head>
       <body className="min-h-full flex flex-col">
         <Script defer src="https://cloud.umami.is/script.js" data-website-id="a11145f5-cd87-4536-927a-637681dd9e7e" strategy="lazyOnload" />

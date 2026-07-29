@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { SECTIONS } from "@/lib/types";
 import Link from "next/link";
+import { useAdminRealtime } from "@/hooks/useAdminRealtime";
 import {
   BarChartIcon, FileTextIcon, MessageIcon, TrendingUpIcon,
   ClockIcon, UsersIcon, MailIcon, EyeIcon, HeartIcon,
@@ -30,77 +31,162 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [viewsData, setViewsData] = useState<{ day: string; count: number }[]>([]);
 
-  useEffect(() => {
-    async function load() {
-      const [
-        { count: articles }, { count: comments }, { count: users },
-        { count: pending }, { count: subscribers }, { count: unreadMessages },
-        { count: totalLikes }, { count: writers },
-      ] = await Promise.all([
-        supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "published"),
-        supabase.from("comments").select("*", { count: "exact", head: true }),
-        supabase.from("profiles").select("*", { count: "exact", head: true }),
-        supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "pending"),
-        supabase.from("subscribers").select("*", { count: "exact", head: true }).eq("confirmed", true).eq("unsubscribed", false),
-        supabase.from("contact_messages").select("*", { count: "exact", head: true }).eq("read", false),
-        supabase.from("likes").select("*", { count: "exact", head: true }),
-        supabase.from("profiles").select("*", { count: "exact", head: true }).in("role", ["writer", "admin"]),
-      ]);
+  const loadDashboard = useCallback(async () => {
+    const [
+      { count: articles }, { count: comments }, { count: users },
+      { count: pending }, { count: subscribers }, { count: unreadMessages },
+      { count: totalLikes }, { count: writers },
+    ] = await Promise.all([
+      supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "published"),
+      supabase.from("comments").select("*", { count: "exact", head: true }),
+      supabase.from("profiles").select("*", { count: "exact", head: true }),
+      supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "pending"),
+      supabase.from("subscribers").select("*", { count: "exact", head: true }).eq("confirmed", true).eq("unsubscribed", false),
+      supabase.from("contact_messages").select("*", { count: "exact", head: true }).eq("read", false),
+      supabase.from("likes").select("*", { count: "exact", head: true }),
+      supabase.from("profiles").select("*", { count: "exact", head: true }).in("role", ["writer", "admin"]),
+    ]);
 
-      let totalViews = 0;
-      try {
-        const { count: views } = await supabase.from("article_views").select("*", { count: "exact", head: true });
-        totalViews = views || 0;
-      } catch {}
+    let totalViews = 0;
+    try {
+      const { count: views } = await supabase.from("article_views").select("*", { count: "exact", head: true });
+      totalViews = views || 0;
+    } catch {}
 
-      setStats({
-        articles: articles || 0, comments: comments || 0, users: users || 0,
-        pending: pending || 0, subscribers: subscribers || 0, totalViews,
-        unreadMessages: unreadMessages || 0, totalLikes: totalLikes || 0,
-        writers: writers || 0,
-      });
+    setStats({
+      articles: articles || 0, comments: comments || 0, users: users || 0,
+      pending: pending || 0, subscribers: subscribers || 0, totalViews,
+      unreadMessages: unreadMessages || 0, totalLikes: totalLikes || 0,
+      writers: writers || 0,
+    });
 
-      const [{ data: recent }, { data: recentC }] = await Promise.all([
-        supabase.from("articles")
-          .select("id, title, section, status, created_at, author_name, visibility")
-          .order("created_at", { ascending: false }).limit(8),
-        supabase.from("comments")
-          .select("id, article_id, author_name, content, created_at")
-          .order("created_at", { ascending: false }).limit(5),
-      ]);
-      setRecentArticles(recent || []);
-      setRecentComments(recentC || []);
+    const [{ data: recent }, { data: recentC }] = await Promise.all([
+      supabase.from("articles")
+        .select("id, title, section, status, created_at, author_name, visibility")
+        .order("created_at", { ascending: false }).limit(8),
+      supabase.from("comments")
+        .select("id, article_id, author_name, content, created_at")
+        .order("created_at", { ascending: false }).limit(5),
+    ]);
+    setRecentArticles(recent || []);
+    setRecentComments(recentC || []);
 
-      const counts: Record<string, number> = {};
-      for (const s of SECTIONS) {
-        const { count } = await supabase.from("articles")
-          .select("*", { count: "exact", head: true })
-          .eq("section", s.name).eq("status", "published");
-        counts[s.name] = count || 0;
-      }
-      setSectionCounts(counts);
-
-      const { data: authors } = await supabase
-        .from("articles")
-        .select("author_name, author_id")
-        .eq("status", "published");
-      const authorCounts: Record<string, { count: number; id: string }> = {};
-      (authors || []).forEach((a: any) => {
-        const key = a.author_name || "مجهول";
-        if (!authorCounts[key]) authorCounts[key] = { count: 0, id: a.author_id };
-        authorCounts[key].count++;
-      });
-      setTopAuthors(
-        Object.entries(authorCounts)
-          .map(([name, data]) => ({ name, count: data.count, id: data.id }))
-          .sort((a, b) => b.count - a.count)
-          .slice(0, 6)
-      );
-
-      setLoading(false);
+    const counts: Record<string, number> = {};
+    for (const s of SECTIONS) {
+      const { count } = await supabase.from("articles")
+        .select("*", { count: "exact", head: true })
+        .eq("section", s.name).eq("status", "published");
+      counts[s.name] = count || 0;
     }
-    load();
+    setSectionCounts(counts);
+
+    const { data: authors } = await supabase
+      .from("articles")
+      .select("author_name, author_id")
+      .eq("status", "published");
+    const authorCounts: Record<string, { count: number; id: string }> = {};
+    (authors || []).forEach((a: any) => {
+      const key = a.author_name || "مجهول";
+      if (!authorCounts[key]) authorCounts[key] = { count: 0, id: a.author_id };
+      authorCounts[key].count++;
+    });
+    setTopAuthors(
+      Object.entries(authorCounts)
+        .map(([name, data]) => ({ name, count: data.count, id: data.id }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 6)
+    );
+
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
+
+  const handleRealtimeEvent = useCallback((payload: any) => {
+    const table = payload.table;
+    const eventType = payload.eventType;
+    const record = payload.new;
+    const oldRecord = payload.old;
+
+    if (table === "articles") {
+      loadDashboard();
+    } else if (table === "comments") {
+      if (eventType === "INSERT") {
+        setStats(prev => ({ ...prev, comments: prev.comments + 1 }));
+        setRecentComments(prev => [record, ...prev].slice(0, 5));
+      } else if (eventType === "DELETE") {
+        setStats(prev => ({ ...prev, comments: Math.max(0, prev.comments - 1) }));
+        setRecentComments(prev => prev.filter(c => c.id !== oldRecord.id));
+      }
+    } else if (table === "contact_messages") {
+      if (eventType === "INSERT") {
+        setStats(prev => ({ ...prev, unreadMessages: prev.unreadMessages + 1 }));
+      } else if (eventType === "UPDATE" && record.read) {
+        setStats(prev => ({ ...prev, unreadMessages: Math.max(0, prev.unreadMessages - 1) }));
+      } else if (eventType === "UPDATE" && !record.read) {
+        setStats(prev => ({ ...prev, unreadMessages: prev.unreadMessages + 1 }));
+      }
+    } else if (table === "subscribers") {
+      if (eventType === "INSERT" && record.confirmed) {
+        setStats(prev => ({ ...prev, subscribers: prev.subscribers + 1 }));
+      } else if (eventType === "UPDATE") {
+        if (record.confirmed && !oldRecord.confirmed) {
+          setStats(prev => ({ ...prev, subscribers: prev.subscribers + 1 }));
+        } else if (!record.confirmed && oldRecord.confirmed) {
+          setStats(prev => ({ ...prev, subscribers: Math.max(0, prev.subscribers - 1) }));
+        }
+      } else if (eventType === "DELETE" && oldRecord.confirmed) {
+        setStats(prev => ({ ...prev, subscribers: Math.max(0, prev.subscribers - 1) }));
+      }
+    } else if (table === "profiles") {
+      if (eventType === "INSERT") {
+        setStats(prev => ({ ...prev, users: prev.users + 1 }));
+        if (record.role === "writer" || record.role === "admin") {
+          setStats(prev => ({ ...prev, writers: prev.writers + 1 }));
+        }
+      } else if (eventType === "UPDATE") {
+        if (record.role === "writer" || record.role === "admin") {
+          if (oldRecord.role !== "writer" && oldRecord.role !== "admin") {
+            setStats(prev => ({ ...prev, writers: prev.writers + 1 }));
+          }
+        } else {
+          if (oldRecord.role === "writer" || oldRecord.role === "admin") {
+            setStats(prev => ({ ...prev, writers: Math.max(0, prev.writers - 1) }));
+          }
+        }
+      }
+    } else if (table === "likes") {
+      if (eventType === "INSERT") {
+        setStats(prev => ({ ...prev, totalLikes: prev.totalLikes + 1 }));
+      } else if (eventType === "DELETE") {
+        setStats(prev => ({ ...prev, totalLikes: Math.max(0, prev.totalLikes - 1) }));
+      }
+    } else if (table === "article_views") {
+      if (eventType === "INSERT") {
+        setStats(prev => ({ ...prev, totalViews: prev.totalViews + 1 }));
+      }
+    }
+  }, []);
+
+  useAdminRealtime("admin-dashboard", [
+    { table: "articles", event: "INSERT" },
+    { table: "articles", event: "UPDATE" },
+    { table: "articles", event: "DELETE" },
+    { table: "comments", event: "INSERT" },
+    { table: "comments", event: "DELETE" },
+    { table: "contact_messages", event: "INSERT" },
+    { table: "contact_messages", event: "UPDATE" },
+    { table: "subscribers", event: "INSERT" },
+    { table: "subscribers", event: "UPDATE" },
+    { table: "subscribers", event: "DELETE" },
+    { table: "profiles", event: "INSERT" },
+    { table: "profiles", event: "UPDATE" },
+    { table: "likes", event: "INSERT" },
+    { table: "likes", event: "DELETE" },
+    { table: "article_views", event: "INSERT" },
+  ], handleRealtimeEvent);
 
   const statCards = [
     { label: "المقالات", value: stats.articles, icon: FileTextIcon, color: "from-blue-500 to-indigo-600", link: "/admin/articles" },

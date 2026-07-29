@@ -1,8 +1,18 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 
 type Theme = "light" | "dark";
+
+const STORAGE_KEY = "sudfeh-theme";
+
+function getInitialTheme(): Theme {
+  if (typeof window === "undefined") return "light";
+  const stored = localStorage.getItem(STORAGE_KEY) as Theme | null;
+  if (stored === "light" || stored === "dark") return stored;
+  if (window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
+  return "light";
+}
 
 const ThemeContext = createContext<{
   theme: Theme;
@@ -15,29 +25,29 @@ export function useTheme() {
 
 export default function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    const saved = localStorage.getItem("sudfeh-theme") as Theme | null;
-    if (saved) {
-      setTheme(saved);
-    } else {
-      setTheme("light");
-    }
+    setTheme(getInitialTheme());
+    requestAnimationFrame(() => document.documentElement.classList.add("theme-transition"));
   }, []);
 
   useEffect(() => {
-    if (!mounted) return;
-    document.documentElement.classList.toggle("dark", theme === "dark");
-    localStorage.setItem("sudfeh-theme", theme);
-  }, [theme, mounted]);
+    const root = document.documentElement;
+    root.classList.toggle("dark", theme === "dark");
+    localStorage.setItem(STORAGE_KEY, theme);
+  }, [theme]);
 
-  const toggle = () => setTheme((t) => (t === "light" ? "dark" : "light"));
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e: MediaQueryListEvent) => {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (!stored) setTheme(e.matches ? "dark" : "light");
+    };
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
-  if (!mounted) {
-    return <>{children}</>;
-  }
+  const toggle = useCallback(() => setTheme((t) => (t === "light" ? "dark" : "light")), []);
 
   return (
     <ThemeContext.Provider value={{ theme, toggle }}>

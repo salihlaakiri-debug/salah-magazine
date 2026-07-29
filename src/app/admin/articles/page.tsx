@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { Article, SECTIONS, Tag } from "@/lib/types";
 import { PlusIcon, EditIcon, TrashIcon, EyeIcon, XIcon, CheckIcon, SearchIcon, LayersIcon } from "@/components/Icons";
 import { TagInput } from "@/components/TagBadge";
 import Link from "next/link";
+import { useAdminRealtime } from "@/hooks/useAdminRealtime";
 
 export default function ArticlesPage() {
   const [articlesList, setArticlesList] = useState<(Article & { visibility?: string })[]>([]);
@@ -21,6 +22,12 @@ export default function ArticlesPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   useEffect(() => { fetchArticles(); }, []);
+
+  useAdminRealtime("admin-articles", [
+    { table: "articles", event: "INSERT" },
+    { table: "articles", event: "UPDATE" },
+    { table: "articles", event: "DELETE" },
+  ], useCallback(() => fetchArticles(), []));
 
   async function fetchArticles() {
     setLoading(true);

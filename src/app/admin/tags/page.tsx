@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { TagIcon, TrashIcon, CheckIcon, XIcon } from "@/components/Icons";
+import { useAdminRealtime } from "@/hooks/useAdminRealtime";
 
 interface Tag { id: string; name: string; slug: string; article_count?: number; }
 
@@ -15,6 +16,18 @@ export default function TagsPage() {
   const [adding, setAdding] = useState(false);
 
   useEffect(() => { fetchTags(); }, []);
+
+  useAdminRealtime("admin-tags", [
+    { table: "tags", event: "INSERT" },
+    { table: "tags", event: "DELETE" },
+  ], useCallback((payload: any) => {
+    const { eventType, new: record, old: oldRecord } = payload;
+    if (eventType === "INSERT") {
+      setTags(prev => [...prev, { id: record.id, name: record.name, slug: record.slug, article_count: 0 }]);
+    } else if (eventType === "DELETE") {
+      setTags(prev => prev.filter(t => t.id !== oldRecord.id));
+    }
+  }, []));
 
   async function fetchTags() {
     setLoading(true);

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Article, SECTIONS } from "@/lib/types";
 import { CheckIcon, XIcon, EyeIcon, MessageIcon } from "@/components/Icons";
 import Link from "next/link";
+import { useAdminRealtime } from "@/hooks/useAdminRealtime";
 
 export default function SubmissionsPage() {
   const { user, isAdmin, loading } = useAuth();
@@ -21,19 +22,47 @@ export default function SubmissionsPage() {
     if (!loading && !isAdmin) router.replace("/admin");
   }, [user, loading, isAdmin, router]);
 
-  useEffect(() => {
+  const fetchSubmissions = useCallback(async () => {
     if (!isAdmin) return;
-    async function load() {
-      const { data } = await supabase
-        .from("articles")
-        .select("*")
-        .eq("status", "pending")
-        .order("created_at", { ascending: false });
-      setSubmissions((data || []) as any);
-      setLoadingData(false);
-    }
-    load();
+    const { data } = await supabase
+      .from("articles")
+      .select("*")
+      .eq("status", "pending")
+      .order("created_at", { ascending: false });
+    setSubmissions((data || []) as any);
+    setLoadingData(false);
   }, [isAdmin]);
+
+  useEffect(() => {
+    fetchSubmissions();
+  }, [fetchSubmissions]);
+
+  useAdminRealtime("admin-submissions", [
+    { table: "articles", event: "INSERT", filter: "status=eq.pending" },
+    { table: "articles", event: "UPDATE" },
+    { table: "articles", event: "DELETE" },
+  ], useCallback((payload: any) => {
+    const { eventType, new: record, old: oldRecord } = payload;
+    if (eventType === "INSERT" && record.status === "pending") {
+      setSubmissions(prev => [record as Article, ...prev]);
+      return;
+    }
+    if (eventType === "UPDATE") {
+      if (oldRecord.status === "pending" && record.status !== "pending") {
+        setSubmissions(prev => prev.filter(s => s.id !== record.id));
+        return;
+      }
+      if (record.status === "pending" && oldRecord.status !== "pending") {
+        setSubmissions(prev => [record as Article, ...prev]);
+        return;
+      }
+    }
+    if (eventType === "DELETE" && oldRecord.status === "pending") {
+      setSubmissions(prev => prev.filter(s => s.id !== oldRecord.id));
+      return;
+    }
+    fetchSubmissions();
+  }, [fetchSubmissions]));
 
   const updateStatus = async (id: string, status: "published" | "rejected") => {
     if (status === "published") {

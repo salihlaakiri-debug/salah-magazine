@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { MailIcon, TrashIcon, CheckIcon } from "@/components/Icons";
+import { useAdminRealtime } from "@/hooks/useAdminRealtime";
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("ar-SA", {
@@ -18,6 +19,24 @@ export default function AdminMessagesPage() {
   useEffect(() => {
     load();
   }, []);
+
+  useAdminRealtime("admin-messages", [
+    { table: "contact_messages", event: "INSERT" },
+    { table: "contact_messages", event: "UPDATE" },
+    { table: "contact_messages", event: "DELETE" },
+  ], useCallback((payload: any) => {
+    const { eventType, new: record, old: oldRecord } = payload;
+    if (eventType === "INSERT") {
+      setMessages(prev => [record, ...prev]);
+    } else if (eventType === "UPDATE") {
+      setMessages(prev => prev.map(m => m.id === record.id ? { ...m, ...record } : m));
+      if (record.read !== undefined && oldRecord) {
+        setMessages(prev => prev.map(m => m.id === record.id ? { ...m, read: record.read } : m));
+      }
+    } else if (eventType === "DELETE") {
+      setMessages(prev => prev.filter(m => m.id !== oldRecord.id));
+    }
+  }, []));
 
   async function load() {
     const { data } = await supabase
