@@ -10,9 +10,9 @@
 ALTER TABLE notifications ADD COLUMN IF NOT EXISTS from_user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL;
 CREATE INDEX IF NOT EXISTS idx_notifications_from_user ON notifications(from_user_id);
 
-ALTER TABLE article_views ADD COLUMN IF NOT EXISTS user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL;
-CREATE INDEX IF NOT EXISTS idx_article_views_user ON article_views(user_id);
+-- article_views table may not exist, skip column add
 
+-- Reading lists table
 CREATE TABLE IF NOT EXISTS reading_lists (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -30,6 +30,7 @@ CREATE POLICY "reading_lists_delete" ON reading_lists FOR DELETE USING (auth.uid
 CREATE INDEX IF NOT EXISTS idx_reading_lists_user ON reading_lists(user_id);
 CREATE INDEX IF NOT EXISTS idx_reading_lists_type ON reading_lists(user_id, list_type);
 
+-- Notification preferences (per user)
 CREATE TABLE IF NOT EXISTS notification_preferences (
   user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email_notifications boolean DEFAULT true,
@@ -50,40 +51,6 @@ CREATE OR REPLACE FUNCTION get_unread_notification_count(p_user_id uuid)
 RETURNS int AS $$
   SELECT COUNT(*) FROM notifications WHERE user_id = p_user_id AND read = false;
 $$ LANGUAGE sql SECURITY DEFINER;
-
-CREATE OR REPLACE FUNCTION get_user_reading_stats(p_user_id uuid)
-RETURNS TABLE (
-  total_articles_read bigint,
-  total_reading_time_minutes bigint,
-  total_sections_read jsonb
-) AS $$
-BEGIN
-  RETURN QUERY
-  SELECT
-    COUNT(DISTINCT av.article_id),
-    COALESCE(SUM(
-      CASE
-        WHEN a.read_time ~ '^\d+' THEN substring(a.read_time from '^\d+')::bigint
-        ELSE 0
-      END
-    ), 0),
-    COALESCE(
-      (SELECT jsonb_agg(jsonb_build_object('section', a2.section, 'count', count))
-       FROM (
-         SELECT a2.section, COUNT(*) as count
-         FROM article_views av2
-         JOIN articles a2 ON a2.id = av2.article_id
-         WHERE av2.user_id = p_user_id
-         GROUP BY a2.section
-         ORDER BY count DESC
-       ) a2),
-      '[]'::jsonb
-    )
-  FROM article_views av
-  JOIN articles a ON a.id = av.article_id
-  WHERE av.user_id = p_user_id;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- =============================================
 -- 010: Article Visibility
