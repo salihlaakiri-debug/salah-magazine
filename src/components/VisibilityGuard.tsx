@@ -54,7 +54,7 @@ export default function VisibilityGuard({
         .from("follows")
         .select("id")
         .eq("follower_id", user.id)
-        .eq("following_id", authorId)
+        .eq("author_id", authorId)
         .maybeSingle()
         .then(({ data }) => {
           if (data) {

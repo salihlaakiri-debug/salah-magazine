@@ -109,26 +109,16 @@ DROP POLICY IF EXISTS "article_views_select" ON article_views; CREATE POLICY "ar
 
 -- =============================================
 -- Follows table (already exists from 002_follows_notifications)
--- Ensure 'author_id' is renamed to 'following_id' for consistency
+-- Columns: follower_id, author_id (the user being followed)
 -- =============================================
 
-DO $$
-BEGIN
-  IF EXISTS (SELECT FROM pg_tables WHERE tablename = 'follows') THEN
-    IF EXISTS (SELECT FROM information_schema.columns WHERE table_name = 'follows' AND column_name = 'author_id') THEN
-      ALTER TABLE follows RENAME COLUMN author_id TO following_id;
-    END IF;
-  END IF;
-END $$;
-
--- Ensure column exists
-ALTER TABLE follows ADD COLUMN IF NOT EXISTS following_id uuid REFERENCES auth.users(id) ON DELETE CASCADE;
+ALTER TABLE follows ADD COLUMN IF NOT EXISTS author_id uuid;
 
 ALTER TABLE follows ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "follows_select" ON follows; CREATE POLICY "follows_select" ON follows FOR SELECT USING (true);
 DROP POLICY IF EXISTS "follows_insert" ON follows; CREATE POLICY "follows_insert" ON follows FOR INSERT WITH CHECK (auth.uid() = follower_id);
 DROP POLICY IF EXISTS "follows_delete" ON follows; CREATE POLICY "follows_delete" ON follows FOR DELETE USING (auth.uid() = follower_id);
-CREATE INDEX IF NOT EXISTS idx_follows_following ON follows(following_id);
+CREATE INDEX IF NOT EXISTS idx_follows_following ON follows(author_id);
 CREATE INDEX IF NOT EXISTS idx_follows_follower ON follows(follower_id);
 
 -- =============================================
@@ -263,7 +253,7 @@ BEGIN
   IF NEW.status = 'published' AND (OLD IS NULL OR OLD.status IS DISTINCT FROM 'published') THEN
     INSERT INTO notifications (user_id, type, message, article_id)
     SELECT f.follower_id, 'publish', 'عمل جديد "' || LEFT(NEW.title, 60) || '" في قسم ' || COALESCE(NEW.section, ''), NEW.id
-    FROM follows f WHERE f.following_id = NEW.author_id;
+    FROM follows f WHERE f.author_id = NEW.author_id;
   END IF;
   RETURN NEW;
 END;
