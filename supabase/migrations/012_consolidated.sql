@@ -93,6 +93,20 @@ CREATE TABLE IF NOT EXISTS public.article_views (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- Fix: rename author_id to following_id if exists (from old migration 002)
+DO $$ BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'follows' AND column_name = 'author_id'
+  ) THEN
+    ALTER TABLE public.follows RENAME COLUMN author_id TO following_id;
+    ALTER TABLE public.follows ALTER COLUMN following_id SET NOT NULL;
+    ALTER TABLE public.follows DROP CONSTRAINT IF EXISTS follows_pkey;
+    ALTER TABLE public.follows ADD PRIMARY KEY (follower_id, following_id);
+    ALTER TABLE public.follows DROP CONSTRAINT IF EXISTS follows_author_id_fkey;
+  END IF;
+END $$;
+
 -- 2h. Follows
 CREATE TABLE IF NOT EXISTS public.follows (
   follower_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
