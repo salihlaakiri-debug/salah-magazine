@@ -1,0 +1,63 @@
+name: Instagram Automation
+
+on:
+  schedule:
+    - cron: '0 6,18 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: instagram-automation
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -r scripts/instagram-automation/requirements.txt
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-naskh-arabic 2>/dev/null || true
+
+      - name: Create directories
+        run: |
+          mkdir -p scripts/instagram-automation/generated_images
+          mkdir -p scripts/instagram-automation/fonts
+
+      - name: Initialize posting log
+        run: |
+          if [ ! -f scripts/instagram-automation/posting_log.json ]; then
+            echo '[]' > scripts/instagram-automation/posting_log.json
+          fi
+
+      - name: Run post cycle
+        run: cd scripts/instagram-automation && python main.py
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          INSTAGRAM_USERNAME: ${{ secrets.INSTAGRAM_USERNAME }}
+          INSTAGRAM_PASSWORD: ${{ secrets.INSTAGRAM_PASSWORD }}
+
+      - name: Commit and push posting log
+        run: |
+          git config user.name "Al-Sudfeh Bot"
+          git config user.email "bot@sudfeh.com"
+          git add scripts/instagram-automation/posting_log.json
+          git add scripts/instagram-automation/generated_images/ -A 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update Instagram posting log [skip ci]"
+            git pull --rebase
+            git push
+          fi
