@@ -31,6 +31,15 @@ Migrations: 001_performance_indexes.sql, 002_tags_subscribers_views.sql, 003_not
 - Google OAuth client-side via signInWithGoogle() + /auth/callback route
 - Admin: 2ec8e6b2-284c-439e-8ae0-e0a53c1c2642 (role=admin)
 
+## Profile System
+- Profile page /profile/[username]: cover image, avatar, stats (works/likes/followers), section breakdown with progress bars, social links (website/Twitter/Instagram), tabs for articles & bookmarks (owner only)
+- Settings page /settings: edit display_name, username, bio, avatar/cover upload, social links fields
+- Article author linking: WorkCard & work/[id] make author name clickable → profile, show author avatar from profiles table
+- Author bio card on article pages (work/[id]): display_name, username, bio, member-since date
+- Writers page /writers: grid of all writer+admin profiles with avatars, bios, article/follower counts
+- Social columns (website, twitter, instagram) added to profiles table (migration 005)
+- enrichArticles() in supabase-data.ts batch-loads author profiles (avatar, username) into Article objects
+
 ## Key Features
 - Tags system (TagBadge, TagInput, /tag/[slug] pages)
 - Newsletter (subscribe/confirm API routes)
@@ -54,11 +63,14 @@ Migrations: 001_performance_indexes.sql, 002_tags_subscribers_views.sql, 003_not
 - /src/components/NotificationsBell.tsx — realtime notifications via Supabase
 - /src/lib/tags.ts — tag CRUD (server-side)
 - /src/lib/notify.ts — notification creation helpers
+- /src/lib/supabase-data.ts — server data helpers (includes enrichArticles for profile linking)
+- /src/app/profile/[username]/page.tsx — public profile page with stats, sections, social links
+- /src/app/settings/page.tsx — account settings with avatar/cover upload + social links
+- /src/app/writers/page.tsx — writers listing grid
+- /src/app/work/[id]/page.tsx — article page with author bio card
+- /src/components/WorkCard.tsx — article card with clickable author + avatar
 - /supabase/migrations/ — SQL migrations (already executed)
 
 ## Manual Steps Still Needed
-1. **Google OAuth**: Enable in Supabase Dashboard → Authentication → Providers → Google
-   - Set up Google Cloud Console OAuth credentials (Client ID + Secret)
-   - Add redirect URI: https://pbxibeppcnnmrxhrmanf.supabase.co/auth/v1/callback
-   - OR use Supabase Management API PAT to configure via API
-2. **All SQL migrations already executed** (tables + indexes + triggers + RPCs confirmed working)
+1. **Migration 005**: Execute `supabase/migrations/005_profile_social.sql` in Supabase SQL Editor to add social link columns to profiles table
+2. **Add SMTP config** to .env.local (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, EMAIL_FROM) for custom branded emails; falls back to Supabase default emails otherwise
