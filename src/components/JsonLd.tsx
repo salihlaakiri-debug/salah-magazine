@@ -9,7 +9,7 @@ export function WebsiteJsonLd() {
           name: "السُّدفة",
           alternateName: "Al-Sudfeh Magazine",
           url: process.env.NEXT_PUBLIC_SITE_URL || "https://al-sudfeh.vercel.app",
-          description: "مجلة أدبية عربية مستقلة. شعر وقصة ونثر وتأملات ومقالات.",
+          description: "مجلة أدبية عربية مستقلة. حيث تلتقي القصيدة بالتأمل، وتولد الحكاية من رحم الصمت.",
           inLanguage: "ar",
           publisher: {
             "@type": "Organization",

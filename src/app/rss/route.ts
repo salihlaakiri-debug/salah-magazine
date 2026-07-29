@@ -1,6 +1,6 @@
 import { fetchPublishedArticles } from "@/lib/supabase-data";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://salah-magazine.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://al-sudfeh.vercel.app";
 
 function escapeXml(text: string): string {
   return text
@@ -32,7 +32,7 @@ export async function GET() {
   <channel>
     <title>${escapeXml("السُّدفة | مجلة أدبية عربية")}</title>
     <link>${SITE_URL}</link>
-    <description>${escapeXml("مجلة أدبية عربية تنشر القصائد والتأملات والحكايات")}</description>
+    <description>${escapeXml("مجلة أدبية عربية مستقلة. حيث تلتقي القصيدة بالتأمل، وتولد الحكاية من رحم الصمت.")}</description>
     <language>ar</language>
     <atom:link href="${SITE_URL}/rss" rel="self" type="application/rss+xml" />
 ${items}

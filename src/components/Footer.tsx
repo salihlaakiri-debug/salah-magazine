@@ -21,10 +21,17 @@ export default function Footer() {
                 <SudfehLogo size={40} showText={false} />
                 <span className="text-xl font-bold font-[var(--font-heading)] gradient-text leading-none">السُّدفة</span>
               </div>
-              <p className="text-sm opacity-50 leading-relaxed max-w-sm mb-6">
-                مجلة أدبية عربية مستقلة. نكتب لنفهم، وصمتاً لنسمع. ننشر القصائد
-                والتأملات والحكايات من عوالم اللغة والصمت.
-              </p>
+              <div className="max-w-sm mb-6">
+                <div className="relative pr-4 border-r-2 border-accent/25">
+                  <p className="text-sm leading-relaxed opacity-70">
+                    مجلة أدبية عربية مستقلة. حيث تلتقي القصيدة بالتأمل،
+                    وتولد الحكاية من رحم الصمت.
+                  </p>
+                  <p className="text-sm leading-relaxed mt-2 text-accent-light/80 font-[var(--font-heading)] tracking-wide">
+                    نكتب لنفهم، ونُصغي لنرى.
+                  </p>
+                </div>
+              </div>
               <div className="flex gap-3">
                 <a
                   href="mailto:contact@sudfeh.com"
