@@ -1,9 +1,25 @@
-type ToastType = "success" | "error" | "info";
+export type ToastType = "success" | "error" | "info" | "warning";
 
-type ToastMessage = {
+export type ToastPosition =
+  | "bottom-right"
+  | "bottom-left"
+  | "top-right"
+  | "top-left"
+  | "top-center";
+
+export type ToastAction = {
+  label: string;
+  onClick: () => void;
+};
+
+export type ToastMessage = {
   id: string;
   text: string;
   type: ToastType;
+  duration?: number;
+  position?: ToastPosition;
+  action?: ToastAction;
+  progress?: boolean;
 };
 
 type ToastHandler = (toast: ToastMessage) => void;
@@ -20,7 +36,24 @@ export function unregisterToastHandler() {
 
 let counter = 0;
 
-export function showToast(text: string, type: ToastType = "info") {
+export function showToast(
+  text: string,
+  type: ToastType = "info",
+  options?: {
+    duration?: number;
+    position?: ToastPosition;
+    action?: ToastAction;
+    progress?: boolean;
+  }
+) {
   const id = `toast-${++counter}`;
-  toastHandler?.({ id, text, type });
+  toastHandler?.({
+    id,
+    text,
+    type,
+    duration: options?.duration ?? 4000,
+    position: options?.position ?? "bottom-right",
+    action: options?.action,
+    progress: options?.progress ?? true,
+  });
 }

@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { SECTIONS } from "@/lib/types";
 import { useTheme } from "./ThemeProvider";
 import { useAuth } from "./AuthProvider";
-import { MenuIcon, XIcon, MoonIcon, SunIcon, PenIcon, SearchIcon, ShieldIcon, UserIcon, LogOutIcon, BookmarkIcon, SettingsIcon, BellIcon, ClockIcon } from "./Icons";
+import { MenuIcon, XIcon, MoonIcon, SunIcon, PenIcon, SearchIcon, ShieldIcon, UserIcon, LogOutIcon, BookmarkIcon, SettingsIcon, BellIcon, ClockIcon, ChevronDownIcon } from "./Icons";
 import NotificationsBell from "./NotificationsBell";
 import SudfehLogo from "./SudfehLogo";
 
@@ -29,7 +29,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-18">
           <Link href="/" className="flex items-center gap-3 group" aria-label="السُّدفة - الصفحة الرئيسية">
-            <SudfehLogo size={38} className="sm:h-10 h-9" showText={false} />
+            <SudfehLogo size={38} className="sm:h-10 h-9 transition-transform duration-300 group-hover:scale-105" showText={false} />
             <span className="hidden sm:block text-xl font-bold font-[var(--font-heading)] gradient-text leading-none">السُّدفة</span>
           </Link>
 
@@ -46,58 +46,59 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link href="/submit" className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-accent/10 text-accent text-xs font-medium hover:bg-accent/20 hover:shadow-lg hover:shadow-accent/10 transition-all duration-300 btn-ripple">
+            <Link href="/submit" className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-accent/10 text-accent text-xs font-medium hover:bg-accent/20 hover:shadow-lg hover:shadow-accent/10 transition-all duration-300 btn-ripple active:scale-90">
               <PenIcon size={12} /> إرسال عمل
             </Link>
 
             {loading ? (
-              <div className="w-8 h-8 rounded-full bg-surface animate-pulse" />
+              <div className="w-8 h-8 rounded-full bg-surface skeleton" />
             ) : user ? (
               <>
                 <NotificationsBell />
                 <div ref={userMenuRef} className="relative">
                   <button onClick={() => setUserMenuOpen(!userMenuOpen)} className="flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-surface-hover transition-all duration-200 active:scale-95">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent/25 to-accent-light/25 flex items-center justify-center text-accent text-xs font-bold ring-2 ring-accent/10">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent/25 to-accent-light/25 flex items-center justify-center text-accent text-xs font-bold ring-2 ring-accent/10 transition-transform duration-200 group-hover:scale-105">
                       {profile?.display_name?.[0] || profile?.username?.[0] || user.email?.[0]}
                     </div>
+                    <ChevronDownIcon size={12} className={`text-text-muted transition-transform duration-200 ${userMenuOpen ? "rotate-180" : ""}`} />
                   </button>
                   {userMenuOpen && (
-                    <div className="absolute left-0 top-full mt-2 w-56 glass-strong rounded-2xl border border-border/50 shadow-2xl shadow-black/10 dark:shadow-black/40 py-2 animate-scale-in z-50">
+                    <div className="absolute left-0 top-full mt-2 w-56 glass-strong rounded-2xl border border-border/50 shadow-2xl shadow-black/10 dark:shadow-black/40 py-2 animate-scale-in z-50 origin-top-left">
                       <div className="px-4 py-3 border-b border-border/30">
                         <p className="font-bold text-sm truncate">{profile?.display_name || profile?.username}</p>
                         <p className="text-[11px] text-text-muted truncate">{user.email}</p>
                       </div>
-                      <Link href={`/profile/${profile?.username}`} onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200">
+                      <Link href={`/profile/${profile?.username}`} onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200 active:scale-[0.98]">
                         <UserIcon size={16} /> ملفي الشخصي
                       </Link>
-                      <Link href="/notifications" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200">
+                      <Link href="/notifications" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200 active:scale-[0.98]">
                         <BellIcon size={16} /> الإشعارات
                       </Link>
-                      <Link href="/dashboard" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200">
+                      <Link href="/dashboard" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200 active:scale-[0.98]">
                         <PenIcon size={16} /> لوحة الكاتب
                       </Link>
-                      <Link href="/my-works" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200">
+                      <Link href="/my-works" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200 active:scale-[0.98]">
                         <PenIcon size={16} /> أعمالي
                       </Link>
-                      <Link href="/reading-history" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200">
+                      <Link href="/reading-history" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200 active:scale-[0.98]">
                         <ClockIcon size={16} /> سجل القراءة
                       </Link>
-                      <Link href="/reading-lists" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200">
+                      <Link href="/reading-lists" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200 active:scale-[0.98]">
                         <BookmarkIcon size={16} /> قوائم القراءة
                       </Link>
-                      <Link href="/bookmarks" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200">
+                      <Link href="/bookmarks" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200 active:scale-[0.98]">
                         <BookmarkIcon size={16} /> المحفوظات
                       </Link>
-                      <Link href="/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200">
+                      <Link href="/settings" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200 active:scale-[0.98]">
                         <SettingsIcon size={16} /> إعدادات الحساب
                       </Link>
                       {isAdmin && (
-                        <Link href="/admin/dashboard" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200 text-accent">
+                        <Link href="/admin/dashboard" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-surface-hover transition-all duration-200 text-accent active:scale-[0.98]">
                           <ShieldIcon size={16} /> لوحة التحكم
                         </Link>
                       )}
                       <div className="border-t border-border/30 mt-1 pt-1">
-                        <button onClick={async () => { await signOut(); setUserMenuOpen(false); }} className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-500/10 transition-all duration-200 w-full">
+                        <button onClick={async () => { await signOut(); setUserMenuOpen(false); }} className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-500/10 transition-all duration-200 w-full active:scale-[0.98]">
                           <LogOutIcon size={16} /> خروج
                         </button>
                       </div>
@@ -112,13 +113,13 @@ export default function Header() {
               </div>
             )}
 
-            <button onClick={toggle} className="p-2.5 rounded-xl hover:bg-surface-hover transition-all duration-300 text-text-muted hover:text-foreground active:scale-90" aria-label="تبديل الوضع">
-              <span className={`block transition-transform duration-500 ${theme === "light" ? "rotate-0" : "rotate-180"}`}>
+            <button onClick={toggle} className="p-2.5 rounded-xl hover:bg-surface-hover transition-all duration-300 text-text-muted hover:text-foreground active:scale-85" aria-label="تبديل الوضع">
+              <span className={`block transition-all duration-500 ${theme === "light" ? "rotate-0 scale-100" : "rotate-180 scale-110"}`}>
                 {theme === "light" ? <MoonIcon size={18} /> : <SunIcon size={18} />}
               </span>
             </button>
 
-            <button onClick={() => setMenuOpen(!menuOpen)} className="lg:hidden p-2.5 rounded-xl hover:bg-surface-hover transition-all duration-200 text-text-muted hover:text-foreground active:scale-90" aria-label="القائمة">
+            <button onClick={() => setMenuOpen(!menuOpen)} className="lg:hidden p-2.5 rounded-xl hover:bg-surface-hover transition-all duration-200 text-text-muted hover:text-foreground active:scale-85" aria-label="القائمة">
               <span className={`block transition-transform duration-300 ${menuOpen ? "rotate-90" : ""}`}>
                 {menuOpen ? <XIcon size={18} /> : <MenuIcon size={18} />}
               </span>

@@ -36,9 +36,10 @@ export default function WorkCard({ article, featured = false }: { article: Artic
   if (featured) {
     return (
       <Link href={`/work/${article.id}`} className="group block">
-        <div className="relative overflow-hidden rounded-3xl bg-surface border border-border/50 card-hover">
+        <div className="relative overflow-hidden rounded-3xl bg-surface border border-border/50 card-hover card-glow">
           <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-accent-light/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-accent/[0.03] group-hover:bg-accent/[0.06] transition-colors duration-500 blur-lg" />
+          <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-accent/[0.03] group-hover:bg-accent/[0.06] transition-all duration-500 blur-lg group-hover:scale-150" />
+          <div className="absolute -bottom-6 -left-6 w-28 h-28 rounded-full bg-accent/[0.02] opacity-0 group-hover:opacity-100 transition-all duration-500 blur-lg group-hover:scale-150" />
           <div className="relative p-8 sm:p-10">
             <div className="flex items-center gap-2 mb-4">
               <span className={`text-xs font-semibold px-3 py-1 rounded-full bg-gradient-to-r section-badge ${colors}`}>
@@ -61,7 +62,7 @@ export default function WorkCard({ article, featured = false }: { article: Artic
             </p>
             <div className="flex items-center justify-between">
               <AuthorLink username={article.author_username} className="flex items-center gap-3 text-sm text-text-muted group/author">
-                <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-bold ring-2 ring-accent/5 overflow-hidden">
+                <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-bold ring-2 ring-accent/5 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
                   {article.author_avatar_url ? (
                     <Image src={article.author_avatar_url} alt="" width={32} height={32} className="w-full h-full object-cover" />
                   ) : (
@@ -86,9 +87,10 @@ export default function WorkCard({ article, featured = false }: { article: Artic
 
   return (
     <Link href={`/work/${article.id}`} className="group block">
-      <div className="relative overflow-hidden rounded-2xl bg-surface border border-border/50 p-6 card-hover">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-accent/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-accent/[0.03] group-hover:bg-accent/[0.06] transition-colors duration-500 blur-lg" />
+      <div className="relative overflow-hidden rounded-2xl bg-surface border border-border/50 p-6 card-hover card-glow">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-accent/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-accent/3 to-transparent rounded-tr-full opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110" />
+        <div className="absolute -top-4 -right-4 w-20 h-20 rounded-full bg-accent/[0.03] group-hover:bg-accent/[0.06] transition-all duration-500 blur-lg group-hover:scale-150" />
         <div className="relative">
           <div className="flex items-center gap-2 mb-3">
             <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gradient-to-r section-badge ${colors}`}>
@@ -111,7 +113,7 @@ export default function WorkCard({ article, featured = false }: { article: Artic
           </p>
           <div className="flex items-center justify-between text-xs text-text-muted">
             <AuthorLink username={article.author_username} className="flex items-center gap-2 group/author">
-              <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold ring-1 ring-accent/5 overflow-hidden shrink-0 relative">
+              <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold ring-1 ring-accent/5 overflow-hidden shrink-0 relative transition-transform duration-300 group-hover/author:scale-110">
                 {article.author_avatar_url ? (
                   <Image src={article.author_avatar_url} alt="" fill className="object-cover" />
                 ) : (
@@ -122,7 +124,7 @@ export default function WorkCard({ article, featured = false }: { article: Artic
               <span className="w-1 h-1 rounded-full bg-border" />
               <span>{formatDate(article.date)}</span>
             </AuthorLink>
-            <span className="text-accent opacity-0 group-hover:opacity-100 transition-all duration-300">
+            <span className="text-accent opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
               <ArrowLeftIcon size={12} />
             </span>
           </div>
