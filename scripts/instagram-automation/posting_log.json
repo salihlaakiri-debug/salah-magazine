@@ -4,5 +4,11 @@
     "timestamp": "2026-07-29T11:54:33.142679",
     "success": true,
     "details": "Simulated: مطر من ورق (no creds)"
+  },
+  {
+    "article_id": "effa88e5-d112-4dca-825c-d8d5c6061a62",
+    "timestamp": "2026-07-29T10:13:12.483628",
+    "success": false,
+    "details": "Posted: النسخ والواقع"
   }
 ]
