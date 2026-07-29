@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { sendPasswordResetEmail } from "@/lib/email";
+import { validateEmail } from "@/lib/validation";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
+    const body = await req.json();
+    const { email } = body;
 
-    if (!email) {
-      return NextResponse.json({ error: "البريد الإلكتروني مطلوب" }, { status: 400 });
-    }
+    const emailResult = validateEmail(email);
+    if (!emailResult.valid) return NextResponse.json({ error: emailResult.error }, { status: 400 });
 
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -18,21 +19,20 @@ export async function POST(req: NextRequest) {
     }
 
     const admin = createClient(url, serviceKey);
+    const cleanedEmail = email.toLowerCase().trim();
 
     const { data, error: linkError } = await admin.auth.admin.generateLink({
       type: "recovery",
-      email,
+      email: cleanedEmail,
       options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://al-sudfeh.vercel.app"}/auth/callback` },
     });
 
     if (linkError || !data?.properties?.action_link) {
-      // Don't reveal whether the email exists — just return success
       return NextResponse.json({ success: true, message: "إذا كان البريد مسجلاً، ستصل لك رسالة استعادة كلمة المرور." });
     }
 
     const resetLink = data.properties.action_link;
-
-    const result = await sendPasswordResetEmail(email, resetLink);
+    const result = await sendPasswordResetEmail(cleanedEmail, resetLink);
 
     return NextResponse.json({
       success: true,

@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 const RATE_LIMIT = new Map<string, { count: number; timestamp: number }>();
 
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, val] of RATE_LIMIT) {
+    if (now - val.timestamp > 600000) RATE_LIMIT.delete(key);
+  }
+}, 300000);
+
 function getRateLimit(key: string, limit: number, windowMs: number): boolean {
   const now = Date.now();
   const entry = RATE_LIMIT.get(key);
@@ -17,16 +24,11 @@ function getRateLimit(key: string, limit: number, windowMs: number): boolean {
   return true;
 }
 
-if (RATE_LIMIT.size > 10000) {
-  const now = Date.now();
-  for (const [key, val] of RATE_LIMIT) {
-    if (now - val.timestamp > 600000) RATE_LIMIT.delete(key);
-  }
-}
-
 const API_LIMITS: Record<string, { limit: number; windowMs: number }> = {
   "/api/auth/signup": { limit: 5, windowMs: 60000 },
   "/api/auth/auto-confirm": { limit: 10, windowMs: 60000 },
+  "/api/contact": { limit: 5, windowMs: 60000 },
+  "/api/newsletter": { limit: 10, windowMs: 60000 },
 };
 
 export function proxy(req: NextRequest) {
@@ -49,6 +51,7 @@ export function proxy(req: NextRequest) {
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "SAMEORIGIN");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("X-XSS-Protection", "1; mode=block");
 
   return response;
 }

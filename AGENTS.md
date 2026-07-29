@@ -17,28 +17,20 @@ Live at: https://al-sudfeh.vercel.app
 - Vercel (hosting, edge middleware proxy)
 - Arabic RTL (Noto Naskh Arabic, Noto Kufi Arabic, Amiri fonts)
 - Deep Indigo (#2d3561) color scheme, light mode default (localStorage key: sudfeh-theme)
+- Vitest (testing)
 
 ## 5 Literary Sections
 poetry, story, prose, articles, reflections
 
 ## Database (Supabase)
 Project: pbxibeppcnnmrxhrmanf
-Tables: articles, comments, profiles, tags, article_tags, subscribers, article_views, follows, likes, bookmarks, notifications
-Migrations: 001_performance_indexes.sql, 002_tags_subscribers_views.sql, 003_notifications.sql (all executed)
+Tables: articles, comments, profiles, tags, article_tags, subscribers, article_views, follows, likes, bookmarks, notifications, contact_messages, reading_lists, notification_preferences, rate_limits
+Consolidated migration: supabase/migrations/012_consolidated.sql (run ONCE in Supabase SQL Editor — covers all tables, indexes, RLS, functions, triggers, storage buckets, admin setup)
 
 ## Auth System
 - Server-side API routes (/api/auth/signup, /api/auth/auto-confirm) bypass email confirmation
 - Google OAuth client-side via signInWithGoogle() + /auth/callback route
-- Admin: 2ec8e6b2-284c-439e-8ae0-e0a53c1c2642 (role=admin)
-
-## Profile System
-- Profile page /profile/[username]: cover image, avatar, stats (works/likes/followers), section breakdown with progress bars, social links (website/Twitter/Instagram), tabs for articles & bookmarks (owner only)
-- Settings page /settings: edit display_name, username, bio, avatar/cover upload, social links fields
-- Article author linking: WorkCard & work/[id] make author name clickable → profile, show author avatar from profiles table
-- Author bio card on article pages (work/[id]): display_name, username, bio, member-since date
-- Writers page /writers: grid of all writer+admin profiles with avatars, bios, article/follower counts
-- Social columns (website, twitter, instagram) added to profiles table (migration 005)
-- enrichArticles() in supabase-data.ts batch-loads author profiles (avatar, username) into Article objects
+- Admin: salihlaakiri@gmail.com (role=admin, set by migration 012)
 
 ## Key Features
 - Tags system (TagBadge, TagInput, /tag/[slug] pages)
@@ -53,39 +45,33 @@ Migrations: 001_performance_indexes.sql, 002_tags_subscribers_views.sql, 003_not
 - Admin articles (CRUD, filter by section, tag management)
 - Admin comments (search, pagination, article-title lookup, delete/clear-all)
 - Loading skeletons, error boundaries, pagination
-- CSP security headers, rate limiting (in proxy.ts)
+- CSP security headers, rate limiting (in-memory at edge + DB-backed in API routes)
+- Input validation (src/lib/validation.ts)
 - Theme toggle (light/dark), localStorage persistence
 
 ## Important Paths
 - /src/proxy.ts — middleware (rate limiting, security headers)
-- /src/app/auth/callback/route.ts — OAuth callback for Google sign-in
+- /src/lib/validation.ts — input validation utilities
+- /src/lib/rate-limit.ts — DB-backed rate limiting fallback
+- /src/lib/supabase.ts — client-side Supabase (lazy proxy)
+- /src/lib/supabase-server.ts — server-side Supabase client
+- /src/lib/supabase-data.ts — server data helpers (enrichArticles)
+- /src/lib/tags.ts — tag CRUD
+- /src/lib/notify.ts — notification creation helpers
+- /src/lib/email.ts — email sending (nodemailer)
+- /src/lib/toast.ts — toast notification system
 - /src/components/AuthProvider.tsx — auth context with Google OAuth
 - /src/components/NotificationsBell.tsx — realtime notifications via Supabase
-- /src/lib/tags.ts — tag CRUD (server-side)
-- /src/lib/notify.ts — notification creation helpers
-- /src/lib/supabase-data.ts — server data helpers (includes enrichArticles for profile linking)
-- /src/app/profile/[username]/page.tsx — public profile page with stats, sections, social links
-- /src/app/settings/page.tsx — account settings with avatar/cover upload + social links
-- /src/app/writers/page.tsx — writers listing grid
-- /src/app/work/[id]/page.tsx — article page with author bio card
-- /src/components/WorkCard.tsx — article card with clickable author + avatar
-- /supabase/migrations/ — SQL migrations (already executed)
+- /supabase/migrations/012_consolidated.sql — single file for full DB setup
 
-## New Pages (Launch-Ready)
-- **/contact**: Contact form with Supabase storage (contact_messages table, migration 006)
-- **/newsletter/confirmed**: Dedicated confirmation page after email confirmation
-- **CookiesConsent**: EU-compliant consent banner added to root layout
-- **Image lazy loading**: Added to WorkCard.tsx and AvatarUpload.tsx
-
-## Toast Notification System
-- `src/lib/toast.ts`: Module-level showToast() function with callback registration
-- `src/components/ToastProvider.tsx`: Renders animated toasts (success/error/info) with auto-dismiss
-- Integrated in: AuthProvider (login, signup, logout), LikeButton (login prompt), BookmarkButton (login/save/remove), Comments (publish), Submit (send/edit), Settings (save)
-- Animation: `animate-slide-up` in globals.css
+## Important Pages
+- /profile/[username] — public profile page with stats, sections, social links
+- /settings — account settings with avatar/cover upload + social links
+- /writers — writers listing grid
+- /work/[id] — article page with author bio card
+- /contact — contact form with Supabase storage
+- /newsletter/confirmed — confirmation page
 
 ## Manual Steps Still Needed
-1. **Migration 005**: Execute `supabase/migrations/005_profile_social.sql` in Supabase SQL Editor to add social link columns to profiles table
-2. **Migration 006**: Execute `supabase/migrations/006_contact_messages.sql` in Supabase SQL Editor to create contact messages table
-3. **Migration 007**: Execute `supabase/migrations/007_nested_comments.sql` in Supabase SQL Editor to add parent_id column for nested replies
-4. **Migration 008**: Execute `supabase/migrations/008_images_bucket.sql` in Supabase SQL Editor to create the images storage bucket with RLS policies
-5. **Add SMTP config** to .env.local (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, EMAIL_FROM) for custom branded emails; falls back to Supabase default emails otherwise
+1. **Run consolidated migration**: Execute `supabase/migrations/012_consolidated.sql` in Supabase SQL Editor (idempotent — safe to run multiple times) — this replaces all individual migrations 001-011
+2. **Add SMTP config** to .env.local (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, EMAIL_FROM) for custom branded emails; falls back to Supabase default emails otherwise

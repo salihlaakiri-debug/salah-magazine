@@ -1,13 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { validateEmail, validatePassword, validateUsername } from "@/lib/validation";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, username } = await req.json();
+    const body = await req.json();
+    const { email, password, username } = body;
 
-    if (!email || !password || !username) {
-      return NextResponse.json({ error: "جميع الحقول مطلوبة" }, { status: 400 });
-    }
+    const emailResult = validateEmail(email);
+    if (!emailResult.valid) return NextResponse.json({ error: emailResult.error }, { status: 400 });
+
+    const passwordResult = validatePassword(password);
+    if (!passwordResult.valid) return NextResponse.json({ error: passwordResult.error }, { status: 400 });
+
+    const usernameResult = validateUsername(username);
+    if (!usernameResult.valid) return NextResponse.json({ error: usernameResult.error }, { status: 400 });
 
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -18,11 +25,11 @@ export async function POST(req: NextRequest) {
 
     const admin = createClient(url, serviceKey);
 
-    const { data: signUpData, error: signUpError } = await admin.auth.admin.createUser({
-      email,
+    const { error: signUpError } = await admin.auth.admin.createUser({
+      email: email.toLowerCase().trim(),
       password,
       email_confirm: true,
-      user_metadata: { username, display_name: username },
+      user_metadata: { username: username.trim(), display_name: username.trim() },
     });
 
     if (signUpError) {
@@ -30,7 +37,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { data: signInData, error: signInError } = await admin.auth.signInWithPassword({
-      email,
+      email: email.toLowerCase().trim(),
       password,
     });
 

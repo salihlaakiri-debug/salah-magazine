@@ -1,36 +1,152 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# السُّدفة — Al-Sudfeh Magazine
 
-## Getting Started
+مجلة أدبية عربية. Literary Arabic magazine.
 
-First, run the development server:
+**الموقع:** [al-sudfeh.vercel.app](https://al-sudfeh.vercel.app)
+
+---
+
+## التقنيات — Tech Stack
+
+| Layer            | Technology                          |
+| ---------------- | ----------------------------------- |
+| Framework        | Next.js 16 (Turbopack), React 19    |
+| Language         | TypeScript                          |
+| Styling          | Tailwind CSS v4                     |
+| Database         | Supabase (PostgreSQL)               |
+| Auth             | Supabase Auth (Google OAuth + Email)|
+| Storage          | Supabase Storage (profiles, images) |
+| Hosting          | Vercel                              |
+| Testing          | Vitest                              |
+| Fonts            | Noto Naskh Arabic, Noto Kufi Arabic, Amiri |
+
+---
+
+## الأقسام — Sections
+
+- شعر (Poetry)
+- قصة (Story)
+- نثر (Prose)
+- مقالات (Articles)
+- تأملات (Reflections)
+
+---
+
+## البدء — Getting Started
+
+### المتطلبات — Prerequisites
+
+- Node.js 20+
+- npm
+- Supabase project (or access to the existing one)
+
+### التثبيت — Install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local  # ثم املأ المتغيرات
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### التطوير — Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run dev    # http://localhost:3000
+npm run build  # بناء الإنتاج
+npm run lint   # التحقق من الأخطاء
+npm test       # تشغيل الاختبارات
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### قاعدة البيانات — Database
 
-## Learn More
+يتم تشغيل التهيئة الكاملة لقاعدة البيانات عبر ملف واحد:
 
-To learn more about Next.js, take a look at the following resources:
+1. افتح Supabase SQL Editor
+2. شغّل `supabase/migrations/012_consolidated.sql`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+هذا الملف الواحد يشمل كل الجداول، الفهارس، صلاحيات RLS، التوابع، المحفزات، وأوعية التخزين.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## المتغيرات البيئية — Environment Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+انظر `.env.example` لجميع المتغيرات المطلوبة.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Variable | Required | Description |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | ✓ | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✓ | Supabase anonymous key |
+| `SUPABASE_SERVICE_ROLE_KEY` | ✓ | Service role key (server-side only) |
+| `NEXT_PUBLIC_SITE_URL` | ✓ | Deployment URL for redirects |
+| `SMTP_HOST` | | SMTP server for branded emails |
+| `SMTP_PORT` | | SMTP port |
+| `SMTP_USER` | | SMTP username |
+| `SMTP_PASS` | | SMTP password |
+| `EMAIL_FROM` | | Sender email address |
+
+---
+
+## الهيكلة — Project Structure
+
+```
+src/
+├── proxy.ts                  # Middleware (rate limiting, security headers)
+├── app/                      # Next.js App Router pages
+│   ├── (auth)/               # Auth pages (login, register, forgot/reset password)
+│   ├── admin/                # Admin dashboard (articles, comments, users, etc.)
+│   ├── api/                  # API routes (auth, contact, newsletter, track-view)
+│   ├── auth/callback/        # Google OAuth callback
+│   └── ...                   # Pages: about, archive, bookmarks, contact, dashboard,
+│                              #   profile/[username], search, section/[slug],
+│                              #   settings, submit, tag/[slug], work/[id], writers
+├── components/               # React components
+│   ├── AuthProvider.tsx      # Auth context + Google OAuth
+│   ├── Comments.tsx          # Comments section (nested replies)
+│   ├── LikeButton.tsx        # Like/unlike
+│   ├── BookmarkButton.tsx    # Bookmark/unbookmark
+│   ├── NotificationsBell.tsx # Realtime notifications
+│   ├── WorkCard.tsx          # Article card with author link
+│   ├── RichEditor.tsx        # Content editor
+│   ├── ToastProvider.tsx     # Toast notifications
+│   └── ...
+├── lib/                      # Utilities
+│   ├── supabase.ts           # Client-side Supabase (lazy proxy)
+│   ├── supabase-server.ts    # Server-side Supabase client
+│   ├── supabase-data.ts      # Server data helpers (enrichArticles)
+│   ├── validation.ts         # Input validation
+│   ├── rate-limit.ts         # DB-backed rate limiting
+│   ├── email.ts              # Email sending (nodemailer)
+│   ├── types.ts              # TypeScript types
+│   ├── tags.ts               # Tag CRUD
+│   ├── notify.ts             # Notification helpers
+│   └── toast.ts              # Toast system
+└── __tests__/                # Vitest tests
+    ├── validation.test.ts
+    ├── components.test.tsx
+    └── setup.ts
+```
+
+---
+
+## المميزات — Features
+
+- ✓ نظام حسابات مع Google OAuth
+- ✓ مقالات مع أقسام وتصنيفات
+- ✓ نظام تعليقات مع ردود متسلسلة
+- ✓ إعجابات، إشارات مرجعية، متابعة
+- ✓ إشعارات فورية (Realtime)
+- ✓ لوحة تحكم للمشرف
+- ✓ رسائل إخبارية (Newsletter)
+- ✓ صفحة ملف شخصي مع إحصائيات
+- ✓ وضع القراءة
+- ✓ جدول المحتويات
+- ✓ RSS Feed, Sitemap, JSON-LD
+- ✓ PWA
+- ✓ دعم كامل للغة العربية (RTL)
+- ✓ وضع مظلم/فاتح
+- ✓ حماية CSP، تقييد الطلبات، التحقق من المدخلات
+
+---
+
+## الترخيص — License
+
+All rights reserved.

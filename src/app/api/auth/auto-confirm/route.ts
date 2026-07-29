@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { validateEmail, validatePassword } from "@/lib/validation";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+    const body = await req.json();
+    const { email, password } = body;
 
-    if (!email || !password) {
-      return NextResponse.json({ error: "البريد وكلمة المرور مطلوبان" }, { status: 400 });
-    }
+    const emailResult = validateEmail(email);
+    if (!emailResult.valid) return NextResponse.json({ error: emailResult.error }, { status: 400 });
+
+    const passwordResult = validatePassword(password);
+    if (!passwordResult.valid) return NextResponse.json({ error: passwordResult.error }, { status: 400 });
 
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -17,8 +21,9 @@ export async function POST(req: NextRequest) {
     }
 
     const admin = createClient(url, serviceKey);
+    const cleanedEmail = email.toLowerCase().trim();
 
-    const { error: signInError } = await admin.auth.signInWithPassword({ email, password });
+    const { error: signInError } = await admin.auth.signInWithPassword({ email: cleanedEmail, password });
 
     if (!signInError) {
       return NextResponse.json({ success: true });
@@ -36,7 +41,7 @@ export async function POST(req: NextRequest) {
     for (let page = 1; page <= 5; page++) {
       const { data, error: listError } = await admin.auth.admin.listUsers({ page, perPage: 100 });
       if (listError || !data?.users?.length) break;
-      targetUser = data.users.find((u) => u.email === email) || null;
+      targetUser = data.users.find((u) => u.email === cleanedEmail) || null;
       if (targetUser || data.users.length < 100) break;
     }
 
@@ -53,7 +58,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { data: retryData, error: retryError } = await admin.auth.signInWithPassword({
-      email,
+      email: cleanedEmail,
       password,
     });
 

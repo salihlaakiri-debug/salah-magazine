@@ -1,27 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { randomBytes } from "crypto";
+import { validateEmail, validateName } from "@/lib/validation";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, name } = await req.json();
+    const body = await req.json();
+    const { email, name } = body;
 
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ error: "البريد الإلكتروني غير صالح" }, { status: 400 });
-    }
+    const emailResult = validateEmail(email);
+    if (!emailResult.valid) return NextResponse.json({ error: emailResult.error }, { status: 400 });
+
+    const nameResult = validateName(name || "");
+    if (!nameResult.valid) return NextResponse.json({ error: nameResult.error }, { status: 400 });
 
     const supabase = getSupabaseServer();
+    const cleanedEmail = email.toLowerCase().trim();
 
-    // Check if already subscribed
     const { data: existing } = await supabase
       .from("subscribers")
       .select("id, confirmed, unsubscribed")
-      .eq("email", email)
+      .eq("email", cleanedEmail)
       .single();
 
     if (existing) {
       if (existing.unsubscribed) {
-        // Re-subscribe
         const { error } = await supabase
           .from("subscribers")
           .update({ unsubscribed: false, confirmed: true })
@@ -32,7 +35,6 @@ export async function POST(req: NextRequest) {
       if (existing.confirmed) {
         return NextResponse.json({ message: "أنت مشترك بالفعل!" });
       }
-      // Not confirmed yet — resend
     }
 
     const confirmToken = randomBytes(32).toString("hex");
@@ -40,12 +42,12 @@ export async function POST(req: NextRequest) {
     if (existing) {
       await supabase
         .from("subscribers")
-        .update({ confirm_token: confirmToken, name: name || null })
+        .update({ confirm_token: confirmToken, name: (name || "").trim() || null })
         .eq("id", existing.id);
     } else {
       const { error } = await supabase
         .from("subscribers")
-        .insert({ email, name: name || null, confirm_token: confirmToken, confirmed: false });
+        .insert({ email: cleanedEmail, name: (name || "").trim() || null, confirm_token: confirmToken, confirmed: false });
       if (error) throw error;
     }
 

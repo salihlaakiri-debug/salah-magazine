@@ -1,5 +1,17 @@
 import type { NextConfig } from "next";
 
+const csp = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "img-src 'self' data: blob: https://pbxibeppcnnmrxhrmanf.supabase.co https://lh3.googleusercontent.com https://lh3.google.com",
+  "font-src 'self' https://fonts.gstatic.com",
+  "connect-src 'self' https://pbxibeppcnnmrxhrmanf.supabase.co wss://pbxibeppcnnmrxhrmanf.supabase.co https://fonts.googleapis.com https://va.vercel-scripts.com",
+  "frame-ancestors 'self'",
+  "base-uri 'self'",
+  "form-action 'self'",
+].join("; ");
+
 const securityHeaders = [
   { key: "X-DNS-Prefetch-Control", value: "on" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
@@ -7,24 +19,8 @@ const securityHeaders = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
   { key: "X-XSS-Protection", value: "1; mode=block" },
-  {
-    key: "Strict-Transport-Security",
-    value: "max-age=63072000; includeSubDomains; preload",
-  },
-  {
-    key: "Content-Security-Policy",
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live https://va.vercel-scripts.com",
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "img-src 'self' data: blob: https: http:",
-      "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' https://pbxibeppcnnmrxhrmanf.supabase.co wss://pbxibeppcnnmrxhrmanf.supabase.co https://fonts.googleapis.com https://va.vercel-scripts.com",
-      "frame-ancestors 'self'",
-      "base-uri 'self'",
-      "form-action 'self'",
-    ].join("; "),
-  },
+  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+  { key: "Content-Security-Policy", value: csp },
 ];
 
 const nextConfig: NextConfig = {
@@ -32,7 +28,6 @@ const nextConfig: NextConfig = {
   compress: true,
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "salah-magazine.vercel.app" },
       { protocol: "https", hostname: "al-sudfeh.vercel.app" },
       { protocol: "https", hostname: "pbxibeppcnnmrxhrmanf.supabase.co" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
