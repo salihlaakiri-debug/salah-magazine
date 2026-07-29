@@ -102,6 +102,7 @@ function ResultCard({ article }: { article: Article }) {
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
+  useEffect(() => { document.title = "بحث | مجلة السُّدفة"; }, []);
   const [activeSection, setActiveSection] = useState<string>(ALL_SECTIONS);
   const [sortBy, setSortBy] = useState<SortOption>("الأحدث");
   const [results, setResults] = useState<Article[]>([]);

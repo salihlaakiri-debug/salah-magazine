@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import {
   BarChartIcon, FileTextIcon, MessageIcon, SettingsIcon,
-  LogOutIcon, PenIcon, HomeIcon,
+  LogOutIcon, PenIcon, HomeIcon, MailIcon,
 } from "@/components/Icons";
 
 const navItems = [
@@ -14,6 +14,7 @@ const navItems = [
   { href: "/admin/articles", label: "المقالات", icon: FileTextIcon },
   { href: "/admin/submissions", label: "المراجعات", icon: FileTextIcon },
   { href: "/admin/comments", label: "التعليقات", icon: MessageIcon },
+  { href: "/admin/messages", label: "الرسائل", icon: MailIcon },
   { href: "/admin/settings", label: "الإعدادات", icon: SettingsIcon },
 ];
 

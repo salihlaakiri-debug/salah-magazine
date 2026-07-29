@@ -77,6 +77,7 @@ export default function AvatarUpload({ uid, url, onUpload, type }: Props) {
           <img
             src={preview || url!}
             alt={type}
+            loading="lazy"
             className={`w-full h-full object-cover ${!isCover ? "rounded-2xl" : ""}`}
           />
           {uploading && (

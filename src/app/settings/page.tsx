@@ -7,10 +7,12 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/AuthProvider";
 import { UserProfile } from "@/lib/types";
 import AvatarUpload from "@/components/AvatarUpload";
+import { showToast } from "@/lib/toast";
 import { SaveIcon, AlertIcon, ArrowLeftIcon } from "@/components/Icons";
 
 export default function SettingsPage() {
   const { user, profile, loading: authLoading } = useAuth();
+  useEffect(() => { document.title = "الإعدادات | مجلة السُّدفة"; }, []);
   const router = useRouter();
   const [form, setForm] = useState({ display_name: "", username: "", bio: "", website: "", twitter: "", instagram: "" });
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -60,8 +62,10 @@ export default function SettingsPage() {
 
     if (error) {
       setMessage({ type: "error", text: error.message });
+      showToast("حدث خطأ أثناء الحفظ", "error");
     } else {
       setMessage({ type: "success", text: "تم حفظ التغييرات بنجاح" });
+      showToast("تم حفظ التغييرات بنجاح", "success");
       setTimeout(() => setMessage(null), 3000);
     }
     setSaving(false);

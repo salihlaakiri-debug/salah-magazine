@@ -5,6 +5,7 @@ import { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import { UserProfile } from "@/lib/types";
 import { useRouter } from "next/navigation";
+import { showToast } from "@/lib/toast";
 
 interface AuthContextType {
   user: User | null;
@@ -120,6 +121,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         });
       }
 
+      showToast("تم تسجيل الدخول بنجاح", "success");
       return {};
     } catch {
       return { error: "حدث خطأ غير متوقع" };
@@ -144,6 +146,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
           access_token: result.access_token,
           refresh_token: result.refresh_token,
         });
+        showToast("تم إنشاء الحساب بنجاح", "success");
         return {};
       }
 
@@ -164,6 +167,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   async function signOut() {
     await supabase.auth.signOut();
     setProfile(null);
+    showToast("تم تسجيل الخروج", "info");
     router.push("/");
   }
 

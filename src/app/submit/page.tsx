@@ -8,11 +8,13 @@ import { supabase } from "@/lib/supabase";
 import { SECTIONS, Section } from "@/lib/types";
 import RichEditor from "@/components/RichEditor";
 import { TagInput } from "@/components/TagBadge";
+import { showToast } from "@/lib/toast";
 import { PenIcon, CheckIcon, SaveIcon } from "@/components/Icons";
 
 export default function SubmitPage() {
   const { user, profile, loading } = useAuth();
   const router = useRouter();
+  useEffect(() => { document.title = "إرسال عمل | مجلة السُّدفة"; }, []);
   const searchParams = useSearchParams();
   const editId = searchParams.get("edit");
   const isEditing = !!editId;
@@ -140,8 +142,10 @@ export default function SubmitPage() {
       if (updateError) {
         setError("حدث خطأ أثناء التعديل. حاول مرة أخرى.");
         setSubmitting(false);
+        showToast("حدث خطأ أثناء التعديل", "error");
       } else {
         setSuccess(true);
+        showToast("تم التعديل بنجاح", "success");
         setTimeout(() => router.push("/my-works"), 2000);
       }
     } else {
@@ -159,8 +163,10 @@ export default function SubmitPage() {
       if (insertError) {
         setError("حدث خطأ أثناء الإرسال. حاول مرة أخرى.");
         setSubmitting(false);
+        showToast("حدث خطأ أثناء الإرسال", "error");
       } else {
         setSuccess(true);
+        showToast("تم الإرسال بنجاح! سيتم مراجعة عملك", "success");
         setTimeout(() => router.push("/my-works"), 2000);
       }
     }

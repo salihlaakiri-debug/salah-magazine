@@ -21,6 +21,7 @@ function initials(name: string, fallback: string): string {
 export default function ProfilePage() {
   const params = useParams();
   const username = params.username as string;
+  useEffect(() => { document.title = `${username} | مجلة السُّدفة`; }, [username]);
   const { user, profile: currentUser } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { SECTIONS } from "@/lib/types";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { fetchPublishedArticles, fetchArticleById } from "@/lib/supabase-data";
@@ -128,9 +129,9 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <AuthorLink username={article.author_username} className="flex items-center gap-3 group/author">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-sm font-bold overflow-hidden shrink-0">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-sm font-bold overflow-hidden shrink-0 relative">
                   {article.author_avatar_url ? (
-                    <img src={article.author_avatar_url} alt="" className="w-full h-full object-cover" />
+                    <Image src={article.author_avatar_url} alt="" fill className="object-cover" />
                   ) : (
                     article.author.startsWith("ال") ? (article.author[2] || article.author[0]) : article.author[0]
                   )}
@@ -194,9 +195,9 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
           <div className="bg-surface border border-border/40 rounded-3xl p-8">
             <div className="flex items-start gap-5">
               <Link href={`/profile/${authorProfile.username}`}>
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-lg font-bold overflow-hidden shrink-0 ring-2 ring-accent/10">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-lg font-bold overflow-hidden shrink-0 ring-2 ring-accent/10 relative">
                   {authorProfile.avatar_url ? (
-                    <img src={authorProfile.avatar_url} alt="" className="w-full h-full object-cover" />
+                    <Image src={authorProfile.avatar_url} alt="" fill className="object-cover rounded-2xl" />
                   ) : (
                     authorProfile.display_name?.[0] || authorProfile.username[0]
                   )}

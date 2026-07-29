@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Article } from "@/lib/types";
 import { ArrowLeftIcon } from "./Icons";
 
@@ -55,7 +56,7 @@ export default function WorkCard({ article, featured = false }: { article: Artic
               <AuthorLink username={article.author_username} className="flex items-center gap-3 text-sm text-text-muted group/author">
                 <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-bold ring-2 ring-accent/5 overflow-hidden">
                   {article.author_avatar_url ? (
-                    <img src={article.author_avatar_url} alt="" className="w-full h-full object-cover" />
+                    <Image src={article.author_avatar_url} alt="" width={32} height={32} className="w-full h-full object-cover" />
                   ) : (
                     getAuthorInitial(article.author)
                   )}
@@ -96,9 +97,9 @@ export default function WorkCard({ article, featured = false }: { article: Artic
           </p>
           <div className="flex items-center justify-between text-xs text-text-muted">
             <AuthorLink username={article.author_username} className="flex items-center gap-2 group/author">
-              <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold ring-1 ring-accent/5 overflow-hidden shrink-0">
+              <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold ring-1 ring-accent/5 overflow-hidden shrink-0 relative">
                 {article.author_avatar_url ? (
-                  <img src={article.author_avatar_url} alt="" className="w-full h-full object-cover" />
+                  <Image src={article.author_avatar_url} alt="" fill className="object-cover" />
                 ) : (
                   getAuthorInitial(article.author)
                 )}

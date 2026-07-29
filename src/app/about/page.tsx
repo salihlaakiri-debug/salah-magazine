@@ -27,6 +27,7 @@ const VALUES = [
 ];
 
 export default function AboutPage() {
+  useEffect(() => { document.title = "عن المجلة | مجلة السُّدفة"; }, []);
   const [stats, setStats] = useState([
     { value: "0", label: "أعمال منشورة" },
     { value: "5", label: "أقسام أدبية" },

@@ -27,6 +27,8 @@ export interface Comment {
   name: string;
   text: string;
   date: string;
+  parentId?: string | null;
+  replies?: Comment[];
 }
 
 export interface UserProfile {

@@ -71,6 +71,21 @@ Migrations: 001_performance_indexes.sql, 002_tags_subscribers_views.sql, 003_not
 - /src/components/WorkCard.tsx — article card with clickable author + avatar
 - /supabase/migrations/ — SQL migrations (already executed)
 
+## New Pages (Launch-Ready)
+- **/contact**: Contact form with Supabase storage (contact_messages table, migration 006)
+- **/newsletter/confirmed**: Dedicated confirmation page after email confirmation
+- **CookiesConsent**: EU-compliant consent banner added to root layout
+- **Image lazy loading**: Added to WorkCard.tsx and AvatarUpload.tsx
+
+## Toast Notification System
+- `src/lib/toast.ts`: Module-level showToast() function with callback registration
+- `src/components/ToastProvider.tsx`: Renders animated toasts (success/error/info) with auto-dismiss
+- Integrated in: AuthProvider (login, signup, logout), LikeButton (login prompt), BookmarkButton (login/save/remove), Comments (publish), Submit (send/edit), Settings (save)
+- Animation: `animate-slide-up` in globals.css
+
 ## Manual Steps Still Needed
 1. **Migration 005**: Execute `supabase/migrations/005_profile_social.sql` in Supabase SQL Editor to add social link columns to profiles table
-2. **Add SMTP config** to .env.local (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, EMAIL_FROM) for custom branded emails; falls back to Supabase default emails otherwise
+2. **Migration 006**: Execute `supabase/migrations/006_contact_messages.sql` in Supabase SQL Editor to create contact messages table
+3. **Migration 007**: Execute `supabase/migrations/007_nested_comments.sql` in Supabase SQL Editor to add parent_id column for nested replies
+4. **Migration 008**: Execute `supabase/migrations/008_images_bucket.sql` in Supabase SQL Editor to create the images storage bucket with RLS policies
+5. **Add SMTP config** to .env.local (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, EMAIL_FROM) for custom branded emails; falls back to Supabase default emails otherwise

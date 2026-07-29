@@ -5,6 +5,8 @@ import Footer from "@/components/Footer";
 import ThemeProvider from "@/components/ThemeProvider";
 import AuthProvider from "@/components/AuthProvider";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import CookiesConsent from "@/components/CookiesConsent";
+import ToastProvider from "@/components/ToastProvider";
 import { WebsiteJsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
@@ -64,6 +66,7 @@ export default function RootLayout({
         <ServiceWorkerRegister />
         <ThemeProvider>
           <AuthProvider>
+            <ToastProvider>
             <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:right-4 focus:z-[999] focus:px-4 focus:py-2 focus:rounded-xl focus:bg-accent focus:text-white focus:outline-none focus:ring-2 focus:ring-accent/50">
               الانتقال إلى المحتوى الرئيسي
             </a>
@@ -72,6 +75,8 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
+            <CookiesConsent />
+          </ToastProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

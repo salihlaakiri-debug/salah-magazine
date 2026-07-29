@@ -42,6 +42,7 @@ export default function Header() {
             <NavLink href="/writers">الكتّاب</NavLink>
             <NavLink href="/search"><SearchIcon size={14} className="inline-block ml-1" />بحث</NavLink>
             <NavLink href="/about">من نحن</NavLink>
+            <NavLink href="/contact">تواصل معنا</NavLink>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -126,6 +127,7 @@ export default function Header() {
                 { href: "/writers", label: "الكتّاب" },
                 { href: "/search", label: "بحث" },
                 { href: "/about", label: "من نحن" },
+                { href: "/contact", label: "تواصل معنا" },
                 { href: "/submit", label: "إرسال عمل" },
                 ...(user ? [{ href: "/dashboard", label: "لوحة الكاتب" }, { href: "/bookmarks", label: "المحفوظات" }, { href: "/my-works", label: "أعمالي" }, { href: "/settings", label: "إعدادات الحساب" }] : []),
                 ...(!user ? [{ href: "/login", label: "دخول" }] : []),

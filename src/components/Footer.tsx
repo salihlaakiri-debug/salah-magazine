@@ -68,6 +68,7 @@ export default function Footer() {
                   { href: "/archive", label: "الأرشيف" },
                   { href: "/search", label: "بحث" },
                   { href: "/about", label: "من نحن" },
+                  { href: "/contact", label: "تواصل معنا" },
                   { href: "/submit", label: "إرسال عمل" },
                 ].map((link) => (
                   <li key={link.href}>
@@ -89,6 +90,7 @@ export default function Footer() {
                 {[
                   { href: "/privacy", label: "سياسة الخصوصية" },
                   { href: "/terms", label: "شروط الاستخدام" },
+                  { href: "/contact", label: "تواصل معنا" },
                   { href: "/rss", label: "خلاصة RSS" },
                 ].map((link) => (
                   <li key={link.href}>

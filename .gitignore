@@ -41,6 +41,10 @@ scripts/instagram-automation/generated_images/
 scripts/instagram-automation/instagram_session.json
 scripts/instagram-automation/test_output.png
 scripts/instagram-automation/__pycache__/
+scripts/instagram-automation/instagram_cookies.json
+scripts/instagram-automation/*.bat
+scripts/instagram-automation/*.html
+scripts/instagram-automation/posting_log.json
 
 # typescript
 *.tsbuildinfo

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./AuthProvider";
+import { showToast } from "@/lib/toast";
 import { BookmarkIcon } from "./Icons";
 
 export default function BookmarkButton({ articleId }: { articleId: string }) {
@@ -25,7 +26,7 @@ export default function BookmarkButton({ articleId }: { articleId: string }) {
   }, [articleId, user]);
 
   const toggle = async () => {
-    if (!user) return;
+    if (!user) { showToast("سجّل الدخول للحفظ", "info"); return; }
     setAnimating(true);
     setTimeout(() => setAnimating(false), 400);
 
@@ -36,11 +37,13 @@ export default function BookmarkButton({ articleId }: { articleId: string }) {
         .eq("article_id", articleId)
         .eq("user_id", user.id);
       setSaved(false);
+      showToast("تمت الإزالة من المحفوظات", "info");
     } else {
       await supabase
         .from("bookmarks")
         .insert({ article_id: articleId, user_id: user.id });
       setSaved(true);
+      showToast("تم الحفظ", "success");
     }
   };
 

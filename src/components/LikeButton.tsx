@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./AuthProvider";
 import { createNotification, getAuthorIdForArticle } from "@/lib/notify";
+import { showToast } from "@/lib/toast";
 import { HeartIcon } from "./Icons";
 
 export default function LikeButton({ articleId }: { articleId: string }) {
@@ -34,7 +35,7 @@ export default function LikeButton({ articleId }: { articleId: string }) {
   }, [articleId, user]);
 
   const toggle = async () => {
-    if (!user) return;
+    if (!user) { showToast("سجّل الدخول للإعجاب", "info"); return; }
     setAnimating(true);
     setTimeout(() => setAnimating(false), 400);
 

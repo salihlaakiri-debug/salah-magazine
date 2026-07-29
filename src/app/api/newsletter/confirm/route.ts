@@ -14,5 +14,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL("/?error=confirm-failed", req.url));
   }
 
-  return NextResponse.redirect(new URL("/?subscribed=true", req.url));
+  return NextResponse.redirect(new URL("/newsletter/confirmed", req.url));
 }

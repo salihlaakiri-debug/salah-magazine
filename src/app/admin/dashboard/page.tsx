@@ -6,7 +6,7 @@ import { SECTIONS } from "@/lib/types";
 import { BarChartIcon, FileTextIcon, MessageIcon, TrendingUpIcon, ClockIcon, UsersIcon, MailIcon, EyeIcon, TrendingIcon } from "@/components/Icons";
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState({ articles: 0, comments: 0, users: 0, pending: 0, subscribers: 0, totalViews: 0 });
+  const [stats, setStats] = useState({ articles: 0, comments: 0, users: 0, pending: 0, subscribers: 0, totalViews: 0, unreadMessages: 0 });
   const [recentArticles, setRecentArticles] = useState<any[]>([]);
   const [sectionCounts, setSectionCounts] = useState<Record<string, number>>({});
   const [recentComments, setRecentComments] = useState<any[]>([]);
@@ -14,12 +14,13 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function load() {
-      const [{ count: articles }, { count: comments }, { count: users }, { count: pending }, { count: subscribers }] = await Promise.all([
+      const [{ count: articles }, { count: comments }, { count: users }, { count: pending }, { count: subscribers }, { count: unreadMessages }] = await Promise.all([
         supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "published"),
         supabase.from("comments").select("*", { count: "exact", head: true }),
         supabase.from("profiles").select("*", { count: "exact", head: true }),
         supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("subscribers").select("*", { count: "exact", head: true }).eq("confirmed", true).eq("unsubscribed", false),
+        supabase.from("contact_messages").select("*", { count: "exact", head: true }).eq("read", false),
       ]);
 
       let totalViews = 0;
@@ -35,6 +36,7 @@ export default function DashboardPage() {
         pending: pending || 0,
         subscribers: subscribers || 0,
         totalViews,
+        unreadMessages: unreadMessages || 0,
       });
 
       const { data: recent } = await supabase
@@ -73,6 +75,7 @@ export default function DashboardPage() {
     { label: "المستخدمون", value: stats.users, icon: UsersIcon, color: "from-purple-500 to-violet-600" },
     { label: "المشتركون", value: stats.subscribers, icon: MailIcon, color: "from-rose-500 to-pink-600" },
     { label: "مشاهدات", value: stats.totalViews, icon: EyeIcon, color: "from-cyan-500 to-blue-600" },
+    { label: "رسائل غير مقروءة", value: stats.unreadMessages, icon: MailIcon, color: "from-rose-500 to-pink-600" },
   ];
 
   if (loading) return <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>;

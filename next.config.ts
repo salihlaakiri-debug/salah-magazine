@@ -35,6 +35,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "salah-magazine.vercel.app" },
       { protocol: "https", hostname: "al-sudfeh.vercel.app" },
       { protocol: "https", hostname: "pbxibeppcnnmrxhrmanf.supabase.co" },
+      { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      { protocol: "https", hostname: "lh3.google.com" },
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30,

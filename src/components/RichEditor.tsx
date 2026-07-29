@@ -30,19 +30,32 @@ export default function RichEditor({ value, onChange, placeholder }: RichEditorP
   }, [value, onChange]);
 
   const uploadImage = async (file: File) => {
+    const validTypes = ["image/png", "image/jpeg", "image/webp", "image/gif", "image/avif"];
+    if (!validTypes.includes(file.type)) {
+      alert("يرجى اختيار صورة بصيغة PNG أو JPEG أو WebP أو GIF أو AVIF");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      alert("حجم الصورة يجب ألا يتجاوز 10 ميغابايت");
+      return;
+    }
+
     setUploading(true);
     const ext = file.name.split(".").pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const { data, error } = await supabase.storage.from("images").upload(fileName, file);
-    if (!error && data) {
-      const { data: urlData } = supabase.storage.from("images").getPublicUrl(data.path);
-      const markdown = `\n![صورة](${urlData.publicUrl})\n`;
-      const ta = textareaRef.current;
-      if (ta) {
-        const pos = ta.selectionStart;
-        const newText = value.substring(0, pos) + markdown + value.substring(pos);
-        onChange(newText);
-      }
+    const fileName = `articles/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { data, error } = await supabase.storage.from("images").upload(fileName, file, { upsert: false, contentType: file.type });
+    if (error) {
+      alert("فشل رفع الصورة. تأكد من وجود مجلد images في التخزين.");
+      setUploading(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("images").getPublicUrl(data.path);
+    const markdown = `\n![صورة](${urlData.publicUrl})\n`;
+    const ta = textareaRef.current;
+    if (ta) {
+      const pos = ta.selectionStart;
+      const newText = value.substring(0, pos) + markdown + value.substring(pos);
+      onChange(newText);
     }
     setUploading(false);
   };

@@ -20,6 +20,7 @@ function formatDate(dateStr: string): string {
 
 export default function ArchivePage() {
   const [articles, setArticles] = useState<Article[]>([]);
+  useEffect(() => { document.title = "الأرشيف | مجلة السُّدفة"; }, []);
   const [loading, setLoading] = useState(true);
   const [selectedSection, setSelectedSection] = useState("الكل");
   const [selectedMonth, setSelectedMonth] = useState("الكل");
