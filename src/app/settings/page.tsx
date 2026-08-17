@@ -27,10 +27,11 @@ export default function SettingsPage() {
   }, [user, authLoading]);
 
   const loadProfile = async () => {
+    if (!user) return;
     const { data } = await supabase
       .from("profiles")
       .select("*")
-      .eq("id", user!.id)
+      .eq("id", user.id)
       .single();
 
     if (data) {
@@ -43,6 +44,7 @@ export default function SettingsPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
     setSaving(true);
     setMessage(null);
 
@@ -58,7 +60,7 @@ export default function SettingsPage() {
         avatar_url: avatarUrl,
         cover_url: coverUrl,
       })
-      .eq("id", user!.id);
+      .eq("id", user.id);
 
     if (error) {
       setMessage({ type: "error", text: error.message });
@@ -75,6 +77,10 @@ export default function SettingsPage() {
     return <div className="min-h-[60vh] flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>;
   }
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12">
       <Link href={`/profile/${profile?.username}`} className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-accent mb-6 transition-all">
@@ -86,7 +92,7 @@ export default function SettingsPage() {
       {/* Cover image */}
       <div className="mb-8">
         <label className="text-xs font-medium text-text-muted block mb-2">صورة الغلاف</label>
-        <AvatarUpload uid={user!.id} url={coverUrl} onUpload={setCoverUrl} type="cover" />
+        <AvatarUpload uid={user.id} url={coverUrl} onUpload={setCoverUrl} type="cover" />
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
@@ -94,7 +100,7 @@ export default function SettingsPage() {
         <div className="flex items-start gap-6">
           <div>
             <label className="text-xs font-medium text-text-muted block mb-2">الصورة الشخصية</label>
-            <AvatarUpload uid={user!.id} url={avatarUrl} onUpload={setAvatarUrl} type="avatar" />
+            <AvatarUpload uid={user.id} url={avatarUrl} onUpload={setAvatarUrl} type="avatar" />
           </div>
           <div className="flex-1">
             <label className="text-xs font-medium text-text-muted block mb-1.5">الاسم المعروض</label>

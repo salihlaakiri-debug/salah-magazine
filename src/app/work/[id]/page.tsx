@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { SECTIONS } from "@/lib/types";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { fetchPublishedArticles, fetchArticleById } from "@/lib/supabase-data";
@@ -13,6 +12,7 @@ import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/JsonLd";
 import { ArrowLeftIcon, ClockIcon, FileTextIcon } from "@/components/Icons";
 import TrackView from "@/components/TrackView";
 import VisibilityGuard from "@/components/VisibilityGuard";
+import SafeImage from "@/components/SafeImage";
 import {
   ClientComments,
   ClientReadingMode,
@@ -141,7 +141,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
               <AuthorLink username={article.author_username} className="flex items-center gap-3 group/author">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-sm font-bold overflow-hidden shrink-0 relative">
                   {article.author_avatar_url ? (
-                    <Image src={article.author_avatar_url} alt="" fill sizes="40px" className="object-cover" priority />
+                    <SafeImage src={article.author_avatar_url} alt="" width={40} height={40} className="object-cover" priority fallback={article.author.startsWith("ال") ? (article.author[2] || article.author[0]) : article.author[0]} />
                   ) : (
                     article.author.startsWith("ال") ? (article.author[2] || article.author[0]) : article.author[0]
                   )}
@@ -208,7 +208,7 @@ export default async function WorkPage({ params }: { params: Promise<{ id: strin
               <Link href={`/profile/${authorProfile.username}`}>
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-lg font-bold overflow-hidden shrink-0 ring-2 ring-accent/10 relative">
                   {authorProfile.avatar_url ? (
-                    <Image src={authorProfile.avatar_url} alt="" fill sizes="64px" className="object-cover rounded-2xl" />
+                    <SafeImage src={authorProfile.avatar_url} alt="" width={64} height={64} className="object-cover rounded-2xl" fallback={authorProfile.display_name?.[0] || authorProfile.username[0]} />
                   ) : (
                     authorProfile.display_name?.[0] || authorProfile.username[0]
                   )}

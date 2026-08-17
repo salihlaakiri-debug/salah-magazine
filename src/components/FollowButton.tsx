@@ -20,14 +20,14 @@ export default function FollowButton({ authorId }: { authorId: string }) {
       const { count: total } = await supabase
         .from("follows")
         .select("*", { count: "exact", head: true })
-        .eq("author_id", authorId);
+        .eq("following_id", authorId);
       setCount(total || 0);
 
       if (user && user.id !== authorId) {
         const { data } = await supabase
           .from("follows")
           .select("follower_id")
-          .eq("author_id", authorId)
+          .eq("following_id", authorId)
           .eq("follower_id", user.id)
           .maybeSingle();
         setFollowing(!!data);
@@ -43,13 +43,13 @@ export default function FollowButton({ authorId }: { authorId: string }) {
     setAnimating("loading");
 
     if (following) {
-      await supabase.from("follows").delete().eq("author_id", authorId).eq("follower_id", user!.id);
+      await supabase.from("follows").delete().eq("following_id", authorId).eq("follower_id", user!.id);
       setFollowing(false);
       setCount((c) => Math.max(0, c - 1));
       setAnimating("unfollow");
       setTimeout(() => setAnimating("idle"), 300);
     } else {
-      await supabase.from("follows").insert({ author_id: authorId, follower_id: user!.id });
+      await supabase.from("follows").insert({ following_id: authorId, follower_id: user!.id });
       setFollowing(true);
       setCount((c) => c + 1);
       const { data: profile } = await supabase.from("profiles").select("display_name,username").eq("id", user!.id).single();

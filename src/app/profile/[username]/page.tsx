@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
@@ -8,6 +8,27 @@ import { useAuth } from "@/components/AuthProvider";
 import { UserProfile, Article, SECTIONS } from "@/lib/types";
 import WorkCard from "@/components/WorkCard";
 import FollowButton from "@/components/FollowButton";
+
+function mapArticle(row: any): Article {
+  return {
+    id: row.id,
+    title: row.title,
+    content: row.content,
+    excerpt: row.excerpt || "",
+    section: row.section,
+    date: row.published_at || row.created_at,
+    author: row.author_name || "السُّدفة",
+    author_id: row.author_id || undefined,
+    author_name: row.author_name || undefined,
+    author_username: row.author_username || undefined,
+    author_avatar_url: row.author_avatar_url || undefined,
+    readTime: row.read_time || "3 دقائق",
+    status: row.status,
+    published_at: row.published_at,
+    created_at: row.created_at,
+    visibility: row.visibility || "public",
+  };
+}
 import { UserIcon, ClockIcon, FileTextIcon, HeartIcon, UsersIcon, SettingsIcon, GridIcon, BookmarkIcon, CalendarIcon } from "@/components/Icons";
 
 type Tab = "articles" | "bookmarks";
@@ -29,6 +50,8 @@ export default function ProfilePage() {
   const [stats, setStats] = useState({ followers: 0, totalLikes: 0 });
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("articles");
+  const [avatarFailed, setAvatarFailed] = useState(false);
+  const [coverFailed, setCoverFailed] = useState(false);
   const isOwner = user && profile?.id === user.id;
 
   useEffect(() => {
@@ -44,13 +67,13 @@ export default function ProfilePage() {
         .eq("status", "published")
         .order("published_at", { ascending: false });
 
-      const articleList = (a || []) as Article[];
+      const articleList = (a || []).map(mapArticle);
       setArticles(articleList);
 
       const { count: followerCount } = await supabase
         .from("follows")
         .select("*", { count: "exact", head: true })
-        .eq("author_id", p.id);
+        .eq("following_id", p.id);
 
       let totalLikes = 0;
       if (articleList.length > 0) {
@@ -61,11 +84,11 @@ export default function ProfilePage() {
         totalLikes = likeCount || 0;
       }
 
-      if (isOwner) {
+      if (user && p.id === user.id) {
         const { data: bmData } = await supabase
           .from("bookmarks")
           .select("article_id")
-          .eq("user_id", user!.id);
+          .eq("user_id", user.id);
 
         if (bmData && bmData.length > 0) {
           const { data: bmArticles } = await supabase
@@ -75,7 +98,7 @@ export default function ProfilePage() {
             .eq("status", "published")
             .order("published_at", { ascending: false });
 
-          setBookmarks((bmArticles || []) as Article[]);
+          setBookmarks((bmArticles || []).map(mapArticle));
         }
       }
 
@@ -112,8 +135,8 @@ export default function ProfilePage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
       {/* Cover */}
       <div className="relative h-48 sm:h-56 rounded-3xl overflow-hidden">
-        {profile.cover_url ? (
-          <img src={profile.cover_url} alt="" className="w-full h-full object-cover" />
+        {profile.cover_url && !coverFailed ? (
+          <img src={profile.cover_url} alt="" onError={() => setCoverFailed(true)} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-accent/10 via-accent/5 to-background" />
         )}
@@ -123,8 +146,8 @@ export default function ProfilePage() {
       <div className="bg-surface rounded-3xl border border-border/50 p-8 sm:p-10 -mt-16 relative z-10 shadow-lg">
         <div className="flex flex-col sm:flex-row items-start gap-6">
           <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-accent/25 to-accent-light/25 flex items-center justify-center text-accent text-3xl font-bold font-[var(--font-heading)] shrink-0 overflow-hidden ring-4 ring-surface shadow-xl -mt-14 sm:-mt-20">
-            {profile.avatar_url ? (
-              <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+            {profile.avatar_url && !avatarFailed ? (
+              <img src={profile.avatar_url} alt="" onError={() => setAvatarFailed(true)} className="w-full h-full object-cover" />
             ) : (
               avatarInitial
             )}

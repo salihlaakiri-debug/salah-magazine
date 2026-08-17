@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import { ImageIcon, XIcon } from "@/components/Icons";
+import { showToast } from "@/lib/toast";
 
 type Props = {
   uid: string;
@@ -14,6 +15,7 @@ type Props = {
 export default function AvatarUpload({ uid, url, onUpload, type }: Props) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const [imgError, setImgError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const uploadImage = async (file: File) => {
@@ -27,7 +29,9 @@ export default function AvatarUpload({ uid, url, onUpload, type }: Props) {
 
     if (error) {
       console.error("Upload error:", error.message);
+      showToast("فشل رفع الصورة: " + error.message, "error");
       setUploading(false);
+      setPreview(null);
       return;
     }
 
@@ -72,12 +76,13 @@ export default function AvatarUpload({ uid, url, onUpload, type }: Props) {
 
   return (
     <div className={`relative ${isCover ? "w-full h-48" : "w-24 h-24"}`}>
-      {preview || url ? (
+      {preview || (url && !imgError) ? (
         <div className={`relative ${isCover ? "w-full h-full" : "w-full h-full"} rounded-2xl overflow-hidden`}>
           <img
             src={preview || url!}
             alt={type}
             loading="lazy"
+            onError={() => setImgError(true)}
             className={`w-full h-full object-cover ${!isCover ? "rounded-2xl" : ""}`}
           />
           {uploading && (

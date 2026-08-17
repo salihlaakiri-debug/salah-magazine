@@ -54,7 +54,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       message: "تم الاشتراك بنجاح! يمكنك تصفح المقالات الآن.",
-      token: confirmToken,
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "خطأ داخلي" }, { status: 500 });

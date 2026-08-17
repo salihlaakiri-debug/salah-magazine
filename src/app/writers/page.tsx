@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { FileTextIcon, HeartIcon, UsersIcon } from "@/components/Icons";
+import SafeImage from "@/components/SafeImage";
 
 export const metadata = {
   title: "الكتّاب | مجلة السُّدفة",
@@ -53,7 +53,7 @@ export default async function WritersPage() {
       const { count: followers } = await supabase
         .from("follows")
         .select("*", { count: "exact", head: true })
-        .eq("author_id", w.id);
+        .eq("following_id", w.id);
 
       return { ...w, articleCount: articles || 0, followerCount: followers || 0 };
     })
@@ -78,7 +78,7 @@ export default async function WritersPage() {
             <div className="flex flex-col items-center text-center">
               <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent/20 to-accent-light/20 flex items-center justify-center text-accent text-2xl font-bold font-[var(--font-heading)] overflow-hidden mb-4 ring-2 ring-accent/5 group-hover:ring-accent/20 transition-all">
                 {writer.avatar_url ? (
-                  <Image src={writer.avatar_url} alt="" width={80} height={80} className="w-full h-full object-cover" />
+                  <SafeImage src={writer.avatar_url} alt="" width={80} height={80} className="w-full h-full object-cover" fallback={initials(writer.display_name, writer.username)} />
                 ) : (
                   initials(writer.display_name, writer.username)
                 )}

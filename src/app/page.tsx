@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { SECTIONS } from "@/lib/types";
 import { fetchPublishedArticles } from "@/lib/supabase-data";
 import WorkCard from "@/components/WorkCard";
@@ -7,6 +6,7 @@ import SectionIcon from "@/components/SectionIcon";
 import ScrollReveal from "@/components/ScrollReveal";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import SudfehIcon from "@/components/SudfehIcon";
+import SafeImage from "@/components/SafeImage";
 import { ArrowLeftIcon, SearchIcon } from "@/components/Icons";
 
 const QUOTES = [
@@ -141,7 +141,7 @@ export default async function HomePage() {
                           <Link href={`/profile/${featured.author_username}`} className="flex items-center gap-2 group/author">
                             <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold overflow-hidden">
                               {featured.author_avatar_url ? (
-                                <Image src={featured.author_avatar_url} alt="" width={28} height={28} className="w-full h-full object-cover" priority />
+                                <SafeImage src={featured.author_avatar_url} alt="" width={28} height={28} className="w-full h-full object-cover" priority fallback={featured.author.startsWith("ال") ? featured.author[2] || featured.author[0] : featured.author[0]} />
                               ) : (
                                 featured.author.startsWith("ال") ? featured.author[2] || featured.author[0] : featured.author[0]
                               )}

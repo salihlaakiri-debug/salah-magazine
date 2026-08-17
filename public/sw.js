@@ -1,4 +1,4 @@
-const CACHE_NAME = "salah-magazine-v1";
+const CACHE_NAME = "salah-magazine-v2";
 
 const STATIC_ASSETS = ["/", "/favicon.svg"];
 

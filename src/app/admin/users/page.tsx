@@ -51,6 +51,11 @@ export default function UsersPage() {
   }
 
   async function changeRole(userId: string, newRole: string) {
+    const user = users.find(u => u.id === userId);
+    const label = roleLabels[newRole] || newRole;
+    if (!confirm(`هل تريد تغيير دور ${user?.display_name || user?.username || ""} إلى ${label}؟`)) {
+      return;
+    }
     setChangingRole(userId);
     await supabase.from("profiles").update({ role: newRole }).eq("id", userId);
     setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));

@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Article } from "@/lib/types";
 import { ArrowLeftIcon } from "./Icons";
+import SafeImage from "./SafeImage";
 
 function getAuthorInitial(name: string): string {
   if (name.startsWith("ال")) return name[2] || name[0];
@@ -64,7 +64,7 @@ export default function WorkCard({ article, featured = false }: { article: Artic
               <AuthorLink username={article.author_username} className="flex items-center gap-3 text-sm text-text-muted group/author">
                 <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-bold ring-2 ring-accent/5 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
                   {article.author_avatar_url ? (
-                    <Image src={article.author_avatar_url} alt="" width={32} height={32} className="w-full h-full object-cover" />
+                    <SafeImage src={article.author_avatar_url} alt="" width={32} height={32} className="w-full h-full object-cover" fallback={getAuthorInitial(article.author)} />
                   ) : (
                     getAuthorInitial(article.author)
                   )}
@@ -115,7 +115,7 @@ export default function WorkCard({ article, featured = false }: { article: Artic
             <AuthorLink username={article.author_username} className="flex items-center gap-2 group/author">
               <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold ring-1 ring-accent/5 overflow-hidden shrink-0 relative transition-transform duration-300 group-hover/author:scale-110">
                 {article.author_avatar_url ? (
-                  <Image src={article.author_avatar_url} alt="" width={24} height={24} className="object-cover" />
+                  <SafeImage src={article.author_avatar_url} alt="" width={24} height={24} className="object-cover" fallback={getAuthorInitial(article.author)} />
                 ) : (
                   getAuthorInitial(article.author)
                 )}

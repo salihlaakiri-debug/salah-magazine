@@ -37,7 +37,7 @@ export default function WriterDashboard() {
         supabase.from("articles").select("*", { count: "exact", head: true }).eq("author_id", user!.id).eq("status", "published"),
         supabase.from("articles").select("*", { count: "exact", head: true }).eq("author_id", user!.id).eq("status", "pending"),
         supabase.from("articles").select("*", { count: "exact", head: true }).eq("author_id", user!.id).eq("status", "rejected"),
-        supabase.from("follows").select("*", { count: "exact", head: true }).eq("author_id", user!.id),
+        supabase.from("follows").select("*", { count: "exact", head: true }).eq("following_id", user!.id),
       ]);
 
       let totalLikes = 0, totalComments = 0, totalViews = 0;
