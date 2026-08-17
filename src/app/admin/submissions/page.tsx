@@ -25,11 +25,14 @@ export default function SubmissionsPage() {
 
   const fetchSubmissions = useCallback(async () => {
     if (!isAdmin) return;
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("articles")
-      .select("*")
+      .select("id, title, content, excerpt, section, author_id, author_name, status, read_time, visibility, created_at, tags")
       .eq("status", "pending")
       .order("created_at", { ascending: false });
+    if (error) {
+      console.error("Error fetching submissions:", error);
+    }
     setSubmissions((data || []) as any);
     setLoadingData(false);
   }, [isAdmin]);
