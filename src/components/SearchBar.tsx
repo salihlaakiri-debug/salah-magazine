@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Article } from "@/lib/types";
 import { supabase } from "@/lib/supabase";
 import WorkCard from "./WorkCard";
@@ -12,34 +12,39 @@ export default function SearchBar() {
   const [searched, setSearched] = useState(false);
   const [focused, setFocused] = useState(false);
   const [loading, setLoading] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
-  const doSearch = useCallback(async () => {
+  useEffect(() => {
     if (query.trim().length < 2) {
       setResults([]);
       setSearched(false);
       return;
     }
     setLoading(true);
-    const q = query.trim();
-    const { data } = await supabase
-      .from("articles")
-      .select("*")
-      .eq("status", "published")
-      .or(`title.ilike.%${q}%,content.ilike.%${q}%,excerpt.ilike.%${q}%`)
-      .order("published_at", { ascending: false });
-    setResults((data || []).map((a: any) => ({
-      id: a.id, title: a.title, content: a.content, excerpt: a.excerpt || "",
-      section: a.section, date: a.published_at || a.created_at,
-      author: a.author_name || "السُّدفة", readTime: a.read_time || "3 دقائق",
-    })));
-    setSearched(true);
-    setLoading(false);
-  }, [query]);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(async () => {
+      const q = query.trim();
+      const { data } = await supabase
+        .from("articles")
+        .select("id, title, excerpt, section, author_id, author_name, author_username, author_avatar_url, read_time, published_at, created_at")
+        .eq("status", "published")
+        .or(`title.ilike.%${q}%,excerpt.ilike.%${q}%`)
+        .order("published_at", { ascending: false });
+      setResults((data || []).map((a: any) => ({
+        id: a.id, title: a.title, content: "", excerpt: a.excerpt || "",
+        section: a.section, date: a.published_at || a.created_at,
+        author: a.author_name || "السُّدفة", author_id: a.author_id,
+        author_username: a.author_username, author_avatar_url: a.author_avatar_url,
+        readTime: a.read_time || "3 دقائق", status: a.status,
+        published_at: a.published_at, created_at: a.created_at,
+        visibility: "public" as const,
+      })));
+      setSearched(true);
+      setLoading(false);
+    }, 300);
 
-  useEffect(() => {
-    const timer = setTimeout(doSearch, 400);
-    return () => clearTimeout(timer);
-  }, [doSearch]);
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [query]);
 
   return (
     <div>

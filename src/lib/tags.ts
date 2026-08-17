@@ -80,13 +80,27 @@ export async function setArticleTags(articleId: string, tagNames: string[]): Pro
 
   if (tagNames.length === 0) return;
 
-  for (const name of tagNames) {
-    const tag = await upsertTag(name);
-    if (tag) {
-      await supabase.from("article_tags").upsert(
-        { article_id: articleId, tag_id: tag.id },
-        { onConflict: "article_id,tag_id" }
-      );
-    }
+  const tagRows = tagNames.map((name) => ({
+    name: name.trim(),
+    slug: name.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^\p{L}\p{N}-]/gu, ""),
+  }));
+
+  const { data: upsertedTags } = await supabase
+    .from("tags")
+    .upsert(tagRows, { onConflict: "name" })
+    .select("id, name");
+
+  if (!upsertedTags?.length) return;
+
+  const nameToId = new Map(upsertedTags.map((t: any) => [t.name, t.id]));
+  const articleTagRows = tagNames
+    .map((name) => {
+      const tagId = nameToId.get(name.trim());
+      return tagId ? { article_id: articleId, tag_id: tagId } : null;
+    })
+    .filter((r): r is { article_id: string; tag_id: string } => r !== null);
+
+  if (articleTagRows.length > 0) {
+    await supabase.from("article_tags").upsert(articleTagRows, { onConflict: "article_id,tag_id" });
   }
 }

@@ -8,6 +8,9 @@ import OrnamentalDivider from "@/components/OrnamentalDivider";
 import SudfehIcon from "@/components/SudfehIcon";
 import SafeImage from "@/components/SafeImage";
 import { ArrowLeftIcon, SearchIcon } from "@/components/Icons";
+import { getInitial } from "@/lib/utils";
+
+export const revalidate = 300;
 
 const QUOTES = [
   "الكلمةُ حين تُولد من الصمت، تحملهُ معها أينما ذهبت",
@@ -141,9 +144,9 @@ export default async function HomePage() {
                           <Link href={`/profile/${featured.author_username}`} className="flex items-center gap-2 group/author">
                             <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold overflow-hidden">
                               {featured.author_avatar_url ? (
-                                <SafeImage src={featured.author_avatar_url} alt="" width={28} height={28} className="w-full h-full object-cover" priority fallback={featured.author.startsWith("ال") ? featured.author[2] || featured.author[0] : featured.author[0]} />
+                                <SafeImage src={featured.author_avatar_url} alt="" width={28} height={28} className="w-full h-full object-cover" priority fallback={getInitial(featured.author)} />
                               ) : (
-                                featured.author.startsWith("ال") ? featured.author[2] || featured.author[0] : featured.author[0]
+                                getInitial(featured.author)
                               )}
                             </div>
                             <span className="text-xs text-text-muted group-hover/author:text-accent transition-colors">{featured.author}</span>
@@ -151,7 +154,7 @@ export default async function HomePage() {
                         ) : (
                           <>
                             <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold">
-                              {featured.author.startsWith("ال") ? featured.author[2] || featured.author[0] : featured.author[0]}
+                              {getInitial(featured.author)}
                             </div>
                             <span className="text-xs text-text-muted">{featured.author}</span>
                           </>

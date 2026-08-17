@@ -2,33 +2,12 @@ import Link from "next/link";
 import { Article } from "@/lib/types";
 import { ArrowLeftIcon } from "./Icons";
 import SafeImage from "./SafeImage";
-
-function getAuthorInitial(name: string): string {
-  if (name.startsWith("ال")) return name[2] || name[0];
-  return name[0];
-}
-
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("ar-SA", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
+import { sectionColors, formatDate, getInitial } from "@/lib/utils";
 
 function AuthorLink({ username, className, children }: { username?: string; className?: string; children: React.ReactNode }) {
   if (!username) return <div className={className}>{children}</div>;
   return <Link href={`/profile/${username}`} className={className}>{children}</Link>;
 }
-
-const sectionColors: Record<string, string> = {
-  "شعر": "from-amber-500/10 to-orange-500/10 text-amber-600 dark:text-amber-400",
-  "قصة": "from-blue-500/10 to-indigo-500/10 text-blue-600 dark:text-blue-400",
-  "نثر": "from-emerald-500/10 to-teal-500/10 text-emerald-600 dark:text-emerald-400",
-  "مقالات": "from-purple-500/10 to-violet-500/10 text-purple-600 dark:text-purple-400",
-  "تأملات": "from-rose-500/10 to-pink-500/10 text-rose-600 dark:text-rose-400",
-};
 
 export default function WorkCard({ article, featured = false }: { article: Article; featured?: boolean }) {
   const colors = sectionColors[article.section] || "from-gray-500/10 to-gray-500/10 text-gray-600";
@@ -64,9 +43,9 @@ export default function WorkCard({ article, featured = false }: { article: Artic
               <AuthorLink username={article.author_username} className="flex items-center gap-3 text-sm text-text-muted group/author">
                 <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-bold ring-2 ring-accent/5 overflow-hidden transition-transform duration-300 group-hover/author:scale-110">
                   {article.author_avatar_url ? (
-                    <SafeImage src={article.author_avatar_url} alt="" width={32} height={32} className="w-full h-full object-cover" fallback={getAuthorInitial(article.author)} />
+                    <SafeImage src={article.author_avatar_url} alt="" width={32} height={32} className="w-full h-full object-cover" fallback={getInitial(article.author)} />
                   ) : (
-                    getAuthorInitial(article.author)
+                    getInitial(article.author)
                   )}
                 </div>
                 <div>
@@ -115,9 +94,9 @@ export default function WorkCard({ article, featured = false }: { article: Artic
             <AuthorLink username={article.author_username} className="flex items-center gap-2 group/author">
               <div className="w-6 h-6 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[10px] font-bold ring-1 ring-accent/5 overflow-hidden shrink-0 relative transition-transform duration-300 group-hover/author:scale-110">
                 {article.author_avatar_url ? (
-                  <SafeImage src={article.author_avatar_url} alt="" width={24} height={24} className="object-cover" fallback={getAuthorInitial(article.author)} />
+                  <SafeImage src={article.author_avatar_url} alt="" width={24} height={24} className="object-cover" fallback={getInitial(article.author)} />
                 ) : (
-                  getAuthorInitial(article.author)
+                  getInitial(article.author)
                 )}
               </div>
               <span className="group-hover/author:text-accent transition-colors">{article.author}</span>

@@ -1,5 +1,7 @@
 import { fetchPublishedArticles } from "@/lib/supabase-data";
 
+export const revalidate = 3600;
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://al-sudfeh.vercel.app";
 
 function escapeXml(text: string): string {
@@ -12,7 +14,7 @@ function escapeXml(text: string): string {
 }
 
 export async function GET() {
-  const articles = await fetchPublishedArticles();
+  const articles = await fetchPublishedArticles(50);
 
   const items = articles
     .map(

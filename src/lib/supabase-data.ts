@@ -1,6 +1,9 @@
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { getSupabaseServer } from "./supabase-server";
 import { Article, Section, UserProfile } from "./types";
+
+const LIST_COLUMNS = "id, title, excerpt, section, author_id, author_name, author_username, author_avatar_url, read_time, published_at, created_at, visibility";
 
 function mapArticle(row: any): Article {
   return {
@@ -49,7 +52,7 @@ export const fetchPublishedArticles = cache(async (limit?: number, offset?: numb
   if (!supabase) return [];
   let query = supabase
     .from("articles")
-    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
+    .select(LIST_COLUMNS)
     .eq("status", "published")
     .eq("visibility", "public")
     .order("published_at", { ascending: false });
@@ -63,7 +66,7 @@ export async function fetchPublishedArticlesCount(): Promise<number> {
   if (!supabase) return 0;
   const { count } = await supabase
     .from("articles")
-    .select("*", { count: "exact", head: true })
+    .select("id", { count: "exact", head: true })
     .eq("status", "published")
     .eq("visibility", "public");
   return count || 0;
@@ -74,7 +77,7 @@ export async function fetchArticlesBySection(section: Section, limit?: number, o
   if (!supabase) return [];
   let query = supabase
     .from("articles")
-    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
+    .select(LIST_COLUMNS)
     .eq("status", "published")
     .eq("visibility", "public")
     .eq("section", section)
@@ -102,7 +105,7 @@ export async function fetchRecentArticles(count: number): Promise<Article[]> {
   if (!supabase) return [];
   const { data } = await supabase
     .from("articles")
-    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
+    .select(LIST_COLUMNS)
     .eq("status", "published")
     .eq("visibility", "public")
     .order("published_at", { ascending: false })
@@ -115,7 +118,7 @@ export async function searchArticlesServer(query: string): Promise<Article[]> {
   if (!supabase) return [];
   const { data } = await supabase
     .from("articles")
-    .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at, visibility")
+    .select(LIST_COLUMNS)
     .eq("status", "published")
     .eq("visibility", "public")
     .or(`title.ilike.%${query}%,content.ilike.%${query}%,excerpt.ilike.%${query}%`)
@@ -128,7 +131,7 @@ export async function fetchArticleCount(): Promise<number> {
   if (!supabase) return 0;
   const { count } = await supabase
     .from("articles")
-    .select("*", { count: "exact", head: true })
+    .select("id", { count: "exact", head: true })
     .eq("status", "published")
     .eq("visibility", "public");
   return count || 0;
@@ -139,7 +142,7 @@ export async function fetchPendingCount(): Promise<number> {
   if (!supabase) return 0;
   const { count } = await supabase
     .from("articles")
-    .select("*", { count: "exact", head: true })
+    .select("id", { count: "exact", head: true })
     .eq("status", "pending");
   return count || 0;
 }
@@ -149,7 +152,7 @@ export async function fetchCommentCount(): Promise<number> {
   if (!supabase) return 0;
   const { count } = await supabase
     .from("comments")
-    .select("*", { count: "exact", head: true });
+    .select("id", { count: "exact", head: true });
   return count || 0;
 }
 
@@ -158,7 +161,7 @@ export async function fetchUserCount(): Promise<number> {
   if (!supabase) return 0;
   const { count } = await supabase
     .from("profiles")
-    .select("*", { count: "exact", head: true });
+    .select("id", { count: "exact", head: true });
   return count || 0;
 }
 
@@ -167,7 +170,7 @@ export async function fetchLikeCount(articleId: string): Promise<number> {
   if (!supabase) return 0;
   const { count } = await supabase
     .from("likes")
-    .select("*", { count: "exact", head: true })
+    .select("id", { count: "exact", head: true })
     .eq("article_id", articleId);
   return count || 0;
 }

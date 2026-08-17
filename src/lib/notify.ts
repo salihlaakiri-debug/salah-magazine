@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { getSupabaseServer } from "./supabase-server";
 
 export async function createNotification({
   userId,
@@ -14,6 +14,8 @@ export async function createNotification({
   message: string;
 }) {
   if (userId === fromUserId) return;
+  const supabase = getSupabaseServer();
+  if (!supabase) return;
   await supabase.from("notifications").insert({
     user_id: userId,
     type,
@@ -24,6 +26,8 @@ export async function createNotification({
 }
 
 export async function getAuthorIdForArticle(articleId: string): Promise<string | null> {
+  const supabase = getSupabaseServer();
+  if (!supabase) return null;
   const { data } = await supabase
     .from("articles")
     .select("author_id")
@@ -33,9 +37,11 @@ export async function getAuthorIdForArticle(articleId: string): Promise<string |
 }
 
 export async function getFollowerIds(authorId: string): Promise<string[]> {
+  const supabase = getSupabaseServer();
+  if (!supabase) return [];
   const { data } = await supabase
     .from("follows")
     .select("follower_id")
-    .eq("author_id", authorId);
+    .eq("following_id", authorId);
   return (data || []).map((f) => f.follower_id);
 }

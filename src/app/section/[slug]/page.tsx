@@ -7,6 +7,8 @@ import SectionIcon from "@/components/SectionIcon";
 import { FileTextIcon } from "@/components/Icons";
 import { BreadcrumbJsonLd } from "@/components/JsonLd";
 
+export const revalidate = 300;
+
 export function generateStaticParams() {
   return SECTIONS.map((s) => ({ slug: s.slug }));
 }

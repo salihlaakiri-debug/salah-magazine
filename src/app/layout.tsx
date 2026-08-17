@@ -6,10 +6,10 @@ import Footer from "@/components/Footer";
 import ThemeProvider from "@/components/ThemeProvider";
 import AuthProvider from "@/components/AuthProvider";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
-import CookiesConsent from "@/components/CookiesConsent";
 import ToastProvider from "@/components/ToastProvider";
 import { WebsiteJsonLd } from "@/components/JsonLd";
 import { notoNaskhArabic, notoKufiArabic } from "@/lib/fonts";
+import CookiesConsentWrapper from "@/components/CookiesConsentWrapper";
 
 export const metadata: Metadata = {
   title: {
@@ -81,7 +81,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
-            <CookiesConsent />
+            <CookiesConsentWrapper />
           </ToastProvider>
           </AuthProvider>
         </ThemeProvider>

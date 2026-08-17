@@ -3,6 +3,8 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import { FileTextIcon, HeartIcon, UsersIcon } from "@/components/Icons";
 import SafeImage from "@/components/SafeImage";
 
+export const revalidate = 600;
+
 export const metadata = {
   title: "الكتّاب | مجلة السُّدفة",
   description: "تعرف على كتّاب مجلة السُّدفة الأدبية",
@@ -42,22 +44,38 @@ export default async function WritersPage() {
     );
   }
 
-  const enriched = await Promise.all(
-    writers.map(async (w: any) => {
-      const { count: articles } = await supabase
-        .from("articles")
-        .select("*", { count: "exact", head: true })
-        .eq("author_id", w.id)
-        .eq("status", "published");
+  const writerIds = writers.map((w: any) => w.id);
 
-      const { count: followers } = await supabase
-        .from("follows")
-        .select("*", { count: "exact", head: true })
-        .eq("following_id", w.id);
+  const [articleCounts, followerCounts] = await Promise.all([
+    Promise.all(
+      writerIds.map(async (id: string) => {
+        const { count } = await supabase
+          .from("articles")
+          .select("*", { count: "exact", head: true })
+          .eq("author_id", id)
+          .eq("status", "published");
+        return { id, count: count || 0 };
+      })
+    ),
+    Promise.all(
+      writerIds.map(async (id: string) => {
+        const { count } = await supabase
+          .from("follows")
+          .select("*", { count: "exact", head: true })
+          .eq("following_id", id);
+        return { id, count: count || 0 };
+      })
+    ),
+  ]);
 
-      return { ...w, articleCount: articles || 0, followerCount: followers || 0 };
-    })
-  );
+  const articleMap = new Map(articleCounts.map((a) => [a.id, a.count]));
+  const followerMap = new Map(followerCounts.map((f) => [f.id, f.count]));
+
+  const enriched = writers.map((w: any) => ({
+    ...w,
+    articleCount: articleMap.get(w.id) || 0,
+    followerCount: followerMap.get(w.id) || 0,
+  }));
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

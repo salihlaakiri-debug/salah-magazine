@@ -1,64 +1,46 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { Article, SECTIONS } from "@/lib/types";
-import { supabase } from "@/lib/supabase";
+import Link from "next/link";
+import { SECTIONS } from "@/lib/types";
+import { fetchPublishedArticles, fetchPublishedArticlesCount } from "@/lib/supabase-data";
 import WorkCard from "@/components/WorkCard";
 import Pagination from "@/components/Pagination";
-import Link from "next/link";
-import { ArchiveIcon, FileTextIcon } from "@/components/Icons";
+import { FileTextIcon } from "@/components/Icons";
+import { formatMonthYear } from "@/lib/utils";
+import ArchiveFilters from "./ArchiveFilters";
+
+export const revalidate = 300;
 
 const PAGE_SIZE = 12;
 
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("ar-SA", {
-    year: "numeric",
-    month: "long",
-  });
-}
+export const metadata = {
+  title: "الأرشيف | مجلة السُّدفة",
+  description: "تصفح جميع الأعمال الأدبية في مجلة السُّدفة",
+};
 
-export default function ArchivePage() {
-  const [articles, setArticles] = useState<Article[]>([]);
-  useEffect(() => { document.title = "الأرشيف | مجلة السُّدفة"; }, []);
-  const [loading, setLoading] = useState(true);
-  const [selectedSection, setSelectedSection] = useState("الكل");
-  const [selectedMonth, setSelectedMonth] = useState("الكل");
-  const [page, setPage] = useState(1);
+export default async function ArchivePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; section?: string; month?: string }>;
+}) {
+  const params = await searchParams;
+  const currentPage = Math.max(1, parseInt(params.page || "1", 10));
+  const selectedSection = params.section || "الكل";
+  const selectedMonth = params.month || "الكل";
 
-  useEffect(() => {
-    setPage(1);
-  }, [selectedSection, selectedMonth]);
+  const totalArticles = await fetchPublishedArticlesCount();
+  const offset = (currentPage - 1) * PAGE_SIZE;
 
-  useEffect(() => {
-    async function load() {
-      const { data } = await supabase
-        .from("articles")
-        .select("id, title, excerpt, section, author_id, author_name, read_time, status, published_at, created_at")
-        .eq("status", "published")
-        .order("published_at", { ascending: false });
-      setArticles((data || []).map((a: any) => ({
-        id: a.id, title: a.title, content: a.content || "", excerpt: a.excerpt || "",
-        section: a.section, date: a.published_at || a.created_at,
-        author: a.author_name || "السُّدفة", author_id: a.author_id,
-        readTime: a.read_time || "3 دقائق", status: a.status,
-        published_at: a.published_at, created_at: a.created_at,
-      })));
-      setLoading(false);
-    }
-    load();
-  }, []);
+  const allArticles = await fetchPublishedArticles(Math.min(totalArticles, 200));
 
-  const months = [...new Set(articles.map((a) => a.date?.slice(0, 7)))].filter(Boolean).sort().reverse();
+  const months = [...new Set(allArticles.map((a) => a.date?.slice(0, 7)))].filter(Boolean).sort().reverse();
 
-  const filtered = articles.filter((a) => {
+  const filtered = allArticles.filter((a) => {
     const sectionMatch = selectedSection === "الكل" || a.section === selectedSection;
     const monthMatch = selectedMonth === "الكل" || (a.date && a.date.startsWith(selectedMonth));
     return sectionMatch && monthMatch;
   });
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const paged = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -78,49 +60,14 @@ export default function ArchivePage() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3 mb-8" role="group" aria-label="التصفية">
-        <div>
-          <label htmlFor="section-filter" className="text-[11px] text-text-muted block mb-1.5 font-medium">القسم</label>
-          <select
-            id="section-filter"
-            value={selectedSection}
-            onChange={(e) => setSelectedSection(e.target.value)}
-            className="px-4 py-2.5 rounded-xl border border-border bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 transition-all"
-          >
-            <option value="الكل">جميع الأقسام</option>
-            {SECTIONS.map((s) => (
-              <option key={s.slug} value={s.name}>{s.name}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="month-filter" className="text-[11px] text-text-muted block mb-1.5 font-medium">الشهر</label>
-          <select
-            id="month-filter"
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-            className="px-4 py-2.5 rounded-xl border border-border bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 transition-all"
-          >
-            <option value="الكل">جميع الأشهر</option>
-            {months.map((m) => (
-              <option key={m} value={m}>{formatDate(m + "-01")}</option>
-            ))}
-          </select>
-        </div>
-      </div>
+      <ArchiveFilters
+        months={months}
+        selectedSection={selectedSection}
+        selectedMonth={selectedMonth}
+        total={filtered.length}
+      />
 
-      <div className="flex items-center gap-2 mb-6">
-        <span className="w-2 h-2 rounded-full bg-accent" aria-hidden="true" />
-        <p className="text-sm text-text-muted">
-          {loading ? "...جاري التحميل" : `${filtered.length} عمل أدبي`}
-        </p>
-      </div>
-
-      {loading ? (
-        <div className="flex justify-center py-20" role="status" aria-label="جاري التحميل">
-          <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
-        </div>
-      ) : filtered.length === 0 ? (
+      {filtered.length === 0 ? (
         <div className="text-center py-20 bg-surface/50 rounded-3xl border border-border/30">
           <FileTextIcon size={48} className="mx-auto text-text-muted/20 mb-4" aria-hidden="true" />
           <p className="text-text-muted">لا توجد أعمال تطابق التصفية.</p>
@@ -132,7 +79,7 @@ export default function ArchivePage() {
               <WorkCard key={article.id} article={article} />
             ))}
           </div>
-          <Pagination currentPage={page} totalPages={totalPages} baseUrl="/archive" />
+          <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/archive" />
         </>
       )}
     </div>
