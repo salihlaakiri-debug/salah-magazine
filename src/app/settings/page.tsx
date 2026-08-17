@@ -196,7 +196,24 @@ export default function SettingsPage() {
                   <p className="text-sm font-medium">{item.label}</p>
                   <p className="text-xs text-text-muted">{item.desc}</p>
                 </div>
-                <input type="checkbox" className="w-5 h-5 rounded-lg border-border text-accent focus:ring-accent/30" defaultChecked />
+                <input
+                  type="checkbox"
+                  className="w-5 h-5 rounded-lg border-border text-accent focus:ring-accent/30"
+                  defaultChecked
+                  onChange={async (e) => {
+                    if (!user) return;
+                    const checked = e.target.checked;
+                    const { error } = await supabase
+                      .from("notification_preferences")
+                      .upsert(
+                        { user_id: user.id, [`${item.key}_enabled`]: checked },
+                        { onConflict: "user_id" }
+                      );
+                    if (error) {
+                      showToast("حدث خطأ في حفظ التفضيل", "error");
+                    }
+                  }}
+                />
               </label>
             ))}
           </div>

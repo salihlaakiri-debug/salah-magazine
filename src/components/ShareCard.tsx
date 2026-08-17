@@ -34,7 +34,8 @@ function esc(s: string): string {
 }
 
 function getInitials(name: string): string {
-  return name.startsWith("ال") ? name[2] || name[0] : name[0];
+  const n = name.startsWith("ال") ? (name[2] || name[0]) : name[0];
+  return esc(n);
 }
 
 function getSectionColor(section: string) {

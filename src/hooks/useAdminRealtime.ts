@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/components/AuthProvider";
 
 interface SubConfig {
   table: string;
@@ -16,8 +17,11 @@ export function useAdminRealtime(
 ) {
   const cb = useRef(onEvent);
   cb.current = onEvent;
+  const { user, isAdmin, loading } = useAuth();
 
   useEffect(() => {
+    if (loading || !user || !isAdmin) return;
+
     const channel = supabase.channel(channelName);
     subscriptions.forEach(({ table, event, filter }) => {
       const opts = { event, schema: "public" as const, table, ...(filter ? { filter } : {}) };
@@ -25,5 +29,5 @@ export function useAdminRealtime(
     });
     channel.subscribe();
     return () => { supabase.removeChannel(channel); };
-  }, []);
+  }, [user?.id, isAdmin, loading]);
 }
