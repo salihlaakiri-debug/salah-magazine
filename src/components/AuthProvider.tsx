@@ -160,7 +160,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     const next = redirectTo || "/";
     await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        queryParams: { prompt: "select_account" },
+      },
     });
   }
 
