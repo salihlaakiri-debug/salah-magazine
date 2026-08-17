@@ -7,8 +7,10 @@ import { PlusIcon, EditIcon, TrashIcon, EyeIcon, XIcon, CheckIcon, SearchIcon, L
 import { TagInput } from "@/components/TagBadge";
 import Link from "next/link";
 import { useAdminRealtime } from "@/hooks/useAdminRealtime";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function ArticlesPage() {
+  const { user } = useAuth();
   const [articlesList, setArticlesList] = useState<(Article & { visibility?: string })[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -125,6 +127,7 @@ export default function ArticlesPage() {
           content: form.content,
           excerpt: form.excerpt,
           section: form.section,
+          author_id: user?.id || null,
           author_name: form.author,
           read_time: form.readTime,
           visibility: form.visibility,

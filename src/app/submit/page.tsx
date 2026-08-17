@@ -10,6 +10,7 @@ import RichEditor from "@/components/RichEditor";
 import { TagInput } from "@/components/TagBadge";
 import { showToast } from "@/lib/toast";
 import { PenIcon, CheckIcon, SaveIcon } from "@/components/Icons";
+import { setArticleTags } from "@/lib/tags";
 
 export default function SubmitPage() {
   const { user, profile, loading } = useAuth();
@@ -138,6 +139,7 @@ export default function SubmitPage() {
           section,
           read_time: readTime,
           visibility,
+          status: "pending",
           updated_at: new Date().toISOString(),
         })
         .eq("id", editId)
@@ -148,12 +150,13 @@ export default function SubmitPage() {
         setSubmitting(false);
         showToast("حدث خطأ أثناء التعديل", "error");
       } else {
+        if (tags.length > 0) await setArticleTags(editId, tags);
         setSuccess(true);
         showToast("تم التعديل بنجاح", "success");
         setTimeout(() => router.push("/my-works"), 2000);
       }
     } else {
-      const { error: insertError } = await supabase.from("articles").insert({
+      const { error: insertError, data: insertData } = await supabase.from("articles").insert({
         title: title.trim(),
         content: content.trim(),
         excerpt: excerpt.trim() || content.trim().replace(/[#*>\-!\[\]()]/g, "").slice(0, 200),
@@ -163,13 +166,14 @@ export default function SubmitPage() {
         status: "pending",
         read_time: readTime,
         visibility,
-      });
+      }).select("id").single();
 
       if (insertError) {
         setError("حدث خطأ أثناء الإرسال. حاول مرة أخرى.");
         setSubmitting(false);
         showToast("حدث خطأ أثناء الإرسال", "error");
       } else {
+        if (tags.length > 0 && insertData?.id) await setArticleTags(insertData.id, tags);
         setSuccess(true);
         showToast("تم الإرسال بنجاح! سيتم مراجعة عملك", "success");
         setTimeout(() => router.push("/my-works"), 2000);

@@ -8,6 +8,7 @@ import { Article, SECTIONS } from "@/lib/types";
 import { CheckIcon, XIcon, EyeIcon, MessageIcon } from "@/components/Icons";
 import Link from "next/link";
 import { useAdminRealtime } from "@/hooks/useAdminRealtime";
+import { createNotification } from "@/lib/notify";
 
 export default function SubmissionsPage() {
   const { user, isAdmin, loading } = useAuth();
@@ -66,9 +67,15 @@ export default function SubmissionsPage() {
 
   const updateStatus = async (id: string, status: "published" | "rejected") => {
     if (status === "published") {
-      await supabase.from("articles").update({
+      const { data: article } = await supabase.from("articles").update({
         status, published_at: new Date().toISOString(),
-      }).eq("id", id);
+      }).eq("id", id).select("author_id, title").single();
+      if (article?.author_id) {
+        createNotification({
+          userId: article.author_id, type: "publish", fromUserId: user?.id,
+          message: `تم قبول مقالك "${article.title}" ونشره على المجلة`,
+        });
+      }
       setSubmissions((prev) => prev.filter((s) => s.id !== id));
     } else {
       setRejectConfirm(id);
@@ -77,9 +84,15 @@ export default function SubmissionsPage() {
 
   const confirmReject = async () => {
     if (!rejectConfirm) return;
-    await supabase.from("articles").update({
+    const { data: article } = await supabase.from("articles").update({
       status: "rejected",
-    }).eq("id", rejectConfirm);
+    }).eq("id", rejectConfirm).select("author_id, title").single();
+    if (article?.author_id) {
+      createNotification({
+        userId: article.author_id, type: "publish", fromUserId: user?.id,
+        message: `تم رفض مقالك "${article.title}". يمكنك تعديله وإعادة الإرسال.`,
+      });
+    }
     setSubmissions((prev) => prev.filter((s) => s.id !== rejectConfirm));
     setRejectConfirm(null);
   };
