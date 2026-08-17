@@ -43,12 +43,12 @@ export async function POST(req: NextRequest) {
     if (existing) {
       await supabase
         .from("subscribers")
-        .update({ confirm_token: confirmToken, name: (name || "").trim() || null })
+        .update({ confirm_token: confirmToken, name: (name || "").trim() || null, confirmed: true })
         .eq("id", existing.id);
     } else {
       const { error } = await supabase
         .from("subscribers")
-        .insert({ email: cleanedEmail, name: (name || "").trim() || null, confirm_token: confirmToken, confirmed: false });
+        .insert({ email: cleanedEmail, name: (name || "").trim() || null, confirm_token: confirmToken, confirmed: true });
       if (error) throw error;
     }
 

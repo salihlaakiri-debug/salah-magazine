@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Comment } from "@/lib/types";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./AuthProvider";
-import { createNotification, getAuthorIdForArticle } from "@/lib/notify";
+import { createNotification } from "@/lib/notify";
 import { showToast } from "@/lib/toast";
 import Honeypot from "./Honeypot";
 import { MessageIcon, PlusIcon, XIcon, CheckIcon, LoaderIcon, ChevronDownIcon } from "./Icons";
@@ -200,13 +200,6 @@ export default function Comments({ articleId }: { articleId: string }) {
       setText(""); setShowForm(false); setSubmitted(true);
       setTimeout(() => setSubmitted(false), 3000);
       showToast("تم نشر تعليقك", "success", { duration: 3000 });
-      const authorId = await getAuthorIdForArticle(articleId);
-      if (authorId) {
-        createNotification({
-          userId: authorId, type: "comment", fromUserId: user.id, articleId,
-          message: `${authorName} علّق على عملك: "${text.trim().slice(0, 50)}..."`,
-        });
-      }
     } else {
       showToast("حدث خطأ أثناء النشر", "error");
     }
@@ -234,6 +227,14 @@ export default function Comments({ articleId }: { articleId: string }) {
       }]);
       setReplyText(""); setReplyTo(null);
       showToast("تم نشر الرد", "success", { duration: 2000 });
+      const parentComment = comments.find((c) => c.id === parentId);
+      if (parentComment?.user_id && parentComment.user_id !== user.id) {
+        const { data: commenterProfile } = await supabase.from("profiles").select("display_name,username").eq("id", user.id).single();
+        createNotification({
+          userId: parentComment.user_id, type: "comment", fromUserId: user.id, articleId,
+          message: `${commenterProfile?.display_name || commenterProfile?.username || "شخص"} ردّ على تعليقك: "${replyText.trim().slice(0, 50)}..."`,
+        });
+      }
     } else {
       showToast("حدث خطأ أثناء النشر", "error");
     }
