@@ -31,9 +31,23 @@ export default function ForgotPasswordPage() {
         return;
       }
 
+      // If custom SMTP isn't configured, fall back to Supabase's built-in mailer
+      // so the user always receives a recovery email.
+      if (!result.sent) {
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        });
+
+        if (resetError) {
+          setError(resetError.message);
+          setLoading(false);
+          return;
+        }
+      }
+
       setSent(true);
     } catch {
-      // Fallback to Supabase's built-in email
+      // Network error — last resort: Supabase's built-in email
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/auth/callback`,
       });
