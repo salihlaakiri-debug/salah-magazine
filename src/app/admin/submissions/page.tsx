@@ -9,6 +9,7 @@ import { CheckIcon, XIcon, EyeIcon, MessageIcon } from "@/components/Icons";
 import Link from "next/link";
 import { useAdminRealtime } from "@/hooks/useAdminRealtime";
 import { createNotification } from "@/lib/notify";
+import { showToast } from "@/lib/toast";
 
 export default function SubmissionsPage() {
   const { user, isAdmin, loading } = useAuth();
@@ -70,15 +71,21 @@ export default function SubmissionsPage() {
 
   const updateStatus = async (id: string, status: "published" | "rejected") => {
     if (status === "published") {
-      const { data: article } = await supabase.from("articles").update({
+      const { data: article, error } = await supabase.from("articles").update({
         status, published_at: new Date().toISOString(),
       }).eq("id", id).select("author_id, title").single();
+      if (error) {
+        console.error("Error publishing:", error);
+        showToast("حدث خطأ أثناء النشر: " + error.message, "error");
+        return;
+      }
       if (article?.author_id) {
         createNotification({
           userId: article.author_id, type: "publish", fromUserId: user?.id,
           message: `تم قبول مقالك "${article.title}" ونشره على المجلة`,
         });
       }
+      showToast("تم نشر المقال بنجاح", "success");
       setSubmissions((prev) => prev.filter((s) => s.id !== id));
     } else {
       setRejectConfirm(id);
@@ -87,15 +94,22 @@ export default function SubmissionsPage() {
 
   const confirmReject = async () => {
     if (!rejectConfirm) return;
-    const { data: article } = await supabase.from("articles").update({
+    const { data: article, error } = await supabase.from("articles").update({
       status: "rejected",
     }).eq("id", rejectConfirm).select("author_id, title").single();
+    if (error) {
+      console.error("Error rejecting:", error);
+      showToast("حدث خطأ أثناء الرفض: " + error.message, "error");
+      setRejectConfirm(null);
+      return;
+    }
     if (article?.author_id) {
       createNotification({
         userId: article.author_id, type: "publish", fromUserId: user?.id,
         message: `تم رفض مقالك "${article.title}". يمكنك تعديله وإعادة الإرسال.`,
       });
     }
+    showToast("تم رفض المقال", "success");
     setSubmissions((prev) => prev.filter((s) => s.id !== rejectConfirm));
     setRejectConfirm(null);
   };
