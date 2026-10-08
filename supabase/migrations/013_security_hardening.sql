@@ -27,7 +27,7 @@ BEGIN
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data ->> 'username', NEW.raw_user_meta_data ->> 'preferred_username', split_part(NEW.email, '@', 1)),
-    COALESCE(NEW.raw_user_meta_data ->> 'full_name', NEW.raw_user_meta_data ->> 'name', split_part(NEW.email, '@', 1)),
+    COALESCE(NEW.raw_user_meta_data ->> 'display_name', NEW.raw_user_meta_data ->> 'full_name', NEW.raw_user_meta_data ->> 'name', split_part(NEW.email, '@', 1)),
     COALESCE(NEW.raw_user_meta_data ->> 'avatar_url', NEW.raw_user_meta_data ->> 'picture', '')
   )
   ON CONFLICT (id) DO NOTHING;
