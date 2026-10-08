@@ -3,10 +3,11 @@
 import nodemailer from "nodemailer";
 
 function getTransport() {
+  const port = Number(process.env.SMTP_PORT) || (process.env.SMTP_SECURE === "true" ? 465 : 587);
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: process.env.SMTP_SECURE === "true",
+    port,
+    secure: process.env.SMTP_SECURE === "true" || port === 465,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
@@ -97,8 +98,11 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions) {
 
   try {
     const transport = getTransport();
+    // Gmail requires the From address to match the authenticated account;
+    // fall back to SMTP_USER so branded sends work out of the box.
+    const from = process.env.EMAIL_FROM || `"السُّدفة" <${process.env.SMTP_USER}>`;
     await transport.sendMail({
-      from: process.env.EMAIL_FROM || '"السُّدفة" <noreply@al-sudfeh.vercel.app>',
+      from,
       to,
       subject,
       html,
